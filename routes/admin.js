@@ -6,7 +6,7 @@ var apiModel = require('../database/BLL/users');
 router.get('/', function(req, res, next) {
   res.render('admin', { title: 'Express' });
 });
-
+//注册路由
 router.post('/register', function(req, res, next) {
   let userName = req.body.username;
   let password = req.body.password;
@@ -22,20 +22,28 @@ router.post('/register', function(req, res, next) {
       },userName,password)
     }
   },userName)
-  // res.redirect('/');
 });
-
+//登录路由
 router.post('/login', function(req, res, next) {
+  //重新登录时清除先前的数据(如果存在的话)
+  if(req.session.logined){
+    req.session.logined = null;
+  }
+  if(req.session.username){
+    req.session.username = null;
+  }
+  //重新获取数据判断登录
   let userName = req.body.username;
   let password = req.body.password;
   apiModel.findUser(function(data){
     if(data === "true"){
-      console.log(data);
       req.session.logined = true;
-      res.send("登录成功");
+      if(userName === "superAdmin"){
+        req.session.username = "superAdmin";
+      }
+      res.send("success");
     }else{
-      console.log(data);
-      res.send("账户不存在或密码错误!");
+      res.send("fail");
     }
   },userName,password)
 
@@ -58,5 +66,14 @@ router.post('/login', function(req, res, next) {
   // })
   // res.redirect('/');
 });
+//注销路由
+router.get('/logout',function(req,res,next){
+  req.session.logined = false;
+  if(req.session.username){
+    req.session.username = null;
+  }
+  //重新载入这个界面(相当于刷新)
+  res.redirect('/index');
+})
 
 module.exports = router;

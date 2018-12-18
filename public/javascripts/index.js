@@ -4,15 +4,21 @@ layui.use(['element','jquery'],function(){
 
   $("#Mindex").click(function(){
     $(".iframe").attr('src','/index/Mindex');
-	})
-	$("#test").click(function(){
-	 	$(".iframe").attr('src','/index/test');
-	})
-	$("#MDelPicture").click(function(){
-	 	$(".iframe").attr('src',"MDelPicture.html");
   })
-	$("#MDelUser").click(function(){
-	 	$(".iframe").attr('src',"MDelUser.html");
+  
+  $("#user").click(function(){
+    $(".iframe").attr('src','/index/user');
+	})
+
+	$("#article").click(function(){
+	 	$(".iframe").attr('src','/index/article');
+  })
+  $("#type").click(function(){
+    $(".iframe").attr('src','/index/type');
+  })
+
+  $("#comment").click(function(){
+    $(".iframe").attr('src','/index/comment');
   })
 
 });

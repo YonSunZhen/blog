@@ -103,11 +103,11 @@
         async:true,
         data:{'username':username1,'password':password1},
         success:function(result){
-          if(result === "登录成功"){
-            console.log(result);
+          console.log(result);
+          if(result === "success"){
             window.location.href = '/index';
           }else{
-            console.log(result);
+            // console.log(result);
             alert("账户不存在或密码错误!");
           }
         }

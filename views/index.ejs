@@ -10,7 +10,7 @@
 <body class="layui-layout-body">
 <div class="layui-layout layui-layout-admin">
   <div class="layui-header">
-    <div class="layui-logo">管理员后台管理</div>
+    <div class="layui-logo">博客后台管理</div>
     <!-- 头部区域（可配合layui已有的水平导航） -->
     <ul class="layui-nav layui-layout-right">
       <li class="layui-nav-item">
@@ -23,7 +23,7 @@
           <dd><a href="">修改密码</a></dd>
         </dl>
       </li>
-      <li class="layui-nav-item"><a href="">退出</a></li>
+      <li class="layui-nav-item"><a href="/logout">退出</a></li>
     </ul>
   </div>
   
@@ -41,16 +41,26 @@
             <dd><a href="">超链接</a></dd>
           </dl> -->
         </li>
+        <%if(superAdmin){%>
+          <li class="layui-nav-item">
+            <a href="javascript:;" id="user">用户管理</a>
+            <!-- <dl class="layui-nav-child">
+              <dd><a href="javascript:;">列表一</a></dd>
+              <dd><a href="javascript:;">列表二</a></dd>
+              <dd><a href="">超链接</a></dd>
+            </dl> -->
+          </li>
+        <%}%>
         <li class="layui-nav-item">
-          <a href="javascript:;" id="MDelUser">删除用户</a>
-          <!-- <dl class="layui-nav-child">
-            <dd><a href="javascript:;">列表一</a></dd>
-            <dd><a href="javascript:;">列表二</a></dd>
-            <dd><a href="">超链接</a></dd>
-          </dl> -->
+          <a href="javascript:;" id="blog">博客管理</a>
+          <dl class="layui-nav-child">
+            <dd><a href="javascript:;" id="article">文章管理</a></dd>
+            <dd><a href="javascript:;" id="type">分类管理</a></dd>
+          </dl>
         </li>
-        <li class="layui-nav-item"><a href="javascript:;" id="MDelPicture">删除图片</a></li>
-        <li class="layui-nav-item"><a href="javascript:;" id="test">测试</a></li>
+        <li class="layui-nav-item">
+          <a href="javascript:;" id="comment">评论管理</a>
+        </li>
       </ul>
     </div>
   </div>

@@ -6,7 +6,11 @@ var apiModel = require('../database/BLL/users');
 router.get('/', function(req, res, next) {
   console.log(req.session.logined);
   if(req.session.logined){
-    res.render('index', { title: 'Express' });
+    if(req.session.username === "superAdmin"){
+      res.render('index', { title: 'Express',superAdmin: true});
+    }else{
+      res.render('index', { title: 'Express',superAdmin: false});
+    }  
   }else{
     res.redirect('/');
   }
@@ -15,8 +19,21 @@ router.get('/', function(req, res, next) {
 router.get('/Mindex', function(req, res, next) {
   res.render('Mindex', { title: 'Hey', message: '这是首页'});
 });
-router.get('/test', function(req, res, next) {
-  res.render('test', { title: 'Hey', message: '这是测试页面'});
+
+router.get('/user', function(req, res, next) {
+  res.render('user', { title: 'Hey', message: '这是用户管理页面'});
+});
+
+router.get('/article', function(req, res, next) {
+  res.render('article', { title: 'Hey', message: '这是文章管理页面'});
+});
+
+router.get('/type', function(req, res, next) {
+  res.render('type', { title: 'Hey', message: '这是文章类型管理页面'});
+});
+
+router.get('/comment', function(req, res, next) {
+  res.render('comment', { title: 'Hey', message: '这是评论管理页面'});
 });
 
 module.exports = router;
