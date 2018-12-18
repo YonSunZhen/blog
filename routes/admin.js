@@ -31,6 +31,7 @@ router.post('/login', function(req, res, next) {
   apiModel.findUser(function(data){
     if(data === "true"){
       console.log(data);
+      req.session.logined = true;
       res.send("登录成功");
     }else{
       console.log(data);

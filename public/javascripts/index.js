@@ -1,17 +1,18 @@
 layui.use(['element','jquery'],function(){
 	var elenemt = layui.element;
-    var $ = layui.$;
+  var $ = layui.$;
 
-    $("#Mindex").click(function(){
-		$(".iframe").attr('src','Mindex.html');
+  $("#Mindex").click(function(){
+    $(".iframe").attr('src','/index/Mindex');
 	})
-	$("#MDelComment").click(function(){
-	 	$(".iframe").attr('src','MDelComment.html');
+	$("#test").click(function(){
+	 	$(".iframe").attr('src','/index/test');
 	})
 	$("#MDelPicture").click(function(){
 	 	$(".iframe").attr('src',"MDelPicture.html");
-    })
+  })
 	$("#MDelUser").click(function(){
 	 	$(".iframe").attr('src',"MDelUser.html");
-    })
+  })
+
 });
