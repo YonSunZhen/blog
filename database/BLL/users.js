@@ -4,8 +4,8 @@ var apiModel = require('../DAL/users');
 var findUser = (cb, userName, password) => {
   //利用回调函数
   apiModel.findUser(userName,password).then((result) => {
-    if(result.length > 0){
-      console.log(result);
+    if(result.length > 0 && result[0].state === 1){
+      console.log(result[0]);
       return cb("true");
     }else{
       console.log(result);
@@ -40,8 +40,8 @@ var isExist = (cb, userName) => {
 }
 
 //增加一个用户
-var addUser = (cb, userName, password) => {
-  apiModel.addUser(userName, password).then((result) => {
+var addUser = (cb, model) => {
+  apiModel.addUser(model).then((result) => {
     if(result.affectedRows > 0){
       return cb("true");
     }else{

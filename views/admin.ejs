@@ -46,6 +46,9 @@
           <input class="form-text" type="text" placeholder="请输入用户名"  id="username">
         </div>
         <div class="login-item">
+          <input class="form-text" type="text" placeholder="请输入手机号码"  id="mobile">
+        </div>
+        <div class="login-item">
           <input class="form-text" type="password" placeholder="请输入密码"  id="password">
         </div>
         <div class="login-item">
@@ -78,12 +81,13 @@
       var username = $('#username').val();
       var password = $('#password').val();
       var passwordAgain = $("#passwordAgain").val();
+      var mobile = $("#mobile").val();
       if(password === passwordAgain){
         $.ajax({
           type:'POST',
           url:'/register',
           async:true,
-          data:{'username':username,'password':password},
+          data:{'username':username,'password':password,'mobile':mobile},
           success:function(result){
             alert(result);
             window.location.href = '/';

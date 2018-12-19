@@ -1,6 +1,8 @@
 var express = require('express');
 var router = express.Router();
-var apiModel = require('../database/BLL/users');
+var time = require('silly-datetime');
+var usersModel = require('../database/Model/users');
+var usersBll = require('../database/BLL/users');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -10,16 +12,21 @@ router.get('/', function(req, res, next) {
 router.post('/register', function(req, res, next) {
   let userName = req.body.username;
   let password = req.body.password;
+  let mobile = req.body.mobile;
+  //默认状态为0(未通过)
+  let state = 0;
+  let createDate = time.format(new Date(), 'YYYY-MM-DD HH:mm:ss');
+  let userData = new usersModel.User(userName,password,state,mobile,createDate);
   //验证用户是否已存在
-  apiModel.isExist(function(data){
+  usersBll.isExist(function(data){
     if(data === "true"){
       res.send("用户名已存在，请重新输入!");
     }else{
-      apiModel.addUser(function(data){
+      usersBll.addUser(function(data){
         if(data === "true"){
           res.send("注册成功！");
         }
-      },userName,password)
+      },userData)
     }
   },userName)
 });
@@ -35,7 +42,7 @@ router.post('/login', function(req, res, next) {
   //重新获取数据判断登录
   let userName = req.body.username;
   let password = req.body.password;
-  apiModel.findUser(function(data){
+  usersBll.findUser(function(data){
     if(data === "true"){
       req.session.logined = true;
       if(userName === "superAdmin"){
