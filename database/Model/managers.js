@@ -1,6 +1,6 @@
-function User(username, password, state, mobile, createDate, loginDate, loginTimes, lastLoginDate){
-  this.username = username;
-  this.password = password;
+function Managers(userName, passWord, state, mobile, createDate, loginDate, loginTimes, lastLoginDate){
+  this.userName = userName;
+  this.passWord = passWord;
   this.state = state;
   this.mobile = mobile;
   this.createDate = createDate;
@@ -10,5 +10,5 @@ function User(username, password, state, mobile, createDate, loginDate, loginTim
 }
 
 module.exports = {
-  User
+  Managers
 }

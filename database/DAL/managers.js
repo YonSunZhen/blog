@@ -22,10 +22,10 @@ var apiModel = require('../DbHelper');
 // createTable(users);
 
 //增加用户（注册）
-let addUser = (model) => {
-  let _sql = `insert into users set 
-              username="${model.username}",
-              password="${model.password}",
+let addManager = (model) => {
+  let _sql = `insert into Managers set 
+              userName="${model.userName}",
+              passWord="${model.passWord}",
               state="${model.state}",
               mobile="${model.mobile}",
               createDate="${model.createDate}"
@@ -35,21 +35,21 @@ let addUser = (model) => {
 }
 
 //验证用户（登录）
-let findUser = (userName, password) => {
-  let _sql = `select * from users where username="${userName}" AND password="${password}"; `
+let findManager = (userName, password) => {
+  let _sql = `select * from Managers where userName="${userName}" AND passWord="${password}"; `
   // console.log(1);
   return apiModel.query(_sql);
 }
 
 //验证用户是否已存在（登录）
 let isExist = (userName) => {
-  let _sql = `select * from users where username="${userName}"; `
+  let _sql = `select * from Managers where userName="${userName}"; `
   // console.log(1);
   return apiModel.query(_sql);
 }
 
 module.exports = {
   isExist,
-  addUser,
-  findUser
+  addManager,
+  findManager
 }

@@ -1,8 +1,8 @@
 var express = require('express');
 var router = express.Router();
 var time = require('silly-datetime');
-var usersModel = require('../database/Model/users');
-var usersBll = require('../database/BLL/users');
+var managersModel = require('../database/Model/managers');
+var managersBll = require('../database/BLL/managers');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -11,18 +11,18 @@ router.get('/', function(req, res, next) {
 //注册路由
 router.post('/register', function(req, res, next) {
   let userName = req.body.username;
-  let password = req.body.password;
+  let passWord = req.body.password;
   let mobile = req.body.mobile;
   //默认状态为0(未通过)
   let state = 0;
   let createDate = time.format(new Date(), 'YYYY-MM-DD HH:mm:ss');
-  let userData = new usersModel.User(userName,password,state,mobile,createDate);
+  let userData = new managersModel.Managers(userName,passWord,state,mobile,createDate);
   //验证用户是否已存在
-  usersBll.isExist(function(data){
+  managersBll.isExist(function(data){
     if(data === "true"){
       res.send("用户名已存在，请重新输入!");
     }else{
-      usersBll.addUser(function(data){
+      managersBll.addManager(function(data){
         if(data === "true"){
           res.send("注册成功！");
         }
@@ -42,7 +42,7 @@ router.post('/login', function(req, res, next) {
   //重新获取数据判断登录
   let userName = req.body.username;
   let password = req.body.password;
-  usersBll.findUser(function(data){
+  managersBll.findManager(function(data){
     if(data === "true"){
       req.session.logined = true;
       if(userName === "superAdmin"){

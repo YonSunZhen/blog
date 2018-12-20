@@ -1,9 +1,9 @@
-var apiModel = require('../DAL/users');
+var apiModel = require('../DAL/managers');
 
 //登录验证
-var findUser = (cb, userName, password) => {
+var findManager = (cb, userName, password) => {
   //利用回调函数
-  apiModel.findUser(userName,password).then((result) => {
+  apiModel.findManager(userName,password).then((result) => {
     if(result.length > 0 && result[0].state === 1){
       console.log(result[0]);
       return cb("true");
@@ -40,8 +40,8 @@ var isExist = (cb, userName) => {
 }
 
 //增加一个用户
-var addUser = (cb, model) => {
-  apiModel.addUser(model).then((result) => {
+var addManager = (cb, model) => {
+  apiModel.addManager(model).then((result) => {
     if(result.affectedRows > 0){
       return cb("true");
     }else{
@@ -51,7 +51,7 @@ var addUser = (cb, model) => {
 }
 
 module.exports = {
-  addUser,
+  addManager,
   isExist,
-  findUser
+  findManager
 }
