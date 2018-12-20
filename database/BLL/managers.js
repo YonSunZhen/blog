@@ -50,8 +50,27 @@ var addManager = (cb, model) => {
   })
 }
 
+//获取Managers所有数据
+var getManagersAllData = (cb) => {
+  apiModel.getManagersAllData().then((result) => {
+    return cb(result);
+  })
+}
+//根据id删除一条数据
+var delManagersOneData = (cb,id) => {
+  apiModel.delManagersOneData(id).then((result) => {
+    if(result.affectedRows > 0){
+      return cb("true");
+    }else{
+      return cb("false");
+    }
+  })
+}
+
 module.exports = {
   addManager,
   isExist,
-  findManager
+  findManager,
+  getManagersAllData,
+  delManagersOneData
 }

@@ -1,5 +1,7 @@
 var express = require('express');
 var router = express.Router();
+var managersModel = require('../database/Model/managers');
+var managersBll = require('../database/BLL/managers');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -14,13 +16,40 @@ router.get('/', function(req, res, next) {
     res.redirect('/');
   }
 });
+//管理员表获取数据
+router.get('/getManagersAllData',function(req,res,next){
+  managersBll.getManagersAllData(function(result){
+    let code = 0;
+    let message = "";
+    let count = result.length;
+    let data = result;
+    let obj = {
+      "code":0,
+      "msg":"",
+      "count":count,
+      "data":data
+    };
+    res.json(obj);
+  })
+})
+//Managers删除一条数据
+router.post('/delManagersOneData',function(req,res,next){//req,res,next这几个参数的位置不可以变
+  let id = req.body.id;
+  managersBll.delManagersOneData(function(result){
+    if(result === "true"){
+      res.send("success");
+    }else{
+      res.send("fail");
+    }
+  },id)
+})
 //iframe框架的请求
 router.get('/Mindex', function(req, res, next) {
   res.render('Mindex', { title: 'Hey', message: '这是首页'});
 });
 
-router.get('/user', function(req, res, next) {
-  res.render('user', { title: 'Hey', message: '这是用户管理页面'});
+router.get('/manager', function(req, res, next) {
+  res.render('manager', { title: 'Hey', message: '这是用户管理页面'});
 });
 
 router.get('/article', function(req, res, next) {

@@ -48,8 +48,21 @@ let isExist = (userName) => {
   return apiModel.query(_sql);
 }
 
+//获取Managers所有数据
+let getManagersAllData = () => {
+  let _sql = `select * from Managers;`
+  return apiModel.query(_sql);
+}
+//根据id删除一条数据
+let delManagersOneData = (id) => {
+  let _sql = `delete from Managers where id="${id}";`
+  return apiModel.query(_sql);
+}
+
 module.exports = {
   isExist,
   addManager,
-  findManager
+  findManager,
+  getManagersAllData,
+  delManagersOneData
 }

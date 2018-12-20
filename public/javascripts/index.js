@@ -7,7 +7,7 @@ layui.use(['element','jquery'],function(){
   })
   
   $("#user").click(function(){
-    $(".iframe").attr('src','/index/user');
+    $(".iframe").attr('src','/index/manager');
 	})
 
 	$("#article").click(function(){
