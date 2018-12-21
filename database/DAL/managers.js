@@ -58,11 +58,28 @@ let delManagersOneData = (id) => {
   let _sql = `delete from Managers where id="${id}";`
   return apiModel.query(_sql);
 }
+//更改Managers中的一条数据
+let updataManagersOneData = (model,id) => {
+  let _sql = `update Managers set 
+              userName="${model.userName}",
+              state="${model.state}",
+              mobile="${model.mobile}"
+              where id="${id}";
+              `
+  return apiModel.query(_sql);
+}
+//根据id获取一条数据(模型)
+let getModel = (id) => {
+  let _sql = `select * from Managers where id="${id}";`
+  return apiModel.query(_sql);
+}
 
 module.exports = {
   isExist,
   addManager,
   findManager,
   getManagersAllData,
-  delManagersOneData
+  delManagersOneData,
+  updataManagersOneData,
+  getModel
 }

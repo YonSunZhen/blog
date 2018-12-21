@@ -16,7 +16,7 @@ router.get('/', function(req, res, next) {
     res.redirect('/');
   }
 });
-//管理员表获取数据
+//Managers获取数据
 router.get('/getManagersAllData',function(req,res,next){
   managersBll.getManagersAllData(function(result){
     let code = 0;
@@ -43,6 +43,31 @@ router.post('/delManagersOneData',function(req,res,next){//req,res,next这几个
     }
   },id)
 })
+//更改Managers中的一条数据
+router.post('/updataManagersOneData',function(req,res,next){
+  let id = req.body.id;
+  let userName = req.body.username;
+  let state = Number(req.body.state);
+  let mobile = req.body.mobile;
+  let userData = new managersModel.Managers(userName,mobile,state);
+  console.log(userData);
+  managersBll.updataManagersOneData(function(result){
+    if(result === "true"){
+      res.send("success");
+    }else{
+      res.send("fail");
+    }
+  },userData,id)
+})
+//根据id获取模型
+router.post('/getModel',function(req,res,next){
+  let id = req.body.id;
+  managersBll.getModel(function(result){
+    // console.log("haha");
+    res.send(result);
+  },id)
+})
+
 //iframe框架的请求
 router.get('/Mindex', function(req, res, next) {
   res.render('Mindex', { title: 'Hey', message: '这是首页'});

@@ -1,4 +1,4 @@
-function Managers(userName, passWord, state, mobile, createDate, loginDate, loginTimes, lastLoginDate){
+function Managers(userName,mobile,state,passWord,createDate,loginDate,loginTimes,lastLoginDate){
   this.userName = userName;
   this.passWord = passWord;
   this.state = state;

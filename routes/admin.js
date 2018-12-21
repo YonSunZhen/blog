@@ -13,10 +13,21 @@ router.post('/register', function(req, res, next) {
   let userName = req.body.username;
   let passWord = req.body.password;
   let mobile = req.body.mobile;
-  //默认状态为0(未通过)
-  let state = 0;
+  let state;
+  if(req.body.state){
+    state = req.body.state;
+  }else{
+    state = 0;//默认状态为0(未通过)
+  }
   let createDate = time.format(new Date(), 'YYYY-MM-DD HH:mm:ss');
-  let userData = new managersModel.Managers(userName,passWord,state,mobile,createDate);
+  // let model = {
+  //   "userName":userName,
+  //   "passWord":passWord,
+  //   "state":state,
+  //   "mobile":mobile,
+  //   "createDate":createDate
+  // };
+  let userData = new managersModel.Managers(userName,mobile,state,passWord,createDate);
   //验证用户是否已存在
   managersBll.isExist(function(data){
     if(data === "true"){

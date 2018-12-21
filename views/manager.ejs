@@ -12,9 +12,16 @@
 <body>
   <table id="manager" lay-filter="manager"></table>
   <script src="/javascripts/layui/layui.js"></script>
+  <!-- 右边操作 -->
   <script type="text/html" id="bar">
     <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
     <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+  </script>
+  <!-- 头部操作 -->
+  <script type="text/html" id="toolbar">
+    <div class="layui-btn-container">
+      <button class="layui-btn layui-btn-sm" lay-event="addUser">添加用户</button>
+    </div>
   </script>
   <script>
     layui.use(['table','jquery','layer'], function(){
@@ -22,12 +29,13 @@
       var $ = layui.jquery;
       var layer = layui.layer;
       //第一个实例
-      table.render({
+      var table1 = table.render({
         elem: '#manager',
-        width:1400,
+        width:1150,
         height: 540,
         url: '/index/getManagersAllData' ,//数据接口
         page: true ,//开启分页
+        toolbar:'#toolbar',//开启头部工具栏
         cols: [[ //表头
           {type:'checkbox',fixed:'left'},
           {field:'',title:'序号',type:'numbers',width:80},
@@ -47,7 +55,7 @@
           {field: 'right', title: '操作',align:'center', width: 150, toolbar:'#bar'}
         ]]
       });
-
+      //监听行工具栏事件
       table.on('tool(manager)',function(obj){
         let data = obj.data;//获取当前行所有数据
         let id = data.id;//获取选中行的id
@@ -71,22 +79,126 @@
             }
           })
         }else if(layEvent === 'edit'){
-          layer.open({
+          var index1 = layer.open({
             type:0,
             title:'编辑用户',
             btn:['提交','取消'],
             //按钮的回调操作
             btn1:function(index, layero){
-              var haha = $("#username1").val();
-              console.log(haha);
+              let username = $("#username").val();
+              let mobile = $("#mobile").val();
+              let state = $("#state").val();
+              $.ajax({
+                type:"POST",
+                url:"/index/updataManagersOneData",
+                data:{'id':id,'username':username,'mobile':mobile,'state':state},
+                success:function(result){
+                  if(result === "success"){
+                    layer.close(index1);//关闭对话框
+                    table1.reload();//重载表格
+                  }else{
+                    console.log("更新失败");
+                  }
+                }
+              })
+              // console.log(state);
             },
             btn2:function(index, layero){
-              console.log("777");
+              // console.log("999");
             },
-            content:'<div class="login-item" id="edit"><span class="user-icon"></span><input class="form-text" type="text" placeholder="请输入用户名"  id="username1"></div>'
+            content:'<div class="login-item">\
+                      <span>用户名：</span>\
+                      <input class="form-text" type="text" placeholder="请输入用户名"  id="username">\
+                    </div>\
+                    <div class="login-item">\
+                      <span>手机号：</span>\
+                      <input class="form-text" type="text" placeholder="请输入用户名"  id="mobile">\
+                    </div>\
+                    <div class="login-item">\
+                      <span>状态：</span><br>\
+                      <select class="form-text" id="state" style="width:281px;">\
+                        <option value ="1">通过</option>\
+                        <option value ="0">未通过</option>\
+                      </select>\
+                    </div>'
+          });
+          $.ajax({
+            type:"POST",
+            url:"/index/getModel",
+            sync:true,
+            data:{"id":id},
+            success:function(data){
+              $("#username").val(data[0].userName);
+              $("#mobile").val(data[0].mobile);
+              $("#state").val(data[0].state);
+              console.log(data);
+            }
           })
         }
-      })
+      });
+      //监听头部工具栏事件
+      table.on('toolbar(manager)',function(obj){
+        switch(obj.event){
+          case 'addUser':
+            // console.log("4444");
+            var index2 = layer.open({
+              type:0,
+              title:'添加用户',
+              btn:['提交','取消'],
+              //按钮的回调操作
+              btn1:function(index, layero){
+                let username = $("#username1").val();
+                let mobile = $("#mobile1").val();
+                let state = $("#state1").val();
+                let password1 = $("#password1").val();
+                let password2 = $("#password2").val();
+                if(password1 != password2){
+                  alert("两次密码输入不一致！");
+                }else{
+                  $.ajax({
+                    type:"POST",
+                    url:"/register",
+                    data:{'username':username,'mobile':mobile,'state':state,'password':password1},
+                    success:function(result){
+                      alert(result);
+                      layer.close(index2);//关闭对话框
+                      table1.reload();//重载表格
+                    }
+                  })
+                }
+                // console.log(state);
+              },
+              btn2:function(index, layero){
+                // console.log("999");
+              },
+              content:'<div class="login-item">\
+                        <span class="user-icon"></span>\
+                        <input class="form-text" type="text" placeholder="请输入用户名"  id="username1">\
+                      </div>\
+                      <div class="login-item">\
+                        <span class="user-icon"></span>\
+                        <input class="form-text" type="text" placeholder="请输入手机号码"  id="mobile1">\
+                      </div>\
+                      <div class="login-item">\
+                        <span class="user-icon"></span>\
+                        <input class="form-text" type="password" placeholder="请输入密码"  id="password1">\
+                      </div>\
+                      <div class="login-item">\
+                        <span class="user-icon"></span>\
+                        <input class="form-text" type="password" placeholder="请再次输入密码"  id="password2">\
+                      </div>\
+                      <div class="login-item">\
+                        <span class="user-icon"></span>\
+                        <select class="form-text" id="state1" style="width:281px;">\
+                          <option value ="" selected>请选择用户状态</option>\
+                          <option value ="1">通过</option>\
+                          <option value ="0">未通过</option>\
+                        </select>\
+                      </div>'
+            });
+          break;
+        };
+      });
     })
   </script>
 </body>

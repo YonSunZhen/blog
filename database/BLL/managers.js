@@ -8,7 +8,7 @@ var findManager = (cb, userName, password) => {
       console.log(result[0]);
       return cb("true");
     }else{
-      console.log(result);
+      // console.log(result);
       return cb("false");
     }
   })
@@ -66,11 +66,29 @@ var delManagersOneData = (cb,id) => {
     }
   })
 }
+//更改Managers中的一条数据
+var updataManagersOneData = (cb,model,id) => {
+  apiModel.updataManagersOneData(model,id).then((result) => {
+    if(result.affectedRows > 0){
+      return cb("true");
+    }else{
+      return cb("false");
+    }
+  })
+}
+//根据id获取一条数据(模型)
+var getModel = (cb,id) => {
+  apiModel.getModel(id).then((result) => {
+    return cb(result);
+  })
+}
 
 module.exports = {
   addManager,
   isExist,
   findManager,
   getManagersAllData,
-  delManagersOneData
+  delManagersOneData,
+  updataManagersOneData,
+  getModel
 }
