@@ -82,6 +82,29 @@ var getModel = (cb,id) => {
     return cb(result);
   })
 }
+//根据用户名和密码查找出登陆时间和登陆次数
+var getLoginDateAndLoginTimes = (cb,userName,passWord) => {
+  apiModel.getLoginDateAndLoginTimes(userName,passWord).then((result) => {
+    return cb(result);
+  })
+}
+//更新用户的登陆时
+var updateLogin = (cb,loginDate,lastLoginDate,loginTimes,userName,passWord) => {
+  apiModel.updateLogin(loginDate,lastLoginDate,loginTimes,userName,passWord).then((result) => {
+    if(result.affectedRows > 0){
+      return cb("true");
+    }else{
+      return cb("false");
+    }
+  })
+}
+//根据用户名和密码得到用户id（用户articles表的mid）
+var findManagerId = (cb, userName, password) => {
+  //利用回调函数
+  apiModel.findManager(userName,password).then((result) => {
+    return cb(result);
+  })
+}
 
 module.exports = {
   addManager,
@@ -90,5 +113,8 @@ module.exports = {
   getManagersAllData,
   delManagersOneData,
   updataManagersOneData,
-  getModel
+  getModel,
+  getLoginDateAndLoginTimes,
+  updateLogin,
+  findManagerId
 }

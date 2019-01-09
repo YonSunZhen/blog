@@ -2,6 +2,8 @@ var express = require('express');
 var router = express.Router();
 var managersModel = require('../database/Model/managers');
 var managersBll = require('../database/BLL/managers');
+var typesBll = require('../database/BLL/types');
+var time = require('silly-datetime');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -59,7 +61,7 @@ router.post('/updataManagersOneData',function(req,res,next){
     }
   },userData,id)
 })
-//根据id获取模型
+//根据id获取模型(Managers表)
 router.post('/getModel',function(req,res,next){
   let id = req.body.id;
   managersBll.getModel(function(result){
@@ -68,23 +70,102 @@ router.post('/getModel',function(req,res,next){
   },id)
 })
 
+//types表查询所有数据
+router.get('/getTypesAllData',function(req,res,next){
+  console.log("7777");
+  console.log(req.session.mName);
+  console.log(req.session.mPassWord);
+  typesBll.getTypesAllData(function(result){
+    let code = 0;
+    let message = "";
+    let count = result.length;
+    let data = result;
+    let obj = {
+      "code":0,
+      "msg":"",
+      "count":count,
+      "data":data
+    };
+    res.json(obj);
+  })
+})
+//types表增加一条数据
+router.post('/addType',function(req,res,next){
+  let typeName = req.body.typeName;
+  let createPeople = req.body.createPeople;
+  let createDate = time.format(new Date(), 'YYYY-MM-DD HH:mm:ss');
+  let remark = req.body.remark;
+  let state = 0;//添加时状态默认为不通过
+  typesBll.addType(function(result){
+    if(result === "true"){
+      res.send("success");
+    }else{
+      res.send("fail");
+    }
+  },typeName,createPeople,createDate,remark,state)
+})
+//types表删除一条数据
+router.post('/deleteType',function(req,res,next){
+  let id = req.body.id;
+  typesBll.deleteType(function(result){
+    if(result === "true"){
+      res.send("success");
+    }else{
+      res.send("fail");
+    }
+  },id)
+})
+//types表根据id查询一条数据
+router.post('/getTypesOneData',function(req,res,next){
+  let id = req.body.id;
+  typesBll.getTypesOneData(function(result){
+    res.send(result);
+  },id)
+})
+//types表更新一条数据
+router.post('/updateType',function(req,res,next){
+  let id = req.body.id;
+  let typeName = req.body.typeName;
+  let updatePeople = req.body.updatePeople;
+  let updateDate = time.format(new Date(), 'YYYY-MM-DD HH:mm:ss');
+  let state = req.body.state;
+  let remark = req.body.remark;
+  typesBll.updateType(function(result){
+    if(result === "true"){
+      res.send("success");
+    }else{
+      res.send("fail");
+    }
+  },id,typeName,updateDate,updatePeople,state,remark)
+})
+
+//articles表增加一条数据
+router.post('/addOneArticle',function(req,res,next){
+  managersBll.findManagerId(function(result){
+    console.log("2333");
+    console.log(result[0].id);
+    res.send("success");
+  },req.session.mName,req.session.mPassWord)
+})
+
 //iframe框架的请求
 router.get('/Mindex', function(req, res, next) {
   res.render('Mindex', { title: 'Hey', message: '这是首页'});
 });
-
 router.get('/manager', function(req, res, next) {
   res.render('manager', { title: 'Hey', message: '这是用户管理页面'});
 });
-
-router.get('/article', function(req, res, next) {
-  res.render('article', { title: 'Hey', message: '这是文章管理页面'});
+router.get('/addArticle', function(req, res, next) {
+  res.render('addArticle', { title: 'Hey', message: '这是添加文章页面'});
 });
-
-router.get('/type', function(req, res, next) {
-  res.render('type', { title: 'Hey', message: '这是文章类型管理页面'});
+//超级管理员类型管理页面
+router.get('/typeSuper', function(req, res, next) {
+  res.render('typeSuper', { title: 'Hey', message: '这是管理员类型管理页面'});
 });
-
+//普通管理员类型管理页面
+router.get('/typeAdmin', function(req, res, next) {
+  res.render('typeAdmin', { title: 'Hey', message: '这是普通管理员类型管理页面'});
+});
 router.get('/comment', function(req, res, next) {
   res.render('comment', { title: 'Hey', message: '这是评论管理页面'});
 });

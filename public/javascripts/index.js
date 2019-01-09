@@ -3,6 +3,7 @@ layui.use(['element','jquery'],function(){
   var $ = layui.$;
 
   $("#Mindex").click(function(){
+    console.log("000");
     $(".iframe").attr('src','/index/Mindex');
   })
   
@@ -10,12 +11,12 @@ layui.use(['element','jquery'],function(){
     $(".iframe").attr('src','/index/manager');
 	})
 
-	$("#article").click(function(){
-	 	$(".iframe").attr('src','/index/article');
+	$("#addArticle").click(function(){
+	 	$(".iframe").attr('src','/index/addArticle');
   })
-  $("#type").click(function(){
-    $(".iframe").attr('src','/index/type');
-  })
+  // $("#type").click(function(){
+  //   $(".iframe").attr('src','/index/type');
+  // })
 
   $("#comment").click(function(){
     $(".iframe").attr('src','/index/comment');

@@ -43,7 +43,7 @@
         </li>
         <%if(superAdmin){%>
           <li class="layui-nav-item">
-            <a href="javascript:;" id="user">用户管理</a>
+            <a href="javascript:;" id="user">管理员管理</a>
             <!-- <dl class="layui-nav-child">
               <dd><a href="javascript:;">列表一</a></dd>
               <dd><a href="javascript:;">列表二</a></dd>
@@ -54,8 +54,13 @@
         <li class="layui-nav-item">
           <a href="javascript:;" id="blog">博客管理</a>
           <dl class="layui-nav-child">
-            <dd><a href="javascript:;" id="article">文章管理</a></dd>
-            <dd><a href="javascript:;" id="type">分类管理</a></dd>
+            <%if(superAdmin){%>
+            <dd><a href="/index/typeSuper" id="type" target="iframe">分类管理</a></dd>
+            <%}else{%>
+            <dd><a href="/index/typeAdmin" id="type" target="iframe">分类管理</a></dd>
+            <%}%>
+            <dd><a href="javascript:;" id="addArticle">添加文章</a></dd>
+            <dd><a href="javascript:;" id="manageArticle">管理文章</a></dd>
           </dl>
         </li>
         <li class="layui-nav-item">
@@ -67,7 +72,7 @@
   <!-- 内容主体区域 -->
   <div class="layui-body layui-form">
   	<div class="layui-tab-item layui-show" style="margin-left: 10px; width: 100%;">
-  		<iframe src="/index/Mindex" class="iframe"></iframe>
+  		<iframe src="/index/Mindex" class="iframe" name="iframe"></iframe>
     </div>
   </div>
   

@@ -1,4 +1,3 @@
-// import { query } from '../DbHelper';
 var apiModel = require('../DbHelper');
 // let users = 
 //   `create table if not exists users(
@@ -24,6 +23,7 @@ var apiModel = require('../DbHelper');
 //增加用户（注册）
 let addManager = (model) => {
   let _sql = `insert into Managers set 
+              id = "${model.id}",
               userName="${model.userName}",
               passWord="${model.passWord}",
               state="${model.state}",
@@ -73,7 +73,21 @@ let getModel = (id) => {
   let _sql = `select * from Managers where id="${id}";`
   return apiModel.query(_sql);
 }
-
+//根据用户名和密码查找出登陆时间和登陆次数
+let getLoginDateAndLoginTimes = (userName,passWord) => {
+  let _sql = `select loginDate,loginTimes from Managers where userName="${userName}" AND passWord="${passWord}"; `
+  return apiModel.query(_sql);
+}
+//更新用户的登陆时间，登陆次数等
+let updateLogin = (loginDate,lastLoginDate,loginTimes,userName,passWord) => {
+  let _sql = `update Managers set
+              loginDate="${loginDate}",
+              lastLoginDate="${lastLoginDate}",
+              loginTimes="${loginTimes}"
+              where userName="${userName}" AND passWord="${passWord}";
+              `
+  return apiModel.query(_sql);
+}
 module.exports = {
   isExist,
   addManager,
@@ -81,5 +95,7 @@ module.exports = {
   getManagersAllData,
   delManagersOneData,
   updataManagersOneData,
-  getModel
+  getModel,
+  getLoginDateAndLoginTimes,
+  updateLogin
 }
