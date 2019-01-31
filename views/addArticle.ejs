@@ -4,18 +4,46 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" href="/javascripts/layui/css/layui.css">
+  <link rel="stylesheet" type="text/css" href="/stylesheets/index.css">
   <title>文章管理</title>
 </head>
 <body>
-  <div><%-message%></div>
+  <div style="margin-top:10px;width:1100px;" class="layui-form">
+    <div class="layui-form-item">
+      <label class="layui-form-label">输入类型</label>
+      <div class="layui-input-block">
+        <select name="type" lay-filter="" style="width:20px;">
+          <option value=""></option>
+          <option value="0">写作</option>
+          <option value="1" selected="">阅读</option>
+          <option value="2">游戏</option>
+          <option value="3">音乐</option>
+          <option value="4">旅行</option>
+        </select>
+      </div>
+    </div>  
+    <div class="layui-form-item">
+      <label class="layui-form-label">输入标题</label>
+      <div class="layui-input-block">
+        <input type="text" name="title" required  lay-verify="required" placeholder="请输入标题" autocomplete="off" class="layui-input">
+      </div>
+    </div>
+  </div>
   <script src="/javascripts/jquery-3.1.1.min" ></script>
-  <script>
+  <!-- <script>
     $.ajax({
       type:"POST",
       url:'/index/addOneArticle',
       success:function(data){
         console.log(data);
       }
+    })
+  </script> -->
+  <script src="/javascripts/layui/layui.js"></script>
+  <script>
+    layui.use('form',function(){
+      var form = layui.form;
     })
   </script>
 </body>
