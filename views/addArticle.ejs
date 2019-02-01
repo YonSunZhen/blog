@@ -9,7 +9,7 @@
   <title>文章管理</title>
 </head>
 <body>
-  <div style="margin-top:10px;width:1100px;" class="layui-form">
+  <div style="margin-top:30px;width:1100px;" class="layui-form">
     <div class="layui-form-item">
       <label class="layui-form-label">输入类型</label>
       <div class="layui-input-block">
@@ -29,6 +29,14 @@
         <input type="text" name="title" required  lay-verify="required" placeholder="请输入标题" autocomplete="off" class="layui-input">
       </div>
     </div>
+    <div class="layui-form-item">
+      <div id="editor" style="margin-left:38px;"></div>
+    </div>
+    <div class="layui-form-item">
+      <div style="margin-left:38px;text-align: right;">
+        <button class="layui-btn" id="btn">提交文章</button>
+      </div>    
+    </div>
   </div>
   <script src="/javascripts/jquery-3.1.1.min" ></script>
   <!-- <script>
@@ -41,9 +49,56 @@
     })
   </script> -->
   <script src="/javascripts/layui/layui.js"></script>
+  <script src="/javascripts/wangEditor.js"></script>
   <script>
-    layui.use('form',function(){
+    layui.use(['form','jquery'],function(){
       var form = layui.form;
+      var $ = layui.jquery;
+      var E = window.wangEditor;
+      var editor = new E("#editor");
+      editor.customConfig.debug = true;
+      //editor.customConfig.uploadImgShowBase64 = true   // 使用 base64 保存图片
+      editor.customConfig.uploadFileName = 'photo';
+      editor.customConfig.uploadImgServer = '/index/uploadPic';
+      //监听函数在上传图片的不同阶段做相应的处理(插入一张图片就自动上传了)
+      editor.customConfig.uploadImgHooks = {
+        before: function (xhr, editor, files) {
+          // 图片上传之前触发
+          // xhr 是 XMLHttpRequst 对象，editor 是编辑器对象，files 是选择的图片文件
+          
+          // 如果返回的结果是 {prevent: true, msg: 'xxxx'} 则表示用户放弃上传
+          // return {
+          //     prevent: true,
+          //     msg: '放弃上传'
+          // }
+        },
+        success: function (xhr, editor, result) {
+          console.log(result);
+          console.log('图片插入成功！');
+          // 图片上传并返回结果，图片插入成功之后触发
+          // xhr 是 XMLHttpRequst 对象，editor 是编辑器对象，result 是服务器端返回的结果
+        },
+        fail: function (xhr, editor, result) {
+          console.log(result);
+          console.log('图片上传并返回结果，但图片插入错误')
+          // 图片上传并返回结果，但图片插入错误时触发
+          // xhr 是 XMLHttpRequst 对象，editor 是编辑器对象，result 是服务器端返回的结果
+        },
+        error: function (xhr, editor) {
+          // 图片上传出错时触发
+          // xhr 是 XMLHttpRequst 对象，editor 是编辑器对象
+        },
+        timeout: function (xhr, editor) {
+          // 图片上传超时时触发
+          // xhr 是 XMLHttpRequst 对象，editor 是编辑器对象
+        }
+      }
+      editor.create();
+
+      $("#btn").click(function(){
+        console.log(editor.txt.html());
+        console.log(editor.txt.text());
+      })
     })
   </script>
 </body>

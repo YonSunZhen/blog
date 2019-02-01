@@ -4,6 +4,19 @@ var managersModel = require('../database/Model/managers');
 var managersBll = require('../database/BLL/managers');
 var typesBll = require('../database/BLL/types');
 var time = require('silly-datetime');
+var multer = require('multer');
+//配置上传文件时服务器文件夹的相关信息
+var storage = multer.diskStorage({
+  //如果destination是一个函数，必须手动创建上传文件夹
+  destination:function(req,file,cb){
+    cb(null,'public/upload');
+  },
+  filename:function(req,file,cb){
+    const filenameArr = file.originalname.split('.');
+    cb(null,Date.now() + '.' + filenameArr[filenameArr.length-1]);
+  }
+})
+var upload = multer({storage:storage});
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -146,6 +159,21 @@ router.post('/addOneArticle',function(req,res,next){
     console.log(result[0].id);
     res.send("success");
   },req.session.mName,req.session.mPassWord)
+})
+//上传图片到服务器
+router.post('/uploadPic',upload.array('photo',10), function(req,res,next){
+  //console.log("图片上传成功");
+  //console.log(req.files);
+  const array = [];
+  for(let i = 0;i < req.files.length; i++){
+    const arr = "http://localhost:3000/upload/" + req.files[i].filename;
+    array.push(arr);
+  }
+  const picData = {
+    "errno": 0,
+    "data": array
+  }
+  res.send(picData);
 })
 
 //iframe框架的请求
