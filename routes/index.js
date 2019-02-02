@@ -3,7 +3,9 @@ var router = express.Router();
 var managersModel = require('../database/Model/managers');
 var managersBll = require('../database/BLL/managers');
 var typesBll = require('../database/BLL/types');
+var articlesBll = require('../database/BLL/articles');
 var time = require('silly-datetime');
+var uuidv1 = require('uuid/v1');
 var multer = require('multer');
 //配置上传文件时服务器文件夹的相关信息
 var storage = multer.diskStorage({
@@ -23,9 +25,9 @@ router.get('/', function(req, res, next) {
   console.log(req.session.logined);
   if(req.session.logined){
     if(req.session.username === "superAdmin"){
-      res.render('index', { title: 'Express',superAdmin: true});
+      res.render('index', { title: 'Express',superAdmin: true,username:req.session.mName});
     }else{
-      res.render('index', { title: 'Express',superAdmin: false});
+      res.render('index', { title: 'Express',superAdmin: false,username:req.session.mName});
     }  
   }else{
     res.redirect('/');
@@ -155,9 +157,23 @@ router.post('/updateType',function(req,res,next){
 //articles表增加一条数据
 router.post('/addOneArticle',function(req,res,next){
   managersBll.findManagerId(function(result){
-    console.log("2333");
-    console.log(result[0].id);
-    res.send("success");
+    let id = uuidv1();
+    let mid = result[0].id;
+    let articleName = req.body.articleName;
+    let typeName = req.body.typeName;
+    let content = req.body.content;
+    let state = 1;//测试时默认状态为通过（后面改为0）
+    let createDate = time.format(new Date(), 'YYYY-MM-DD HH:mm:ss');
+    let createPeople = result[0].userName;
+    articlesBll.addArticle(function(result){
+      if(result === "true"){
+        res.send("success");
+        //console.log("2333");
+      }else{
+        res.send("fail");
+      }
+    },id,mid,articleName,typeName,content,state,createDate,createPeople)
+    //console.log(result[0].id); 
   },req.session.mName,req.session.mPassWord)
 })
 //上传图片到服务器
@@ -184,7 +200,15 @@ router.get('/manager', function(req, res, next) {
   res.render('manager', { title: 'Hey', message: '这是用户管理页面'});
 });
 router.get('/addArticle', function(req, res, next) {
-  res.render('addArticle', { title: 'Hey', message: '这是添加文章页面'});
+  typesBll.getTypesAdopt(function(result){
+    let data = [];
+    for(let i = 0; i < result.length; i++){
+      data.push(result[i].typeName);
+    }
+    //console.log(result);
+    console.log(data);
+    res.render('addArticle', {data:data});
+  })
 });
 //超级管理员类型管理页面
 router.get('/typeSuper', function(req, res, next) {
@@ -193,6 +217,9 @@ router.get('/typeSuper', function(req, res, next) {
 //普通管理员类型管理页面
 router.get('/typeAdmin', function(req, res, next) {
   res.render('typeAdmin', { title: 'Hey', message: '这是普通管理员类型管理页面'});
+});
+router.get('/manageArticle', function(req, res, next) {
+  res.render('manageArticle', { title: 'Hey', message: '这是文章管理页面'});
 });
 router.get('/comment', function(req, res, next) {
   res.render('comment', { title: 'Hey', message: '这是评论管理页面'});

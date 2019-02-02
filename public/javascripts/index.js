@@ -14,6 +14,10 @@ layui.use(['element','jquery'],function(){
 	$("#addArticle").click(function(){
 	 	$(".iframe").attr('src','/index/addArticle');
   })
+
+	$("#manageArticle").click(function(){
+	 	$(".iframe").attr('src','/index/manageArticle');
+  })
   // $("#type").click(function(){
   //   $(".iframe").attr('src','/index/type');
   // })

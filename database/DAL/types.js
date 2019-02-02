@@ -37,6 +37,11 @@ let updateType = (id,typeName,updateDate,updatePeople,state,remark) => {
               `
   return apiModel.query(_sql);
 }
+//查询出所有通过的类型（增加文章页面初始化类型使用）
+let getTypesAdopt = () => {
+  let _sql =  `select * from types where state=1;`
+  return apiModel.query(_sql);
+}
 
 
 module.exports = {
@@ -44,5 +49,6 @@ module.exports = {
   addType,
   deleteType,
   getTypesOneData,
-  updateType
+  updateType,
+  getTypesAdopt
 }

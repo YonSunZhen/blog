@@ -13,20 +13,18 @@
     <div class="layui-form-item">
       <label class="layui-form-label">输入类型</label>
       <div class="layui-input-block">
-        <select name="type" lay-filter="" style="width:20px;">
+        <select name="type" id="type" lay-filter="" style="width:20px;">
           <option value=""></option>
-          <option value="0">写作</option>
-          <option value="1" selected="">阅读</option>
-          <option value="2">游戏</option>
-          <option value="3">音乐</option>
-          <option value="4">旅行</option>
+          <%data.forEach(function(item){%>
+            <option value="<%=item%>"><%=item%></option>
+          <%})%>
         </select>
       </div>
     </div>  
     <div class="layui-form-item">
       <label class="layui-form-label">输入标题</label>
       <div class="layui-input-block">
-        <input type="text" name="title" required  lay-verify="required" placeholder="请输入标题" autocomplete="off" class="layui-input">
+        <input type="text" name="title" id="name" required  lay-verify="required" placeholder="请输入标题" autocomplete="off" class="layui-input">
       </div>
     </div>
     <div class="layui-form-item">
@@ -34,11 +32,11 @@
     </div>
     <div class="layui-form-item">
       <div style="margin-left:38px;text-align: right;">
-        <button class="layui-btn" id="btn">提交文章</button>
+        <button class="layui-btn" id="addArticle">提交文章</button>
       </div>    
     </div>
   </div>
-  <script src="/javascripts/jquery-3.1.1.min" ></script>
+  <!-- <script src="/javascripts/jquery-3.1.1.min" ></script> -->
   <!-- <script>
     $.ajax({
       type:"POST",
@@ -51,12 +49,16 @@
   <script src="/javascripts/layui/layui.js"></script>
   <script src="/javascripts/wangEditor.js"></script>
   <script>
-    layui.use(['form','jquery'],function(){
+    layui.use(['form','jquery','layer'],function(){
       var form = layui.form;
       var $ = layui.jquery;
+      var layer = layui.layer;
+
+      //初始化富文本编辑器
       var E = window.wangEditor;
       var editor = new E("#editor");
       editor.customConfig.debug = true;
+      editor.customConfig.zIndex = 1;
       //editor.customConfig.uploadImgShowBase64 = true   // 使用 base64 保存图片
       editor.customConfig.uploadFileName = 'photo';
       editor.customConfig.uploadImgServer = '/index/uploadPic';
@@ -64,8 +66,7 @@
       editor.customConfig.uploadImgHooks = {
         before: function (xhr, editor, files) {
           // 图片上传之前触发
-          // xhr 是 XMLHttpRequst 对象，editor 是编辑器对象，files 是选择的图片文件
-          
+          // xhr 是 XMLHttpRequst 对象，editor 是编辑器对象，files 是选择的图片文件    
           // 如果返回的结果是 {prevent: true, msg: 'xxxx'} 则表示用户放弃上传
           // return {
           //     prevent: true,
@@ -94,11 +95,46 @@
         }
       }
       editor.create();
-
-      $("#btn").click(function(){
+      
+      //点击提交按钮事件
+      $("#addArticle").click(function(){
+        let articleName = $("#name").val();
+        let typeName = $("#type").val();
+        let content = encodeURIComponent(editor.txt.html());//将html代码编码后再存进数据库
+        let text = editor.txt.text();
+        let data = {
+          'articleName':articleName,
+          'typeName':typeName,
+          'content':content
+        }
+        //console.log(typeName);
+        if(text === ""){
+          layer.confirm('您还未输入文章!',function(index){
+            layer.close(index);//关闭对话框
+          })
+        }else{
+          $.ajax({
+            type:'POST',
+            url:'/index/addOneArticle',
+            data:data,
+            success:function(result){
+              if(result === "success"){
+                layer.confirm('添加成功!',function(index){
+                  layer.close(index);//关闭对话框
+                })
+              }else{
+                layer.confirm('添加失败!',function(index){
+                  layer.close(index);//关闭对话框
+                })
+              }
+            }
+          })
+        }
         console.log(editor.txt.html());
         console.log(editor.txt.text());
       })
+
+
     })
   </script>
 </body>

@@ -42,11 +42,18 @@ let updateType = (cb,id,typeName,updateDate,updatePeople,state,remark) => {
     }
   })
 }
+//查询出所有通过的类型（增加文章页面初始化类型使用）
+let getTypesAdopt = (cb) => {
+  apiModel.getTypesAdopt().then((result) => {
+    return cb(result);
+  })
+}
 
 module.exports = {
   getTypesAllData,
   addType,
   deleteType,
   getTypesOneData,
-  updateType
+  updateType,
+  getTypesAdopt
 }
