@@ -28,7 +28,9 @@ let addManager = (model) => {
               passWord="${model.passWord}",
               state="${model.state}",
               mobile="${model.mobile}",
-              createDate="${model.createDate}"
+              createDate="${model.createDate}",
+              power="${model.power}",
+              remark="${model.remark}"
               `;
   console.log(1);
   return apiModel.query(_sql);
@@ -50,7 +52,7 @@ let isExist = (userName) => {
 
 //获取Managers所有数据
 let getManagersAllData = () => {
-  let _sql = `select * from Managers;`
+  let _sql = `select * from Managers where userName != "superAdmin";`
   return apiModel.query(_sql);
 }
 //根据id删除一条数据
@@ -63,7 +65,9 @@ let updataManagersOneData = (model,id) => {
   let _sql = `update Managers set 
               userName="${model.userName}",
               state="${model.state}",
-              mobile="${model.mobile}"
+              mobile="${model.mobile}",
+              power="${model.power}",
+              remark="${model.remark}"
               where id="${id}";
               `
   return apiModel.query(_sql);

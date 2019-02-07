@@ -24,10 +24,15 @@
     </div>
   </script>
   <script>
-    layui.use(['table','jquery','layer'], function(){
+    layui.config({
+      base : '../javascripts/'
+    }).extend({
+      selectM: './layui_extends/selectM'
+    }).use(['table','jquery','layer','selectM'], function(){
       var table = layui.table;
       var $ = layui.jquery;
       var layer = layui.layer;
+      var selectM = layui.selectM;
       //第一个实例
       var table1 = table.render({
         elem: '#manager',
@@ -39,7 +44,8 @@
         cols: [[ //表头
           {type:'checkbox',fixed:'left'},
           {field:'',title:'序号',type:'numbers',width:80},
-          {field: 'userName', title: '用户名', width:110},
+          {field: 'userName', title: '用户名', width:100},
+          {field: 'power', title: '权限', width:110},
           {field: 'state', title: '状态', width:80,templet:function(d){
             if(d.state === 1){
               return '通过';
@@ -47,20 +53,21 @@
               return '未通过';
             }
           }},
-          {field: 'mobile', title: '手机号', width:130} ,
-          {field: 'createDate', title: '创建时间', width: 120,templet:function(d){
+          {field: 'mobile', title: '手机号', width:110} ,
+          {field: 'createDate', title: '创建时间', width: 110,templet:function(d){
             let old = d.createDate;
             return new Date(old).toLocaleDateString()+" "+new Date(old).toLocaleTimeString();
           }},
-          {field: 'loginDate', title: '登录时间', width: 180, sort: true,templet:function(d){
+          {field: 'loginDate', title: '登录时间', width: 170, sort: true,templet:function(d){
             let old = d.loginDate;
             return new Date(old).toLocaleDateString()+" "+new Date(old).toLocaleTimeString();
           }},
-          {field: 'lastLoginDate', title: '上次登录时间', width: 120, sort: true,templet:function(d){
+          {field: 'lastLoginDate', title: '上次登录时间', width: 110, sort: true,templet:function(d){
             let old = d.lastLoginDate;
             return new Date(old).toLocaleDateString()+" "+new Date(old).toLocaleTimeString();
           }},
-          {field: 'loginTimes', title: '登录次数', width: 100},
+          {field: 'loginTimes', title: '登录次数', width: 90},
+          {field: 'remark', title: '备注信息', width: 150},
           {field: 'right', title: '操作',align:'center', width: 150, toolbar:'#bar'}
         ]]
       });
@@ -88,59 +95,110 @@
             }
           })
         }else if(layEvent === 'edit'){
-          var index1 = layer.open({
-            type:0,
-            title:'编辑用户',
-            btn:['提交','取消'],
-            //按钮的回调操作
-            btn1:function(index, layero){
-              let username = $("#username").val();
-              let mobile = $("#mobile").val();
-              let state = $("#state").val();
-              $.ajax({
-                type:"POST",
-                url:"/index/updataManagersOneData",
-                data:{'id':id,'username':username,'mobile':mobile,'state':state},
-                success:function(result){
-                  if(result === "success"){
-                    layer.close(index1);//关闭对话框
-                    table1.reload();//重载表格
-                  }else{
-                    console.log("更新失败");
-                  }
-                }
-              })
-              // console.log(state);
-            },
-            btn2:function(index, layero){
-              // console.log("999");
-            },
-            content:'<div class="login-item">\
-                      <span>用户名：</span>\
-                      <input class="form-text" type="text" placeholder="请输入用户名"  id="username">\
-                    </div>\
-                    <div class="login-item">\
-                      <span>手机号：</span>\
-                      <input class="form-text" type="text" placeholder="请输入用户名"  id="mobile">\
-                    </div>\
-                    <div class="login-item">\
-                      <span>状态：</span><br>\
-                      <select class="form-text" id="state" style="width:281px;">\
-                        <option value ="1">通过</option>\
-                        <option value ="0">未通过</option>\
-                      </select>\
-                    </div>'
-          });
+
           $.ajax({
             type:"POST",
             url:"/index/getModel",
             sync:true,
             data:{"id":id},
             success:function(data){
-              $("#username").val(data[0].userName);
-              $("#mobile").val(data[0].mobile);
-              $("#state").val(data[0].state);
-              console.log(data);
+
+              $.ajax({
+                type:'GET',
+                url:'/index/getTypesAdopt',
+                success:function(data1){
+
+                  var index1 = layer.open({
+                    type:0,
+                    title:'编辑用户',
+                    btn:['提交','取消'],
+                    //按钮的回调操作
+                    btn1:function(index, layero){
+                      let username = $("#username").val();
+                      let mobile = $("#mobile").val();
+                      let state = $("#state").val();
+                      let remark = $("#remark").val();
+                      let power;
+                      if(tagIns2.selected.length < 1){
+                        // layer.confirm('请选择权限!',function(index){
+                        //   //layer.close(index);//关闭对话框
+                        // })
+                        alert("请选择权限!");
+                      }else{
+                        power = tagIns2.selected[0].name;
+                        for(let i = 1;i < tagIns2.selected.length;i++){
+                          power += ','+tagIns2.selected[i].name;
+                        }
+                        $.ajax({
+                          type:"POST",
+                          url:"/index/updataManagersOneData",
+                          data:{'id':id,'username':username,'mobile':mobile,'state':state,'power':power,'remark':remark},
+                          success:function(result){
+                            if(result === "success"){
+                              layer.confirm("更新成功!",function(index){
+                                layer.close(index);//关闭对话框
+                              })
+                              table1.reload();//重载表格
+                            }else{
+                              layer.confirm("更新失败!",function(index){
+                                layer.close(index);//关闭对话框
+                              })
+                            }
+                          }
+                        })
+                      }
+                      // console.log(state);
+                    },
+                    btn2:function(index, layero){
+                      // console.log("999");
+                    },
+                    content:'<div class="login-item">\
+                              <span>用户名：</span>\
+                              <input class="form-text" type="text" placeholder="请输入用户名"  id="username">\
+                            </div>\
+                            <div class="login-item">\
+                              <span>权限：</span>\
+                              <div id="power">\
+                              </div>\
+                            </div>\
+                            <div class="login-item">\
+                              <span>手机号：</span>\
+                              <input class="form-text" type="text" placeholder="请输入用户名"  id="mobile">\
+                            </div>\
+                            <div class="login-item">\
+                              <span>状态：</span><br>\
+                              <select class="form-text" id="state" style="width:281px;">\
+                                <option value ="1">通过</option>\
+                                <option value ="0">未通过</option>\
+                              </select>\
+                            </div>\
+                            <div class="login-item">\
+                              <span>备注：</span><br>\
+                              <input class="form-text" type="text" placeholder="请输入备注信息"  id="remark">\
+                            </div>'
+                  });
+
+                  $("#username").val(data[0].userName);
+                  $("#mobile").val(data[0].mobile);
+                  $("#state").val(data[0].state);
+                  $("#power").val(data[0].power);
+                  $("#remark").val(data[0].remark);
+                  let power = data[0].power;
+
+                  //初始化多选框（编辑用户）
+                  var tagIns2 = selectM({
+                    //元素容器【必填】
+                    elem: '#power',
+                    //候选数据【必填】
+                    data: data1,
+                    max:3,
+                    tips:'请选择权限',
+                    width:280,
+                    //添加验证
+                    verify:'required'
+                  });
+                }
+              })
             }
           })
         }
@@ -150,61 +208,107 @@
         switch(obj.event){
           case 'addUser':
             // console.log("4444");
-            var index2 = layer.open({
-              type:0,
-              title:'添加用户',
-              btn:['提交','取消'],
-              //按钮的回调操作
-              btn1:function(index, layero){
-                let username = $("#username1").val();
-                let mobile = $("#mobile1").val();
-                let state = $("#state1").val();
-                let password1 = $("#password1").val();
-                let password2 = $("#password2").val();
-                if(password1 != password2){
-                  alert("两次密码输入不一致！");
-                }else{
-                  $.ajax({
-                    type:"POST",
-                    url:"/register",
-                    data:{'username':username,'mobile':mobile,'state':state,'password':password1},
-                    success:function(result){
-                      alert(result);
-                      layer.close(index2);//关闭对话框
-                      table1.reload();//重载表格
+            $.ajax({
+              type:'GET',
+              url:'/index/getTypesAdopt',
+              success:function(data){
+                //console.log(data);
+                var index2 = layer.open({
+                  type:0,
+                  title:'添加用户',
+                  btn:['提交','取消'],
+                  //按钮的回调操作
+                  btn1:function(index, layero){
+                    let username = $("#username1").val();
+                    let mobile = $("#mobile1").val();
+                    let state = $("#state1").val();
+                    let password1 = $("#password1").val();
+                    let password2 = $("#password2").val();
+                    let remark = $("#remark1").val();
+                    let power;
+                    if(tagIns1.selected.length < 1){
+                      // layer.confirm('请选择权限!',function(index){
+                      //   //layer.close(index);//关闭对话框
+                      // })
+                      alert('请选择权限!');
+                    }else{
+                      power = tagIns1.selected[0].name;
+                      for(let i = 1;i < tagIns1.selected.length;i++){
+                        power += ','+tagIns1.selected[i].name;
+                      }
+                      if(password1 != password2){
+                        // layer.confirm('两次密码输入不一致!',function(index){
+                        //   //layer.close(index);//关闭对话框
+                        // })
+                        alert('两次密码输入不一致!');
+                      }else{
+                        $.ajax({
+                          type:"POST",
+                          url:"/register",
+                          data:{'username':username,'mobile':mobile,'state':state,'password':password1,'power':power,'remark':remark},
+                          success:function(result){
+                            layer.confirm("添加成功!",function(index){
+                              layer.close(index);//关闭对话框
+                            })
+                            table1.reload();//重载表格
+                          }
+                        })
+                      }
+
                     }
-                  })
-                }
-                // console.log(state);
-              },
-              btn2:function(index, layero){
-                // console.log("999");
-              },
-              content:'<div class="login-item">\
-                        <span class="user-icon"></span>\
-                        <input class="form-text" type="text" placeholder="请输入用户名"  id="username1">\
-                      </div>\
-                      <div class="login-item">\
-                        <span class="user-icon"></span>\
-                        <input class="form-text" type="text" placeholder="请输入手机号码"  id="mobile1">\
-                      </div>\
-                      <div class="login-item">\
-                        <span class="user-icon"></span>\
-                        <input class="form-text" type="password" placeholder="请输入密码"  id="password1">\
-                      </div>\
-                      <div class="login-item">\
-                        <span class="user-icon"></span>\
-                        <input class="form-text" type="password" placeholder="请再次输入密码"  id="password2">\
-                      </div>\
-                      <div class="login-item">\
-                        <span class="user-icon"></span>\
-                        <select class="form-text" id="state1" style="width:281px;">\
-                          <option value ="" selected>请选择用户状态</option>\
-                          <option value ="1">通过</option>\
-                          <option value ="0">未通过</option>\
-                        </select>\
-                      </div>'
-            });
+
+                    // console.log(state);
+                  },
+                  btn2:function(index, layero){
+                    // console.log("999");
+                  },
+                  content:'<div class="login-item">\
+                            <span class="user-icon"></span>\
+                            <input class="form-text" type="text" placeholder="请输入用户名"  id="username1">\
+                          </div>\
+                          <div class="login-item">\
+                            <div id="power1" style="margin:0 auto;">\
+                            </div>\
+                          </div>\
+                          <div class="login-item">\
+                            <span class="user-icon"></span>\
+                            <input class="form-text" type="text" placeholder="请输入手机号码"  id="mobile1">\
+                          </div>\
+                          <div class="login-item">\
+                            <span class="user-icon"></span>\
+                            <input class="form-text" type="password" placeholder="请输入密码"  id="password1">\
+                          </div>\
+                          <div class="login-item">\
+                            <span class="user-icon"></span>\
+                            <input class="form-text" type="password" placeholder="请再次输入密码"  id="password2">\
+                          </div>\
+                          <div class="login-item">\
+                            <span class="user-icon"></span>\
+                            <select class="form-text" id="state1" style="width:281px;">\
+                              <option value ="" selected>请选择用户状态</option>\
+                              <option value ="1">通过</option>\
+                              <option value ="0">未通过</option>\
+                            </select>\
+                          </div>\
+                          <div class="login-item">\
+                            <input class="form-text" type="text" placeholder="请输入备注信息"  id="remark1">\
+                          </div>'
+                });
+                //初始化多选框（添加用户）
+                var tagIns1 = selectM({
+                  //元素容器【必填】
+                  elem: '#power1',
+                  //候选数据【必填】
+                  data: data,
+                  max:3,
+                  tips:'请选择权限',
+                  width:280,
+                  //添加验证
+                  verify:'required'
+                  //做一下判断，当取到类型时，相应的修改.container的height
+                });
+              }
+            })
           break;
         };
       });

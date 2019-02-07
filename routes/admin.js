@@ -17,6 +17,8 @@ router.post('/register', function(req, res, next) {
   let userName = req.body.username;
   let passWord = req.body.password;
   let mobile = req.body.mobile;
+  let power = req.body.power;
+  let remark = req.body.remark;
   let state;
   if(req.body.state){
     state = req.body.state;
@@ -31,7 +33,7 @@ router.post('/register', function(req, res, next) {
   //   "mobile":mobile,
   //   "createDate":createDate
   // };
-  let userData = new managersModel.Managers(userName,mobile,state,passWord,createDate,id);
+  let userData = new managersModel.Managers(userName,mobile,state,power,remark,passWord,createDate,id);
   //验证用户是否已存在
   managersBll.isExist(function(data){
     if(data === "true"){

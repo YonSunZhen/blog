@@ -66,7 +66,9 @@ router.post('/updataManagersOneData',function(req,res,next){
   let userName = req.body.username;
   let state = Number(req.body.state);
   let mobile = req.body.mobile;
-  let userData = new managersModel.Managers(userName,mobile,state);
+  let power = req.body.power;
+  let remark = req.body.remark;
+  let userData = new managersModel.Managers(userName,mobile,state,power,remark);
   console.log(userData);
   managersBll.updataManagersOneData(function(result){
     if(result === "true"){
@@ -152,6 +154,20 @@ router.post('/updateType',function(req,res,next){
       res.send("fail");
     }
   },id,typeName,updateDate,updatePeople,state,remark)
+})
+//types表查询出所有通过的类型（注册管理员选择权限时使用）
+router.get('/getTypesAdopt',function(req,res,next){
+  typesBll.getTypesAdopt(function(result){
+    console.log(result);
+    let array = [];
+    for(let i = 0;i < result.length;i++){
+      array[i] = {
+        "id" : result[i].id,
+        "name" : result[i].typeName
+      }
+    }
+    res.send(array);
+  })
 })
 
 //articles表增加一条数据
