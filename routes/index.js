@@ -178,7 +178,12 @@ router.post('/addOneArticle',function(req,res,next){
     let articleName = req.body.articleName;
     let typeName = req.body.typeName;
     let content = req.body.content;
-    let state = 1;//测试时默认状态为通过（后面改为0）
+    let state;
+    if(req.session.mName === "superAdmin"){
+      state = 1;//超管添加的文章默认状态通过
+    }else{
+      state = 0;//普通管理添加的文章由超管审批是否通过
+    }
     let createDate = time.format(new Date(), 'YYYY-MM-DD HH:mm:ss');
     let createPeople = result[0].userName;
     articlesBll.addArticle(function(result){
@@ -216,15 +221,29 @@ router.get('/manager', function(req, res, next) {
   res.render('manager', { title: 'Hey', message: '这是用户管理页面'});
 });
 router.get('/addArticle', function(req, res, next) {
-  typesBll.getTypesAdopt(function(result){
-    let data = [];
-    for(let i = 0; i < result.length; i++){
-      data.push(result[i].typeName);
-    }
-    //console.log(result);
-    console.log(data);
-    res.render('addArticle', {data:data});
-  })
+  let data = [];
+  //如果是超管登录即可获取所有的文章类型
+  if(req.session.mName === "superAdmin"){
+    typesBll.getTypesAdopt(function(result){
+      for(let i = 0; i < result.length; i++){
+        data.push(result[i].typeName);
+      }
+      res.render('addArticle', {data:data});
+    })
+  }else{//普管只能获取他特有的权限
+    managersBll.getPowerByUser(function(result){
+      //将普管的power字段由字符串转化为数组
+      if(result[0].power.indexOf(",") == -1){
+        data[0] = result[0].power;
+      }else{
+        let arr = result[0].power.split(",");
+        for(let i = 0;i < arr.length;i++){
+          data.push(arr[i]);
+        }
+      }
+      res.render('addArticle', {data:data});
+    },req.session.mName,req.session.mPassWord)
+  }
 });
 //超级管理员类型管理页面
 router.get('/typeSuper', function(req, res, next) {

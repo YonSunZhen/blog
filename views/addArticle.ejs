@@ -33,6 +33,7 @@
     <div class="layui-form-item">
       <div style="margin-left:38px;text-align: right;">
         <button class="layui-btn" id="addArticle">提交文章</button>
+        <button class="layui-btn  layui-btn-normal" id="refresh">刷新</button>
       </div>    
     </div>
   </div>
@@ -132,6 +133,11 @@
         }
         console.log(editor.txt.html());
         console.log(editor.txt.text());
+      })
+
+      //点击刷新按钮事假
+      $("#refresh").click(function(){
+        window.location.reload();
       })
 
 

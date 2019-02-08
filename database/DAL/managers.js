@@ -50,7 +50,7 @@ let isExist = (userName) => {
   return apiModel.query(_sql);
 }
 
-//获取Managers所有数据
+//获取Managers所有数据（除了超管）
 let getManagersAllData = () => {
   let _sql = `select * from Managers where userName != "superAdmin";`
   return apiModel.query(_sql);
@@ -92,6 +92,11 @@ let updateLogin = (loginDate,lastLoginDate,loginTimes,userName,passWord) => {
               `
   return apiModel.query(_sql);
 }
+//根据普通管理员用户名和密码获取普管的权限
+let getPowerByUser = (userName,passWord) => {
+  let _sql = `select power from Managers where userName="${userName}" AND passWord="${passWord}"; `
+  return apiModel.query(_sql);
+}
 module.exports = {
   isExist,
   addManager,
@@ -101,5 +106,6 @@ module.exports = {
   updataManagersOneData,
   getModel,
   getLoginDateAndLoginTimes,
-  updateLogin
+  updateLogin,
+  getPowerByUser
 }

@@ -105,7 +105,12 @@ var findManagerId = (cb, userName, password) => {
     return cb(result);
   })
 }
-
+//根据普通管理员用户名和密码获取普管的权限
+var getPowerByUser = (cb,userName,passWord) => {
+  apiModel.getPowerByUser(userName,passWord).then((result) => {
+    return cb(result);
+  })
+}
 module.exports = {
   addManager,
   isExist,
@@ -116,5 +121,6 @@ module.exports = {
   getModel,
   getLoginDateAndLoginTimes,
   updateLogin,
-  findManagerId
+  findManagerId,
+  getPowerByUser
 }
