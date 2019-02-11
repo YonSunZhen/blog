@@ -53,8 +53,12 @@
           }},
           {field: 'createPeople', title: '创建人', width: 100},
           {field: 'updateDate', title: '更新时间', width: 120, sort: true,templet:function(d){
-            let old = d.updateDate;
-            return new Date(old).toLocaleDateString()+" "+new Date(old).toLocaleTimeString();
+            if(d.updateDate){
+              let old = d.updateDate;
+              return new Date(old).toLocaleDateString()+" "+new Date(old).toLocaleTimeString();
+            }else{
+              return '';
+            }
           }},
           {field: 'updatePeople', title: '更新人', width: 100},
           {field: 'remark', title: '备注', width: 100},
@@ -69,21 +73,43 @@
         let tr = obj.tr;//获取当前行tr的DOM对象
         if(layEvent === 'del'){
           console.log(obj);
-          $.ajax({
-            type:'POST',
-            url:'/index/deleteType',
-            data:{'id':id},
-            success:function(data){
-              if(data === "success"){
-                layer.confirm('已成功删除！',function(index){
-                  obj.del();//删除对应行（tr）的DOM结构，并更新缓存
-                  layer.close(index);//关闭对话框
-                })
-              }else{
-                alert("删除失败");
-              }
+          layer.open({
+            content:'确认删除吗?',
+            btn:['删除','取消'],
+            yes:function(index,layero){
+              $.ajax({
+                type:'POST',
+                url:'/index/deleteType',
+                data:{'id':id},
+                success:function(data){
+                  if(data === "success"){
+                    layer.close(index);
+                    obj.del();//删除对应行（tr）的DOM结构，并更新缓存
+                  }else{
+                    alert("删除失败");
+                  }
+                }
+              })
+            },
+            btn2:function(index,layero){
+              layer.close(index);
             }
           })
+          // $.ajax({
+          //   type:'POST',
+          //   url:'/index/deleteType',
+          //   data:{'id':id},
+          //   success:function(data){
+          //     if(data === "success"){
+          //       layer.confirm('已成功删除！',function(index){
+          //         obj.del();//删除对应行（tr）的DOM结构，并更新缓存
+          //         layer.close(index);//关闭对话框
+          //       })
+          //     }else{
+          //       alert("删除失败");
+          //     }
+          //   }
+          // })
         }else if(layEvent === 'edit'){
           var index1 = layer.open({
             type:0,

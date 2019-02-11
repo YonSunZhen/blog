@@ -53,8 +53,12 @@
           }},
           {field: 'createPeople', title: '创建人', width: 100},
           {field: 'updateDate', title: '更新时间', width: 120, sort: true,templet:function(d){
-            let old = d.updateDate;
-            return new Date(old).toLocaleDateString()+" "+new Date(old).toLocaleTimeString();
+            if(d.updateDate){
+              let old = d.updateDate;
+              return new Date(old).toLocaleDateString()+" "+new Date(old).toLocaleTimeString();
+            }else{
+              return '';
+            }     
           }},
           {field: 'updatePeople', title: '更新人', width: 100},
           {field: 'remark', title: '备注', width: 100},    

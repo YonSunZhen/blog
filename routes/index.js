@@ -212,6 +212,51 @@ router.post('/uploadPic',upload.array('photo',10), function(req,res,next){
   }
   res.send(picData);
 })
+//articles表显示数据（初始化表格）
+router.get('/getArticlesAllData',function(req,res,next){
+  //console.log("成功");
+  if(req.session.mName === "superAdmin"){
+    articlesBll.getArticlesAllData(function(result){
+      let code = 0;
+      let message = "";
+      let count = result.length;
+      let data = result;
+      let obj = {
+        "code":0,
+        "msg":"",
+        "count":count,
+        "data":data
+      };
+      //console.log("成功1");
+      res.json(obj);
+    })
+  }else{
+    articlesBll.getArticlesDataByUser(function(result){
+      let code = 0;
+      let message = "";
+      let count = result.length;
+      let data = result;
+      let obj = {
+        "code":0,
+        "msg":"",
+        "count":count,
+        "data":data
+      };
+      res.json(obj);
+    },req.session.mName)
+  }
+})
+//Articles删除一条数据
+router.post('/delArticlesOneData',function(req,res,next){
+  let id = req.body.id;
+  articlesBll.delArticlesOneData(function(result){
+    if(result === "true"){
+      res.send("success");
+    }else{
+      res.send("fail");
+    }
+  },id)
+})
 
 //iframe框架的请求
 router.get('/Mindex', function(req, res, next) {

@@ -59,12 +59,20 @@
             return new Date(old).toLocaleDateString()+" "+new Date(old).toLocaleTimeString();
           }},
           {field: 'loginDate', title: '登录时间', width: 170, sort: true,templet:function(d){
-            let old = d.loginDate;
-            return new Date(old).toLocaleDateString()+" "+new Date(old).toLocaleTimeString();
+            if(d.loginDate){
+              let old = d.loginDate;
+              return new Date(old).toLocaleDateString()+" "+new Date(old).toLocaleTimeString();
+            }else{
+              return '';
+            }     
           }},
           {field: 'lastLoginDate', title: '上次登录时间', width: 110, sort: true,templet:function(d){
-            let old = d.lastLoginDate;
-            return new Date(old).toLocaleDateString()+" "+new Date(old).toLocaleTimeString();
+            if(d.lastLoginDate){
+              let old = d.lastLoginDate;
+              return new Date(old).toLocaleDateString()+" "+new Date(old).toLocaleTimeString();
+            }else{
+              return '';
+            }   
           }},
           {field: 'loginTimes', title: '登录次数', width: 90},
           {field: 'remark', title: '备注信息', width: 150},
@@ -78,20 +86,27 @@
         let layEvent = obj.event;//获取点击的是哪个操作按钮
         let tr = obj.tr;//获取当前行tr的DOM对象
         if(layEvent === 'del'){
-          console.log(obj);
-          $.ajax({
-            type:'POST',
-            url:'/index/delManagersOneData',
-            data:{'id':id},
-            success:function(data){
-              if(data === "success"){
-                layer.confirm('已成功删除！',function(index){
-                  obj.del();//删除对应行（tr）的DOM结构，并更新缓存
-                  layer.close(index);//关闭对话框
-                })
-              }else{
-                alert("删除失败");
-              }
+          //console.log(obj);
+          layer.open({
+            content:'确认删除吗?',
+            btn:['删除','取消'],
+            yes:function(index,layero){
+              $.ajax({
+                type:'POST',
+                url:'/index/delManagersOneData',
+                data:{'id':id},
+                success:function(data){
+                  if(data === "success"){
+                    layer.close(index);
+                    obj.del();//删除对应行（tr）的DOM结构，并更新缓存
+                  }else{
+                    alert("删除失败");
+                  }
+                }
+              })
+            },
+            btn2:function(index,layero){
+              layer.close(index);
             }
           })
         }else if(layEvent === 'edit'){
