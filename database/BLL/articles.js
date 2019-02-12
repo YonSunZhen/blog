@@ -32,10 +32,28 @@ let delArticlesOneData = (cb,id) => {
     }
   })
 }
+//更改Articles中的一条数据
+let updateArticleOneData = (cb,id,articleName,typeName,content,state,updateDate,updatePeople) => {
+  apiModel.updateArticleOneData(id,articleName,typeName,content,state,updateDate,updatePeople).then((result) => {
+    if(result.affectedRows > 0){
+      return cb("true");
+    }else{
+      return cb("false");
+    }
+  })
+}
+//根据id获取Articles中的一条数据
+let getArticleOneData = (cb,id) => {
+  apiModel.getArticleOneData(id).then((result) => {
+    return cb(result);
+  })
+}
 
 module.exports = {
   addArticle,
   getArticlesAllData,
   getArticlesDataByUser,
-  delArticlesOneData
+  delArticlesOneData,
+  updateArticleOneData,
+  getArticleOneData
 }

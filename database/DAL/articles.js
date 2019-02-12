@@ -28,10 +28,30 @@ let delArticlesOneData = (id) => {
   let _sql = `delete from Articles where id="${id}";`
   return apiModel.query(_sql);
 }
+//更改Articles中的一条数据
+let updateArticleOneData = (id,articleName,typeName,content,state,updateDate,updatePeople) => {
+  let _sql = `update articles set 
+              articleName="${articleName}",
+              typeName="${typeName}",
+              content="${content}",
+              updateDate="${updateDate}",
+              state="${state}",
+              updatePeople="${updatePeople}"
+              where id="${id}";
+              `
+  return apiModel.query(_sql); 
+}
+//根据id获取Articles中的一条数据
+let getArticleOneData = (id) => {
+  let _sql = `select * from articles where id="${id}";`
+  return apiModel.query(_sql);
+}
 
 module.exports = {
   addArticle,
   getArticlesAllData,
   getArticlesDataByUser,
-  delArticlesOneData
+  delArticlesOneData,
+  updateArticleOneData,
+  getArticleOneData
 }

@@ -257,6 +257,33 @@ router.post('/delArticlesOneData',function(req,res,next){
     }
   },id)
 })
+//Articles更新一条数据
+router.post('/updateArticleOneData',function(req,res,next){
+  let id = req.body.id;
+  console.log(id);
+  let articleName = req.body.articleName;
+  let typeName = req.body.typeName;
+  let content = req.body.content;
+  let state = req.body.state;
+  let updateDate = time.format(new Date(), 'YYYY-MM-DD HH:mm:ss');
+  let updatePeople = req.session.mName;
+  articlesBll.updateArticleOneData(function(result){
+    if(result === "true"){
+      console.log("成功");
+      res.send("success");
+    }else{
+      console.log("失败");
+      res.send("fail");
+    }
+  },id,articleName,typeName,content,state,updateDate,updatePeople)
+})
+//Articles根据id获取一条数据
+router.post('/getArticleOneData',function(req,res,next){
+  let id = req.body.id;
+  articlesBll.getArticleOneData(function(result){
+    res.send(result);
+  },id)
+})
 
 //iframe框架的请求
 router.get('/Mindex', function(req, res, next) {
@@ -273,6 +300,7 @@ router.get('/addArticle', function(req, res, next) {
       for(let i = 0; i < result.length; i++){
         data.push(result[i].typeName);
       }
+      data.push(req.session.mName);//判断更改文章框是否出现状态文本框使用（只有超管有）
       res.render('addArticle', {data:data});
     })
   }else{//普管只能获取他特有的权限
@@ -280,11 +308,13 @@ router.get('/addArticle', function(req, res, next) {
       //将普管的power字段由字符串转化为数组
       if(result[0].power.indexOf(",") == -1){
         data[0] = result[0].power;
+        data.push(req.session.mName);//判断更改文章框是否出现状态文本框使用（只有超管有）
       }else{
         let arr = result[0].power.split(",");
         for(let i = 0;i < arr.length;i++){
           data.push(arr[i]);
         }
+        data.push(req.session.mName);//判断更改文章框是否出现状态文本框使用（只有超管有）
       }
       res.render('addArticle', {data:data});
     },req.session.mName,req.session.mPassWord)
@@ -299,7 +329,33 @@ router.get('/typeAdmin', function(req, res, next) {
   res.render('typeAdmin', { title: 'Hey', message: '这是普通管理员类型管理页面'});
 });
 router.get('/manageArticle', function(req, res, next) {
-  res.render('manageArticle', { title: 'Hey', message: '这是文章管理页面'});
+  //res.render('manageArticle', { title: 'Hey', message: '这是文章管理页面'});
+  let data = [];
+  //如果是超管登录即可获取所有的文章类型
+  if(req.session.mName === "superAdmin"){
+    typesBll.getTypesAdopt(function(result){
+      for(let i = 0; i < result.length; i++){
+        data.push(result[i].typeName);
+      }
+      data.push(req.session.mName);//判断更改文章框是否出现状态文本框使用（只有超管有）
+      res.render('manageArticle', {data:data});
+    })
+  }else{//普管只能获取他特有的权限
+    managersBll.getPowerByUser(function(result){
+      //将普管的power字段由字符串转化为数组
+      if(result[0].power.indexOf(",") == -1){
+        data[0] = result[0].power;
+        data.push(req.session.mName);//判断更改文章框是否出现状态文本框使用（只有超管有）
+      }else{
+        let arr = result[0].power.split(",");
+        for(let i = 0;i < arr.length;i++){
+          data.push(arr[i]);
+        }
+        data.push(req.session.mName);//判断更改文章框是否出现状态文本框使用（只有超管有）
+      }
+      res.render('manageArticle', {data:data});
+    },req.session.mName,req.session.mPassWord)
+  }
 });
 router.get('/comment', function(req, res, next) {
   res.render('comment', { title: 'Hey', message: '这是评论管理页面'});

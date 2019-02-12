@@ -15,9 +15,9 @@
       <div class="layui-input-block">
         <select name="type" id="type" lay-filter="" style="width:20px;">
           <option value=""></option>
-          <%data.forEach(function(item){%>
-            <option value="<%=item%>"><%=item%></option>
-          <%})%>
+          <%for(var i = 0;i < data.length - 1;i++){%>
+            <option value="<%=data[i]%>"><%=data[i]%></option>
+          <%}%>
         </select>
       </div>
     </div>  
