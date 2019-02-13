@@ -129,9 +129,9 @@
             if(tagIns1.selected.length < 1){
               alert("请选择权限!");
             }else{
-              power = tagIns1.selected[0].name;
+              power = tagIns1.selected[0].id;
               for(let i = 1;i < tagIns1.selected.length;i++){
-                power += ','+tagIns1.selected[i].name;
+                power += ','+tagIns1.selected[i].id;
               }
 
               if(password === passwordAgain){
@@ -142,8 +142,14 @@
                   async:true,
                   data:{'username':username,'password':password,'mobile':mobile,'power':power,'remark':remark},
                   success:function(result){
-                    alert(result);
-                    window.location.href = '/';
+                    if(result === 'success'){
+                      alert("注册成功!");
+                      window.location.href = '/';
+                    }else if(result === 'isExist'){
+                      alert("用户名已存在,请重新输入!");
+                    }else{
+                      alert("注册失败!");
+                    }
                   }
                 })
               }else{

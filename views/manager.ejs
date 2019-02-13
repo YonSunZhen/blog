@@ -140,9 +140,9 @@
                         // })
                         alert("请选择权限!");
                       }else{
-                        power = tagIns2.selected[0].name;
+                        power = tagIns2.selected[0].id;
                         for(let i = 1;i < tagIns2.selected.length;i++){
-                          power += ','+tagIns2.selected[i].name;
+                          power += ','+tagIns2.selected[i].id;
                         }
                         $.ajax({
                           type:"POST",
@@ -247,9 +247,9 @@
                       // })
                       alert('请选择权限!');
                     }else{
-                      power = tagIns1.selected[0].name;
+                      power = tagIns1.selected[0].id;
                       for(let i = 1;i < tagIns1.selected.length;i++){
-                        power += ','+tagIns1.selected[i].name;
+                        power += ','+tagIns1.selected[i].id;
                       }
                       if(password1 != password2){
                         // layer.confirm('两次密码输入不一致!',function(index){

@@ -37,11 +37,13 @@ router.post('/register', function(req, res, next) {
   //验证用户是否已存在
   managersBll.isExist(function(data){
     if(data === "true"){
-      res.send("用户名已存在，请重新输入!");
+      res.send("isExist");
     }else{
       managersBll.addManager(function(data){
         if(data === "true"){
-          res.send("注册成功！");
+          res.send("success");
+        }else{
+          res.send("fail");
         }
       },userData)
     }

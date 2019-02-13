@@ -150,7 +150,7 @@
                         <select name="type" id="type" lay-filter="">\
                           <option value="">请选择</option>\
                           <%for(var i = 0;i < data.length - 1;i++){%>\
-                            <option value="<%=data[i]%>"><%=data[i]%></option>\
+                            <option value="<%=data[i].tid%>"><%=data[i].typeName%></option>\
                           <%}%>\
                         </select>\
                       </div>\
@@ -233,25 +233,25 @@
                 data:{'id':id},
                 success:function(data){
                   $("#name").val(data[0].articleName);
-                  $("#type").val(data[0].typeName);
+                  $("#type").val(data[0].tid);
                   $("#state").val(data[0].state);
                   editor.txt.html(decodeURIComponent(data[0].content));
                   form.render('select');//必须重新渲染
-                  console.log(data);
+                  //console.log(data);
                 }
               })
 
               //点击提交按钮事件
               $("#addArticle").click(function(){
                 let articleName = $("#name").val();
-                let typeName = $("#type").val();
+                let tid = $("#type").val();
                 let content = encodeURIComponent(editor.txt.html());//将html代码编码后再存进数据库
                 let state = $("#state").val();
                 let text = editor.txt.text();
                 let data = {
                   'id':id,
                   'articleName':articleName,
-                  'typeName':typeName,
+                  'tid':tid,
                   'content':content,
                   'state':state
                 }
@@ -291,7 +291,7 @@
                   data:{'id':id},
                   success:function(data){
                     $("#name").val(data[0].articleName);
-                    $("#type").val(data[0].typeName);
+                    $("#type").val(data[0].tid);
                     $("#state").val(data[0].state);
                     editor.txt.html(decodeURIComponent(data[0].content));
                     form.render('select');//必须重新渲染

@@ -16,7 +16,7 @@
         <select name="type" id="type" lay-filter="" style="width:20px;">
           <option value=""></option>
           <%for(var i = 0;i < data.length - 1;i++){%>
-            <option value="<%=data[i]%>"><%=data[i]%></option>
+            <option value="<%=data[i].tid%>"><%=data[i].typeName%></option>
           <%}%>
         </select>
       </div>
@@ -100,12 +100,12 @@
       //点击提交按钮事件
       $("#addArticle").click(function(){
         let articleName = $("#name").val();
-        let typeName = $("#type").val();
+        let tid = $("#type").val();
         let content = encodeURIComponent(editor.txt.html());//将html代码编码后再存进数据库
         let text = editor.txt.text();
         let data = {
           'articleName':articleName,
-          'typeName':typeName,
+          'tid':tid,
           'content':content
         }
         //console.log(typeName);

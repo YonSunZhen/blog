@@ -1,8 +1,8 @@
 var apiModel = require("../DAL/articles");
 
 //增加一篇文章
-let addArticle = (cb,id,mid,articleName,typeName,content,state,createDate,createPeople) => {
-  apiModel.addArticle(id,mid,articleName,typeName,content,state,createDate,createPeople).then((result) => {
+let addArticle = (cb,id,mid,articleName,tid,content,state,createDate,createPeople) => {
+  apiModel.addArticle(id,mid,articleName,tid,content,state,createDate,createPeople).then((result) => {
     if(result.affectedRows > 0){
       return cb("true");
     }else{
@@ -33,8 +33,8 @@ let delArticlesOneData = (cb,id) => {
   })
 }
 //更改Articles中的一条数据
-let updateArticleOneData = (cb,id,articleName,typeName,content,state,updateDate,updatePeople) => {
-  apiModel.updateArticleOneData(id,articleName,typeName,content,state,updateDate,updatePeople).then((result) => {
+let updateArticleOneData = (cb,id,articleName,tid,content,state,updateDate,updatePeople) => {
+  apiModel.updateArticleOneData(id,articleName,tid,content,state,updateDate,updatePeople).then((result) => {
     if(result.affectedRows > 0){
       return cb("true");
     }else{
