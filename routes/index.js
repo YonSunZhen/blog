@@ -4,6 +4,7 @@ var managersModel = require('../database/Model/managers');
 var managersBll = require('../database/BLL/managers');
 var typesBll = require('../database/BLL/types');
 var articlesBll = require('../database/BLL/articles');
+var commentsBll = require('../database/BLL/comments');
 var time = require('silly-datetime');
 var uuidv1 = require('uuid/v1');
 var multer = require('multer');
@@ -283,6 +284,41 @@ router.post('/getArticleOneData',function(req,res,next){
   articlesBll.getArticleOneData(function(result){
     res.send(result);
   },id)
+})
+
+//Comments表显示数据(初始化表格)
+router.get('/getCommentsAllData',function(req,res,next){
+  if(req.session.mName === "superAdmin"){
+    commentsBll.getCommentsAllData(function(result){
+      console.log(result);
+      let code = 0;
+      let message = "";
+      let count = result.length;
+      let data = result;
+      let obj = {
+        "code":0,
+        "msg":"",
+        "count":count,
+        "data":data
+      };
+      res.json(obj);
+    })
+  }else{
+    commentsBll.getCommentsByUser(function(result){
+      console.log(result);
+      let code = 0;
+      let message = "";
+      let count = result.length;
+      let data = result;
+      let obj = {
+        "code":0,
+        "msg":"",
+        "count":count,
+        "data":data
+      };
+      res.json(obj);
+    },req.session.mName)
+  }
 })
 
 //iframe框架的请求

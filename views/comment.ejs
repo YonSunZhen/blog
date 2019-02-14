@@ -4,9 +4,221 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>这是测试界面</title>
+  <link rel='stylesheet' href='/stylesheets/public.css' />
+  <link rel='stylesheet' href='/stylesheets/admin.css' />
+  <link rel="stylesheet" href="/javascripts/layui/css/layui.css">
+  <title>评论管理</title>
 </head>
 <body>
-  <div><%-message%></div>
+  <table id="comment" lay-filter="comment"></table>
+  <script src="/javascripts/layui/layui.js"></script>
+  <!-- 右边操作 -->
+  <script type="text/html" id="bar">
+    <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+  </script>
+  <!-- 头部操作 -->
+  <script type="text/html" id="toolbar">
+    <div class="layui-btn-container">
+      <button class="layui-btn layui-btn-sm" lay-event="addType">添加类型</button>
+    </div>
+  </script>
+  <script>
+    layui.use(['table','jquery','layer'], function(){
+      var table = layui.table;
+      var $ = layui.jquery;
+      var layer = layui.layer;
+      //第一个实例
+      var table1 = table.render({
+        elem: '#comment',
+        width:1150,
+        height: 540,
+        url: '/index/getCommentsAllData' ,//数据接口
+        page: true ,//开启分页
+        toolbar:'#toolbar',//开启头部工具栏
+        cols: [[ //表头
+          {type:'checkbox',fixed:'left'},
+          {field:'',title:'序号',type:'numbers',width:80},
+          {field: 'articleName', title: '博客名', width:110},
+          {field: 'typeName', title: '博客类型', width:110},
+          {field: 'articleAuthor', title: '博客作者', width:110},
+          {field: 'commentUser', title: '评论者', width:110},
+          {field: 'state', title: '状态', width:80,templet:function(d){
+            if(d.state === 1){
+              return '通过';
+            }else{
+              return '未通过';
+            }
+          }},
+          {field: 'createDate', title: '评论时间', width: 120,templet:function(d){
+            let old = d.createDate;
+            return new Date(old).toLocaleDateString()+" "+new Date(old).toLocaleTimeString();
+          }},
+          {field: 'right', title: '操作',align:'center', width: 150, toolbar:'#bar'}
+        ]]
+      });
+      //监听行工具栏事件
+      table.on('tool(manager)',function(obj){
+        let data = obj.data;//获取当前行所有数据
+        let id = data.id;//获取选中行的id
+        let layEvent = obj.event;//获取点击的是哪个操作按钮
+        let tr = obj.tr;//获取当前行tr的DOM对象
+        if(layEvent === 'del'){
+          console.log(obj);
+          layer.open({
+            content:'确认删除吗?',
+            btn:['删除','取消'],
+            yes:function(index,layero){
+              $.ajax({
+                type:'POST',
+                url:'/index/deleteType',
+                data:{'id':id},
+                success:function(data){
+                  if(data === "success"){
+                    layer.close(index);
+                    obj.del();//删除对应行（tr）的DOM结构，并更新缓存
+                  }else{
+                    alert("删除失败");
+                  }
+                }
+              })
+            },
+            btn2:function(index,layero){
+              layer.close(index);
+            }
+          })
+          // $.ajax({
+          //   type:'POST',
+          //   url:'/index/deleteType',
+          //   data:{'id':id},
+          //   success:function(data){
+          //     if(data === "success"){
+          //       layer.confirm('已成功删除！',function(index){
+          //         obj.del();//删除对应行（tr）的DOM结构，并更新缓存
+          //         layer.close(index);//关闭对话框
+          //       })
+          //     }else{
+          //       alert("删除失败");
+          //     }
+          //   }
+          // })
+        }else if(layEvent === 'edit'){
+          var index1 = layer.open({
+            type:0,
+            title:'编辑类型',
+            btn:['提交','取消'],
+            //按钮的回调操作
+            btn1:function(index, layero){
+              let typeName = $("#typeName").val();
+              let updatePeople = $("#updatePeople").val();
+              let state = $("#state").val();
+              let remark = $("#remark").val();
+              $.ajax({
+                type:"POST",
+                url:"/index/updateType",
+                data:{'id':id,'typeName':typeName,'updatePeople':updatePeople,'state':state,'remark':remark},
+                success:function(result){
+                  if(result === "success"){
+                    layer.confirm('更新成功！',function(index){
+                      table1.reload();//重载表格
+                      layer.close(index);//关闭对话框
+                    })
+                  }else{
+                    layer.confirm('更新失败！',function(index){
+                      layer.close(index);//关闭对话框
+                    })
+                  }
+                }
+              })
+              // console.log(state);
+            },
+            btn2:function(index, layero){
+              // console.log("999");
+            },
+            content:'<div class="login-item">\
+                      <span>类型名：</span>\
+                      <input class="form-text" type="text"  id="typeName">\
+                    </div>\
+                    <div class="login-item">\
+                      <span>更新人：</span>\
+                      <input class="form-text" type="text"  id="updatePeople">\
+                    </div>\
+                    <div class="login-item">\
+                      <span>状态：</span>\
+                      <select class="form-text" id="state" style="width:281px;">\
+                        <option value ="1">通过</option>\
+                        <option value ="0">未通过</option>\
+                      </select>\
+                    </div>\
+                    <div class="login-item">\
+                        <span>备注：</span>\
+                      <input class="form-text" type="text" id="remark">\
+                    </div>'
+          });
+          $.ajax({
+            type:"POST",
+            url:"/index/getTypesOneData",
+            sync:true,
+            data:{"id":id},
+            success:function(data){
+              $("#typeName").val(data[0].typeName);
+              $("#updatePeople").val(data[0].updatePeople);
+              $("#state").val(data[0].state);
+              $("#remark").val(data[0].remark);
+              //console.log(data);
+            }
+          })
+        }
+      });
+      //监听头部工具栏事件
+      table.on('toolbar(manager)',function(obj){
+        switch(obj.event){
+          case 'addType':
+            // console.log("4444");
+            var index2 = layer.open({
+              type:0,
+              title:'添加类型',
+              btn:['提交','取消'],
+              //按钮的回调操作
+              btn1:function(index, layero){
+                let typeName = $("#typeName1").val();
+                let createPeople = $("#createPeople1").val();
+                let remark = $("#remark1").val();
+                $.ajax({
+                  type:"POST",
+                  url:"/index/addType",
+                  data:{'typeName':typeName,'createPeople':createPeople,'remark':remark},
+                  success:function(result){
+                    if(result === "success"){
+                      alert("添加成功！");
+                      layer.close(index2);//关闭对话框
+                      table1.reload();//重载表格
+                    }else{
+                      alert("添加失败！");
+                    }          
+                  }
+                })
+              },
+              btn2:function(index, layero){
+                // console.log("999");
+              },
+              content:'<div class="login-item">\
+                        <span class="user-icon"></span>\
+                        <input class="form-text" type="text" placeholder="请输入类型名"  id="typeName1">\
+                      </div>\
+                      <div class="login-item">\
+                        <span class="user-icon"></span>\
+                        <input class="form-text" type="text" placeholder="请输入创建者"  id="createPeople1">\
+                      </div>\
+                      <div class="login-item">\
+                        <span class="user-icon"></span>\
+                        <input class="form-text" type="text" placeholder="请输入备注"  id="remark1">\
+                      </div>'
+            });
+          break;
+        };
+      });
+    })
+  </script>
 </body>
 </html>
