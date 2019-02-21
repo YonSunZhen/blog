@@ -17,3 +17,13 @@ body,a,ul,li,dl,dd,img{
 .hide{
   display:none;
 }
+a{
+  text-decoration: none;
+  cursor: pointer;
+}
+ul{
+  list-style: none;
+}
+.float{
+  float:left;
+}

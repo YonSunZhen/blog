@@ -64,7 +64,7 @@
             <input class="form-text" type="password" placeholder="请再次输入密码"  id="passwordAgain">
           </div>
           <div class="login-item">
-            <input class="submit-btn "type="submit" value="立即注册" id="register">
+            <input class="submit-btn "type="submit" value="提交信息" id="register">
           </div>
         </div>
       </div>
@@ -143,7 +143,7 @@
                   data:{'username':username,'password':password,'mobile':mobile,'power':power,'remark':remark},
                   success:function(result){
                     if(result === 'success'){
-                      alert("注册成功!");
+                      alert("成功提交注册信息,待超管审核通过!");
                       window.location.href = '/';
                     }else if(result === 'isExist'){
                       alert("用户名已存在,请重新输入!");
