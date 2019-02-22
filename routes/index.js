@@ -5,6 +5,7 @@ var managersBll = require('../database/BLL/managers');
 var typesBll = require('../database/BLL/types');
 var articlesBll = require('../database/BLL/articles');
 var commentsBll = require('../database/BLL/comments');
+var replysBll = require('../database/BLL/replys');
 var time = require('silly-datetime');
 var uuidv1 = require('uuid/v1');
 var multer = require('multer');
@@ -23,7 +24,7 @@ var upload = multer({storage:storage});
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  console.log(req.session.logined);
+  //console.log(req.session.logined);
   if(req.session.logined){
     if(req.session.username === "superAdmin"){
       res.render('index', { title: 'Express',superAdmin: true,username:req.session.mName});
@@ -70,7 +71,7 @@ router.post('/updataManagersOneData',function(req,res,next){
   let power = req.body.power;
   let remark = req.body.remark;
   let userData = new managersModel.Managers(userName,mobile,state,power,remark);
-  console.log(userData);
+  //console.log(userData);
   managersBll.updataManagersOneData(function(result){
     if(result === "true"){
       res.send("success");
@@ -159,7 +160,7 @@ router.post('/updateType',function(req,res,next){
 //types表查询出所有通过的类型（注册管理员选择权限时使用）
 router.get('/getTypesAdopt',function(req,res,next){
   typesBll.getTypesAdopt(function(result){
-    console.log(result);
+    //console.log(result);
     let array = [];
     for(let i = 0;i < result.length;i++){
       array[i] = {
@@ -321,6 +322,28 @@ router.get('/getCommentsAllData',function(req,res,next){
   }
 })
 
+//Reply表添加一条数据
+router.post('/addReply',function(req,res,next){
+  managersBll.findManagerId(function(result1){
+    let from_uid = result1[0].id;
+    let comment_id = req.body.comment_id;
+    let content = req.body.content;
+    let to_uid = req.body.to_uid;
+    let id = uuidv1();
+    let reply_id = comment_id;
+    let reply_type = 0;
+    let state = 1;
+    let createDate = time.format(new Date(), 'YYYY-MM-DD HH:mm:ss');
+    replysBll.addReply(function(result2){
+      if(result2 === "true"){
+        res.send("success");
+      }else{
+        res.send("fail");
+      }
+    },id,comment_id,reply_id,reply_type,content,state,from_uid,to_uid,createDate)
+  },req.session.mName,req.session.mPassWord);
+})
+
 //iframe框架的请求
 router.get('/Mindex', function(req, res, next) {
   res.render('Mindex', { title: 'Hey', message: '这是首页'});
@@ -437,7 +460,18 @@ router.get('/manageArticle', function(req, res, next) {
   }
 });
 router.get('/comment', function(req, res, next) {
-  res.render('comment', { title: 'Hey', message: '这是评论管理页面'});
+  let comment_id = req.query.comment_id;
+  console.log(comment_id);
+  replysBll.getReplysByCommentID(function(result){
+    //console.log(result.length);
+    let arr = [];
+    for(let i = 0;i < result.length;i++){
+      arr[i] = result[i];
+    }
+    console.log("2222");
+    console.log(result[0]);
+    res.render('comment', {'data':arr});
+  },comment_id)
 });
 
 module.exports = router;

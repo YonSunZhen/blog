@@ -21,6 +21,10 @@ let getCommentsByUser = (userName) => {
               where two.articleAuthor="${userName}";`
   return apiModel.query(_sql);
 }
+//获取所有被评论过的文章的信息(超管使用)
+// let getCommentsAllData1 = () => {
+//   let _sql = `select distinct article_id from Comments one left JOIN ;`
+// }
 module.exports = {
   getCommentsAllData,
   getCommentsByUser
