@@ -322,26 +322,64 @@ router.get('/getCommentsAllData',function(req,res,next){
   }
 })
 
-//Reply表添加一条数据
+//Replys表添加一条数据
 router.post('/addReply',function(req,res,next){
   managersBll.findManagerId(function(result1){
     let from_uid = result1[0].id;
     let comment_id = req.body.comment_id;
+    //console.log("2345");
+    //console.log(comment_id);
     let content = req.body.content;
     let to_uid = req.body.to_uid;
+    let reply_type = req.body.reply_type;
+    console.log("234");
+    console.log(reply_type);
     let id = uuidv1();
-    let reply_id = comment_id;
-    let reply_type = 0;
+    let reply_id;
+    if(reply_type == '1'){//reply_type为1时，表示回复的是回复，reply_id等于回复的id
+      reply_id = req.body.reply_id;
+    }else if(reply_type == '0'){//reply_type为0时，表示回复的是评论，reply_id等于评论的id
+      console.log("出错了");
+      reply_id = req.body.comment_id;
+    }
+    console.log("23456");
+    console.log(reply_id);
     let state = 1;
     let createDate = time.format(new Date(), 'YYYY-MM-DD HH:mm:ss');
-    replysBll.addReply(function(result2){
-      if(result2 === "true"){
-        res.send("success");
-      }else{
-        res.send("fail");
-      }
-    },id,comment_id,reply_id,reply_type,content,state,from_uid,to_uid,createDate)
+    //当回复人和被回复人一样时
+    if(from_uid == to_uid){
+      res.send("error");
+    }else{
+      replysBll.addReply(function(result2){
+        if(result2 === "true"){
+          res.send("success");
+        }else{
+          res.send("fail");
+        }
+      },id,comment_id,reply_id,reply_type,content,state,from_uid,to_uid,createDate)
+    }
   },req.session.mName,req.session.mPassWord);
+})
+//Replys表获取一条评论的所有回复
+router.post('/getReplysByCommentID',function(req,res,next){
+  let comment_id = req.body.comment_id;
+  console.log(comment_id);
+  replysBll.getReplysByCommentID(function(result){
+    console.log("2222");
+    console.log(result);
+    res.send(result);
+  },comment_id)
+})
+//Replys表删除一条数据
+router.post('/delReply',function(req,res,next){
+  let id = req.body.id;
+  replysBll.delReply(function(result){
+    if(result == "true"){
+      res.send("success");
+    }else{
+      res.send("fail");
+    }
+  },id)
 })
 
 //iframe框架的请求
@@ -460,18 +498,7 @@ router.get('/manageArticle', function(req, res, next) {
   }
 });
 router.get('/comment', function(req, res, next) {
-  let comment_id = req.query.comment_id;
-  console.log(comment_id);
-  replysBll.getReplysByCommentID(function(result){
-    //console.log(result.length);
-    let arr = [];
-    for(let i = 0;i < result.length;i++){
-      arr[i] = result[i];
-    }
-    console.log("2222");
-    console.log(result[0]);
-    res.render('comment', {'data':arr});
-  },comment_id)
+  res.render('comment', {'test':'test'});
 });
 
 module.exports = router;

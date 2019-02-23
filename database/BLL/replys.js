@@ -16,8 +16,19 @@ let getReplysByCommentID = (cb,comment_id) => {
     return cb(result);
   })
 }
+//根据id删除一条回复
+let delReply = (cb,id) => {
+  apiModel.delReply(id).then((result) => {
+    if(result.affectedRows > 0){
+      return cb("true");
+    }else{
+      return cb("false");
+    }
+  })
+}
 
 module.exports = {
   addReply,
-  getReplysByCommentID
+  getReplysByCommentID,
+  delReply
 }

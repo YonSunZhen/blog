@@ -48,7 +48,7 @@
             if(d.state === 1){
               return '通过';
             }else{
-              return '未通过';
+              return '屏蔽';
             }
           }},
           {field: 'createDate', title: '评论时间', width: 120,templet:function(d){
@@ -97,217 +97,304 @@
             }
           })
         }else if(layEvent === 'edit'){
-          $.ajax({
-            type:'GET',
-            url:'/index/comment?comment_id='+id,
-            success:function(){
-              console.log(data.from_uid);
-              var index1 = layer.open({
-                type:1,
-                area: ['1000px', '540px'],
-                title:'编辑评论',
-                content:'<div class="blog-content">\
-                          <div class="blog-content-box">\
-                            <div class="article-header-box">\
-                              <div class="article-header">\
-                                <div class="article-title-box">\
-                                  <h1 class="title-article" id="title-article">已写入</h1>\
-                                </div>\
-                                <div class="article-info-box">\
-                                  <div class="article-bar">\
-                                    <span class="author" id="author">已写入</span>\
-                                  </div>\
-                                </div>\
+          var index1 = layer.open({
+            type:1,
+            area: ['1000px', '540px'],
+            title:'编辑评论',
+            content:'<div class="blog-content">\
+                      <div class="blog-content-box">\
+                        <div class="article-header-box">\
+                          <div class="article-header">\
+                            <div class="article-title-box">\
+                              <h1 class="title-article" id="title-article">已写入</h1>\
+                            </div>\
+                            <div class="article-info-box">\
+                              <div class="article-bar">\
+                                <span class="author" id="author">已写入</span>\
                               </div>\
                             </div>\
-                            <article class="article-content-box">\
-                              <div class="article-content" id="article-content">\
-                                已写入\
-                              </div>\
-                            </article>\
                           </div>\
-                          <div class="comment-box">\
-                            <div class="comment-list-box">\
-                              <ul class="comment-list">\
-                                <li class="comment-line-box" id="comment1">\
+                        </div>\
+                        <article class="article-content-box">\
+                          <div class="article-content" id="article-content">\
+                            已写入\
+                          </div>\
+                        </article>\
+                      </div>\
+                      <div class="comment-box">\
+                        <div class="comment-list-box">\
+                          <ul class="comment-list">\
+                            <li class="comment-line-box" id="comment1">\
+                              <a href="" class="avatar-link">\
+                                <img src="https://avatar.csdn.net/D/F/D/3_lixiang_1989.jpg" class="avatar" alt="">\
+                              </a>\
+                              <div class="right-box">\
+                                <div class="info-box">\
+                                  <span class="name" id="name">已写入</span>\
+                                  <span class="comment" id="comment_content">已写入</span>\
+                                  <span class="date" id="date">已写入</span>\
+                                  <span class="opt-box">\
+                                    <a href="javascript:;" id="showReply" class="float hide">查看回复</a>\
+                                    <a href="javascript:;" id="hideReply" class="float">收起回复</a>\
+                                    <div class="float showHide" id="showHide">\
+                                      <a href="javascript:;" class="float reply" id="reply">回复</a>\
+                                      <a href="javascript:;" class="float reply hide" id="agree">通过</a>\
+                                      <a href="javascript:;" class="float reply hide" id="disagree">屏蔽</a>\
+                                      <a href="javascript:;" class="float reply" id="delete">删除</a>\
+                                      <div class="clear"></div>\
+                                    </div>\
+                                  </span>\
+                                </div>\
+                              </div>\
+                              <div class="clear"></div>\
+                            </li>\
+                            <li class="reply-box">\
+                              <ul class="comment-list-reply" id="reply1">\
+                                <li class="comment-line-box">\
                                   <a href="" class="avatar-link">\
                                     <img src="https://avatar.csdn.net/D/F/D/3_lixiang_1989.jpg" class="avatar" alt="">\
                                   </a>\
                                   <div class="right-box">\
                                     <div class="info-box">\
-                                      <span class="name" id="name">已写入</span>\
-                                      <span class="comment" id="comment_content">已写入</span>\
-                                      <span class="date" id="date">已写入</span>\
-                                      <span class="opt-box">\
-                                        <a href="javascript:;" id="showReply" class="float hide">查看回复</a>\
-                                        <a href="javascript:;" id="hideReply" class="float">收起回复</a>\
-                                        <div class="float hide" id="showHide">\
-                                          <a href="javascript:;" class="float reply" id="reply">回复</a>\
-                                          <a href="javascript:;" class="float reply" id="agree">通过</a>\
-                                          <a href="javascript:;" class="float reply" id="disagree">禁用</a>\
-                                          <a href="javascript:;" class="float reply" id="delete">删除</a>\
-                                          <div class="clear"></div>\
-                                        </div>\
-                                      </span>\
+                                      <span class="name">888:</span>\
+                                      <span class="comment">6666</span>\
+                                      <span class="date">(15分钟前</span>\
+                                      <span class="floor-num">#15楼)</span>\
                                     </div>\
                                   </div>\
                                   <div class="clear"></div>\
                                 </li>\
-                                <li class="reply-box">\
-                                  <ul class="comment-list-reply" id="reply1">\
-                                    <li class="comment-line-box">\
-                                      <a href="" class="avatar-link">\
-                                        <img src="https://avatar.csdn.net/D/F/D/3_lixiang_1989.jpg" class="avatar" alt="">\
-                                      </a>\
-                                      <div class="right-box">\
-                                        <div class="info-box">\
-                                          <%if(data.length < 0){%>\
-                                            <span class="name"><%= data[0].id %></span>\
-                                          <%}%>\
-                                          <span class="comment">6666</span>\
-                                          <span class="date">(15分钟前</span>\
-                                          <span class="floor-num">#15楼)</span>\
-                                        </div>\
-                                      </div>\
-                                      <div class="clear"></div>\
-                                    </li>\
-                                    <li class="comment-line-box">\
-                                      <a href="" class="avatar-link">\
-                                        <img src="https://avatar.csdn.net/D/F/D/3_lixiang_1989.jpg" class="avatar" alt="">\
-                                      </a>\
-                                      <div class="right-box">\
-                                        <div class="info-box">\
-                                          <span class="name">孙永镇:</span>\
-                                          <span class="comment">6666</span>\
-                                          <span class="date">(15分钟前</span>\
-                                          <span class="floor-num">#15楼)</span>\
-                                        </div>\
-                                      </div>\
-                                      <div class="clear"></div>\
-                                    </li>\
-                                  </ul>\
+                                <li class="comment-line-box">\
+                                  <a href="" class="avatar-link">\
+                                    <img src="https://avatar.csdn.net/D/F/D/3_lixiang_1989.jpg" class="avatar" alt="">\
+                                  </a>\
+                                  <div class="right-box">\
+                                    <div class="info-box">\
+                                      <span class="name">孙永镇:</span>\
+                                      <span class="comment">6666</span>\
+                                      <span class="date">(15分钟前</span>\
+                                      <span class="floor-num">#15楼)</span>\
+                                    </div>\
+                                  </div>\
+                                  <div class="clear"></div>\
                                 </li>\
                               </ul>\
-                            </div>\
-                          </div>\
-                        </div>',
-                success:function(){
-                  //点击回复评论事件
-                  $("#reply").click(function(){
-                    var reply = layer.open({
-                      type:0,
-                      title:'回复评论',
-                      btn:['提交','取消'],
-                      btn1:function(index, layero){
-                        let replyText = $("#replyText").val();
-                        let to_uid = data.from_uid;
-                        let comment_id = data.id;
-                        $.ajax({
-                          type:'POST',
-                          url:'/index/addReply',
-                          data:{
-                            'comment_id':comment_id,
-                            'content':replyText,
-                            'to_uid':to_uid
-                          },
-                          success:function(data){
-                            if(data === "success"){
-                              layer.confirm('回复成功!',function(index){
-                                layer.close(index);//关闭对话框
-                              })
-                            }else{
-                              layer.confirm('回复失败!',function(index){
-                                layer.close(index);//关闭对话框
-                              })
-                            }
-                          }
-                        })
+                            </li>\
+                          </ul>\
+                        </div>\
+                      </div>\
+                    </div>',
+            success:function(layero, index){
+              //点击回复评论事件
+              $("#reply").click(function(){
+                var reply = layer.open({
+                  type:0,
+                  title:'回复评论',
+                  btn:['提交','取消'],
+                  btn1:function(index, layero){
+                    let replyText = $("#replyText").val();
+                    let to_uid = data.from_uid;
+                    let comment_id = data.id;
+                    $.ajax({
+                      type:'POST',
+                      url:'/index/addReply',
+                      data:{
+                        'comment_id':comment_id,
+                        'content':replyText,
+                        'to_uid':to_uid,
+                        'reply_type':0
                       },
-                      btn2:function(index, layero){
-                        // console.log("999");
-                      },
-                      content:'<div class="login-item">\
-                                <input class="form-text" type="text" placeholder="请输入回复内容"  id="replyText">\
-                              </div>'
-                    });
-                  })
+                      success:function(data){
+                        if(data === "success"){
+                          layer.confirm('回复成功!',function(index){
+                            layer.close(index);//关闭对话框
+                            addReplyDom();//更新回复节点
+                          })
+                        }else{
+                          layer.confirm('回复失败!',function(index){
+                            layer.close(index);//关闭对话框
+                          })
+                        }
+                      }
+                    })
+                  },
+                  btn2:function(index, layero){
+                    // console.log("999");
+                  },
+                  content:'<div class="login-item">\
+                            <input class="form-text" type="text" placeholder="请输入回复内容"  id="replyText">\
+                          </div>'
+                });
+              })
+              addReplyDom();
+              //评论栏禁用和通过按钮的处理
+              if(data.state){
+                $("#disagree").removeClass('hide');
+              }else{
+                $("#agree").removeClass('hide');
+              }
+              //评论后面的按钮处理
 
-                  window.replyEvent = function(test){
-                    console.log(test);
-                    var reply = layer.open({
-                      type:0,
-                      title:'回复评论',
-                      btn:['提交','取消'],
-                      btn1:function(index, layero){
-                        let replyText = $("#replyText").val();
-                        console.log(replyText);
-                        // $.ajax({
-                        //   type:'POST',
-                        //   url:,
-                        //   data:,
-                        // })
-                      },
-                      btn2:function(index, layero){
-                        // console.log("999");
-                      },
-                      content:'<div class="login-item">\
-                                <input class="form-text" type="text" placeholder="请输入回复内容"  id="replyText">\
-                              </div>'
-                    });
+              //添加回复的dom节点
+              function addReplyDom(){
+                $.ajax({
+                  type:'POST',
+                  url:'/index/getReplysByCommentID',
+                  data:{'comment_id':id},
+                  success:function(replyData){
+                    console.log(replyData);
+                    if(replyData.length > 0){
+                      let replyHtml = '';
+                      let html1 = '<li class="comment-line-box">\
+                                    <a href="" class="avatar-link">\
+                                      <img src="https://avatar.csdn.net/D/F/D/3_lixiang_1989.jpg" class="avatar" alt="">\
+                                    </a>\
+                                    <div class="right-box">\
+                                      <div class="info-box">\
+                                        <span class="name">';
+                      let html2 = ':</span>\
+                                        <span class="comment">';
+                      let html3 = '</span>\
+                                        <span class="date">';
+                      let html4 = '</span>\
+                                        <span class="opt-box">\
+                                          <div class="float showHide" id="showHide">\
+                                            <a href="javascript:;" class="float reply" id="reply" onclick="replyEvent('; 
+                      let html41 = ')">回复</a>';
+                      let html5 = '<a href="javascript:;" class="float reply" id="agree">通过</a>';
+                      let html6 = '<a href="javascript:;" class="float reply" id="disagree">屏蔽</a>';
+                      let html7 = '<a href="javascript:;" class="float reply" id="delete" onclick="deleleEvent(';
+                      let html71 = ')">删除</a>\
+                                            <div class="clear"></div>\
+                                          </div>\
+                                        </span>\
+                                      </div>\
+                                    </div>\
+                                    <div class="clear"></div>\
+                                  </li>';
+                      for(let i = 0;i < replyData.length;i++){
+                        let isHtml = '';
+                        if(replyData[i].state){
+                          console.log("0000");
+                          isHtml = html6;
+                        }else{
+                          isHtml = html5;
+                        }
+                        let parmDelete = '\'' + replyData[i].id +'\'';
+                        let parmReply = '\'' + replyData[i].comment_id +'\''+ ','+'\'' + replyData[i].id +'\''+ ',' +'\''+ replyData[i].from_uid +'\'';
+                        let createDate = new Date(replyData[i].createDate).toLocaleDateString()+" "+new Date(replyData[i].createDate).toLocaleTimeString();
+                        let html = html1+replyData[i].from_userName+'@'+replyData[i].to_userName+html2+replyData[i].content+html3+'('+createDate+')'+html4+parmReply+html41+isHtml+html7+parmDelete+html71;
+                        replyHtml += html;
+                      }
+                      $("#reply1").html(replyHtml);
+                    }else{
+                      $("#reply1").html("<div style=\"margin-left:20px;\">暂没有回复!</div>");
+                    }
                   }
+                })        
+              }
+              //删除事件（回复的）
+              window.deleleEvent = function(id){
+                layer.open({
+                  content:'确认删除吗?',
+                  btn:['删除','取消'],
+                  yes:function(index,layero){
+                    $.ajax({
+                      type:'POST',
+                      url:'/index/delReply',
+                      data:{'id':id},
+                      success:function(data){
+                        if(data == "success"){
+                          layer.confirm('删除成功!',function(index){
+                            layer.close(index);//关闭对话框
+                            addReplyDom();//更新回复节点
+                          })
+                        }else{
+                          layer.confirm('删除失败!',function(index){
+                            layer.close(index);//关闭对话框
+                          })
+                        }
+                      }
+                    })
+                  },
+                  btn2:function(index,layero){
+                    layer.close(index);
+                  }
+                })
+                console.log(id);
+              }
+              //回复事件（回复的）
+              window.replyEvent = function(comment_id,reply_id,to_uid){
+                //console.log(comment_id);
+                //console.log(reply_id);
+                //console.log(to_uid);
+                var reply = layer.open({
+                  type:0,
+                  title:'回复评论',
+                  btn:['提交','取消'],
+                  btn1:function(index, layero){
+                    let replyText = $("#replyText1").val();
+                    console.log(replyText);
+                    $.ajax({
+                      type:'POST',
+                      url:'/index/addReply',
+                      data:{'comment_id':comment_id,'reply_id':reply_id,'to_uid':to_uid,'content':replyText,'reply_type':1},
+                      success:function(data){
+                        if(data === "success"){
+                          layer.confirm('回复成功!',function(index){
+                            layer.close(index);//关闭对话框
+                            addReplyDom();//更新回复节点
+                          })
+                        }else if(data === "error"){
+                          layer.confirm('您不能向自己回复!',function(index){
+                            layer.close(index);//关闭对话框
+                          })
+                        }else{
+                          layer.confirm('回复失败!',function(index){
+                            layer.close(index);//关闭对话框
+                          })
+                        }
+                      }
+                    })
+                  },
+                  btn2:function(index, layero){
+                    // console.log("999");
+                  },
+                  content:'<div class="login-item">\
+                            <input class="form-text" type="text" placeholder="请输入回复内容"  id="replyText1">\
+                          </div>'
+                });
+              }
 
-                  console.log(data);
-                  $("#title-article").text(data.articleName);
-                  $("#author").text(data.articleAuthor);
-                  $("#article-content").html(decodeURIComponent(data.article_content));
-                  $("#name").text(data.commentUser+":");
-                  $("#comment_content").text(data.comment_content);
-                  $("#date").text('('+data.createDate+')');
+              console.log(data);
+              $("#title-article").text(data.articleName);
+              $("#author").text(data.articleAuthor);
+              $("#article-content").html(decodeURIComponent(data.article_content));
+              $("#name").text(data.commentUser+":");
+              $("#comment_content").text(data.comment_content);
+              $("#date").text('('+data.createDate+')');
 
-                }
-              });
+            }
+          });
               
 
-              //查看回复事件
-              $("#showReply").click(function(){
-                $("#reply1").css('display','block');
-                $("#hideReply").css('display','block');
-                $("#showReply").css('display','none');
-                //console.log("666");
-              })
-              //收起回复事件
-              $("#hideReply").click(function(){
-                $("#reply1").css('display','none');
-                $("#hideReply").css('display','none');
-                $("#showReply").css('display','block');
-              })
-              //出现回复两字
-              $("#comment1").mouseenter(function(){
-                $("#showHide").removeClass('hide');
-              })
-              //隐藏回复两字
-              $("#comment1").mouseleave(function(){
-                $("#showHide").addClass('hide');
-              })
-            }
+          //查看回复事件
+          $("#showReply").click(function(){
+            $("#reply1").css('display','block');
+            $("#hideReply").css('display','block');
+            $("#showReply").css('display','none');
+            //console.log("666");
+          })
+          //收起回复事件
+          $("#hideReply").click(function(){
+            $("#reply1").css('display','none');
+            $("#hideReply").css('display','none');
+            $("#showReply").css('display','block');
           })
 
-
-          // $.ajax({
-          //   type:"POST",
-          //   url:"/index/getTypesOneData",
-          //   sync:true,
-          //   data:{"id":id},
-          //   success:function(data){
-          //     $("#typeName").val(data[0].typeName);
-          //     $("#updatePeople").val(data[0].updatePeople);
-          //     $("#state").val(data[0].state);
-          //     $("#remark").val(data[0].remark);
-          //     //console.log(data);
-          //   }
-          // })
         }
       });
+
       //监听头部工具栏事件
       // table.on('toolbar(manager)',function(obj){
       //   switch(obj.event){
