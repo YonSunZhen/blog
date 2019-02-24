@@ -66,28 +66,25 @@
         let tr = obj.tr;//获取当前行tr的DOM对象
         //console.log(data);
         if(layEvent === 'del'){
-          // $.ajax({
-          //   type:'GET',
-          //   url:'/index/comment',
-          //   success:function(data){
-          //     console.log("888");
-          //   }
-          // })
           console.log(obj);
           layer.open({
-            content:'确认删除吗?',
+            content:'确认删除吗?(此评论下的所有回复也将被删除)',
             btn:['删除','取消'],
             yes:function(index,layero){
               $.ajax({
                 type:'POST',
-                url:'/index/deleteType',
+                url:'/index/delComment',
                 data:{'id':id},
                 success:function(data){
-                  if(data === "success"){
-                    layer.close(index);
-                    obj.del();//删除对应行（tr）的DOM结构，并更新缓存
+                  if(data == "success"){
+                    layer.confirm('删除成功!',function(index){
+                      layer.close(index);//关闭对话框
+                      location.reload();
+                    })
                   }else{
-                    alert("删除失败");
+                    layer.confirm('删除失败!',function(index){
+                      layer.close(index);//关闭对话框
+                    })
                   }
                 }
               })
@@ -138,8 +135,8 @@
                                     <a href="javascript:;" id="hideReply" class="float">收起回复</a>\
                                     <div class="float showHide" id="showHide">\
                                       <a href="javascript:;" class="float reply" id="reply">回复</a>\
-                                      <a href="javascript:;" class="float reply hide" id="agree">通过</a>\
-                                      <a href="javascript:;" class="float reply hide" id="disagree">屏蔽</a>\
+                                      <a href="javascript:;" class="float reply hide" id="agree" onclick="agree(\'1\')">通过</a>\
+                                      <a href="javascript:;" class="float reply hide" id="disagree" onclick="agree(\'0\')">屏蔽</a>\
                                       <a href="javascript:;" class="float reply" id="delete">删除</a>\
                                       <div class="clear"></div>\
                                     </div>\
@@ -185,7 +182,7 @@
                       </div>\
                     </div>',
             success:function(layero, index){
-              //点击回复评论事件
+              //回复事件(评论的)
               $("#reply").click(function(){
                 var reply = layer.open({
                   type:0,
@@ -227,14 +224,74 @@
                 });
               })
               addReplyDom();
+              isShowBtnDisagree(data.state);
               //评论栏禁用和通过按钮的处理
-              if(data.state){
-                $("#disagree").removeClass('hide');
-              }else{
-                $("#agree").removeClass('hide');
+              function isShowBtnDisagree(state){
+                if(state === 1){
+                  //console.log("666");
+                  $("#disagree").css('display','block');
+                  $("#agree").css('display','none');
+                }else if(state === 0){
+                  //console.log("777");
+                  $("#agree").css('display','block');
+                  $("#disagree").css('display','none');
+                }
               }
-              //评论后面的按钮处理
-
+              //删除事件(评论的)
+              $("#delete").click(function(){
+                layer.open({
+                  content:'确认删除吗?(此评论下的所有回复也将被删除)',
+                  btn:['删除','取消'],
+                  yes:function(index,layero){
+                    $.ajax({
+                      type:'POST',
+                      url:'/index/delComment',
+                      data:{'id':id},
+                      success:function(data){
+                        if(data == "success"){
+                          layer.confirm('删除成功!',function(index){
+                            layer.close(index);//关闭对话框
+                            location.reload();
+                          })
+                        }else{
+                          layer.confirm('删除失败!',function(index){
+                            layer.close(index);//关闭对话框
+                          })
+                        }
+                      }
+                    })
+                  },
+                  btn2:function(index,layero){
+                    layer.close(index);
+                  }
+                })
+              })
+              //屏蔽通过事件(评论的),更改comments表的state
+              window.agree = function(state){
+                $.ajax({
+                  type:'POST',
+                  url:'/index/updateCommentState',
+                  data:{'id':id,'state':state},
+                  success:function(data){
+                    if(data == "success"){
+                      layer.confirm('操作成功!',function(index){
+                        layer.close(index);//关闭对话框
+                        if(state == 1){
+                          //console.log("111");
+                          isShowBtnDisagree(1);//更新评论栏的屏蔽和通过按钮
+                        }else{
+                          //console.log("222");
+                          isShowBtnDisagree(0);//更新评论栏的屏蔽和通过按钮
+                        }
+                      })
+                    }else{
+                      layer.confirm('操作失败!',function(index){
+                        layer.close(index);//关闭对话框
+                      })
+                    }
+                  }
+                })
+              }
               //添加回复的dom节点
               function addReplyDom(){
                 $.ajax({
@@ -261,8 +318,10 @@
                                           <div class="float showHide" id="showHide">\
                                             <a href="javascript:;" class="float reply" id="reply" onclick="replyEvent('; 
                       let html41 = ')">回复</a>';
-                      let html5 = '<a href="javascript:;" class="float reply" id="agree">通过</a>';
-                      let html6 = '<a href="javascript:;" class="float reply" id="disagree">屏蔽</a>';
+                      let html5 = '<a href="javascript:;" class="float reply" id="agree" onclick="disagreeEvent(';
+                      let html51 = ')">通过</a>';
+                      let html6 = '<a href="javascript:;" class="float reply" id="disagree" onclick="disagreeEvent(';
+                      let html61 = ')">屏蔽</a>';
                       let html7 = '<a href="javascript:;" class="float reply" id="delete" onclick="deleleEvent(';
                       let html71 = ')">删除</a>\
                                             <div class="clear"></div>\
@@ -274,11 +333,12 @@
                                   </li>';
                       for(let i = 0;i < replyData.length;i++){
                         let isHtml = '';
-                        if(replyData[i].state){
-                          console.log("0000");
-                          isHtml = html6;
-                        }else{
-                          isHtml = html5;
+                        if(replyData[i].state == 1){
+                          //console.log("0000");
+                          isHtml = html6 + '\'' + replyData[i].id + '\'' + ',' + '\'' + 0 + '\'' + html61;
+                        }else if(replyData[i].state == 0){
+                          //console.log("1111");
+                          isHtml = html5 + '\'' + replyData[i].id + '\''+ ',' + '\'' + 1 + '\'' + html51;
                         }
                         let parmDelete = '\'' + replyData[i].id +'\'';
                         let parmReply = '\'' + replyData[i].comment_id +'\''+ ','+'\'' + replyData[i].id +'\''+ ',' +'\''+ replyData[i].from_uid +'\'';
@@ -321,7 +381,6 @@
                     layer.close(index);
                   }
                 })
-                console.log(id);
               }
               //回复事件（回复的）
               window.replyEvent = function(comment_id,reply_id,to_uid){
@@ -365,6 +424,28 @@
                           </div>'
                 });
               }
+              //屏蔽通过事件(回复的),更改replys表的state
+              window.disagreeEvent = function(id,state){
+                console.log(id);
+                console.log(state);
+                $.ajax({
+                  type:'POST',
+                  url:'/index/updateReplyState',
+                  data:{'id':id,'state':state},
+                  success:function(data){
+                    if(data == "success"){
+                      layer.confirm('操作成功!',function(index){
+                        layer.close(index);//关闭对话框
+                        addReplyDom();//更新回复节点
+                      })
+                    }else{
+                      layer.confirm('操作失败!',function(index){
+                        layer.close(index);//关闭对话框
+                      })
+                    }
+                  }
+                })
+              }
 
               console.log(data);
               $("#title-article").text(data.articleName);
@@ -374,6 +455,10 @@
               $("#comment_content").text(data.comment_content);
               $("#date").text('('+data.createDate+')');
 
+            },
+            end:function(){
+              //location.reload();
+              table1.reload();//关闭窗口时刷新表格数据
             }
           });
               

@@ -18,7 +18,7 @@ let addReply = (id,comment_id,reply_id,reply_type,content,state,from_uid,to_uid,
 let getReplysByCommentID = (comment_id) => {
   let _sql = `select one.*,Managers.userName as to_userName from 
                 (select r.*,m.userName as from_userName from Replys r left JOIN Managers m on r.from_uid = m.id where comment_id="${comment_id}") 
-              one left JOIN Managers on one.to_uid = Managers.id ORDER BY createDate DESC`;//按createDate降序
+              one left JOIN Managers on one.to_uid = Managers.id ORDER BY createDate`;//按createDate降序
   return apiModel.query(_sql);
 }
 //根据id删除一条回复
@@ -26,9 +26,15 @@ let delReply = (id) => {
   let _sql = `delete from Replys where id="${id}";`
   return apiModel.query(_sql);
 }
+//根据id更改state 
+let updateReplyState = (id,state) => {
+  let _sql = `update Replys set state="${state}" where id="${id}";`
+  return apiModel.query(_sql); 
+}
 
 module.exports = {
   addReply,
   getReplysByCommentID,
-  delReply
+  delReply,
+  updateReplyState
 }

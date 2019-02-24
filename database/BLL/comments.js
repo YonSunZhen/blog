@@ -12,8 +12,30 @@ let getCommentsByUser = (cb,userName) => {
     return cb(result);
   })
 }
+//根据id删除一条评论
+let delComment = (cb,id) => {
+  apiModel.delComment(id).then((result) => {
+    if(result.affectedRows > 0){
+      return cb("true");
+    }else{
+      return cb("false");
+    }
+  })
+}
+//根据id更新一条评论的state
+let updateCommentState = (cb,id,state) => {
+  apiModel.updateCommentState(id,state).then((result) => {
+    if(result.affectedRows > 0){
+      return cb("true");
+    }else{
+      return cb("false");
+    }
+  })
+}
 
 module.exports = {
   getCommentsAllData,
-  getCommentsByUser
+  getCommentsByUser,
+  delComment,
+  updateCommentState
 }

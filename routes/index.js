@@ -321,6 +321,29 @@ router.get('/getCommentsAllData',function(req,res,next){
     },req.session.mName)
   }
 })
+//Comments表根据id删除一条评论
+router.post('/delComment',function(req,res,next){
+  let id = req.body.id;
+  commentsBll.delComment(function(result){
+    if(result == "true"){
+      res.send("success");
+    }else{
+      res.send("fail");
+    }
+  },id)
+})
+//Comments表更改一条评论的状态
+router.post('/updateCommentState',function(req,res,next){
+  let id = req.body.id;
+  let state = req.body.state;
+  commentsBll.updateCommentState(function(result){
+    if(result === "true"){
+      res.send("success");
+    }else{
+      res.send("fail");
+    }
+  },id,state)
+})
 
 //Replys表添加一条数据
 router.post('/addReply',function(req,res,next){
@@ -332,18 +355,18 @@ router.post('/addReply',function(req,res,next){
     let content = req.body.content;
     let to_uid = req.body.to_uid;
     let reply_type = req.body.reply_type;
-    console.log("234");
-    console.log(reply_type);
+    //console.log("234");
+    //console.log(reply_type);
     let id = uuidv1();
     let reply_id;
     if(reply_type == '1'){//reply_type为1时，表示回复的是回复，reply_id等于回复的id
       reply_id = req.body.reply_id;
     }else if(reply_type == '0'){//reply_type为0时，表示回复的是评论，reply_id等于评论的id
-      console.log("出错了");
+      //console.log("出错了");
       reply_id = req.body.comment_id;
     }
-    console.log("23456");
-    console.log(reply_id);
+    //console.log("23456");
+    //console.log(reply_id);
     let state = 1;
     let createDate = time.format(new Date(), 'YYYY-MM-DD HH:mm:ss');
     //当回复人和被回复人一样时
@@ -363,10 +386,10 @@ router.post('/addReply',function(req,res,next){
 //Replys表获取一条评论的所有回复
 router.post('/getReplysByCommentID',function(req,res,next){
   let comment_id = req.body.comment_id;
-  console.log(comment_id);
+  //console.log(comment_id);
   replysBll.getReplysByCommentID(function(result){
-    console.log("2222");
-    console.log(result);
+    //console.log("2222");
+    //console.log(result);
     res.send(result);
   },comment_id)
 })
@@ -380,6 +403,18 @@ router.post('/delReply',function(req,res,next){
       res.send("fail");
     }
   },id)
+})
+//Replys表更改状态
+router.post('/updateReplyState',function(req,res,next){
+  let id = req.body.id;
+  let state = req.body.state;
+  replysBll.updateReplyState(function(result){
+    if(result === "true"){
+      res.send("success");
+    }else{
+      res.send("fail");
+    }
+  },id,state)
 })
 
 //iframe框架的请求

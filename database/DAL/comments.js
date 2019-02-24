@@ -25,7 +25,21 @@ let getCommentsByUser = (userName) => {
 // let getCommentsAllData1 = () => {
 //   let _sql = `select distinct article_id from Comments one left JOIN ;`
 // }
+
+//根据id删除一条评论
+let delComment = (id) => {
+  let _sql = `delete from Comments where id="${id}";`
+  return apiModel.query(_sql);
+}
+//根据id更新一条评论的state
+let updateCommentState = (id,state) => {
+  let _sql = `update Comments set state="${state}" where id="${id}";`
+  return apiModel.query(_sql); 
+}
+
 module.exports = {
   getCommentsAllData,
-  getCommentsByUser
+  getCommentsByUser,
+  delComment,
+  updateCommentState
 }

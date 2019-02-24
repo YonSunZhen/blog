@@ -26,9 +26,20 @@ let delReply = (cb,id) => {
     }
   })
 }
+//根据id更改state
+let updateReplyState = (cb,id,state) => {
+  apiModel.updateReplyState(id,state).then((result) => {
+    if(result.affectedRows > 0){
+      return cb("true");
+    }else{
+      return cb("false");
+    }
+  })
+}
 
 module.exports = {
   addReply,
   getReplysByCommentID,
-  delReply
+  delReply,
+  updateReplyState
 }
