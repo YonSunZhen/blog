@@ -37,6 +37,11 @@ router.get('/', function(req, res, next) {
 });
 //Managers获取数据
 router.get('/getManagersAllData',function(req,res,next){
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Credentials", true);
+  res.header("Access-Control-Allow-Headers","Content-Type,Origin,Accept");
+  res.header("Access-Control-Allow-Methods", "POST,GET,TRACE,OPTIONS");
+  res.header("X-Powered-By", "3.2.1");
   managersBll.getManagersAllData(function(result){
     let code = 0;
     let message = "";
@@ -187,6 +192,7 @@ router.post('/addOneArticle',function(req,res,next){
       state = 0;//普通管理添加的文章由超管审批是否通过
     }
     let createDate = time.format(new Date(), 'YYYY-MM-DD HH:mm:ss');
+    let updateDate = time.format(new Date(), 'YYYY-MM-DD HH:mm:ss');
     let createPeople = result[0].userName;
     articlesBll.addArticle(function(result){
       if(result === "true"){
@@ -195,7 +201,7 @@ router.post('/addOneArticle',function(req,res,next){
       }else{
         res.send("fail");
       }
-    },id,mid,articleName,tid,content,state,createDate,createPeople)
+    },id,mid,articleName,tid,content,state,createDate,createPeople,updateDate)
     //console.log(result[0].id); 
   },req.session.mName,req.session.mPassWord)
 })

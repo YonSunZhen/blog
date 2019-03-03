@@ -1,7 +1,7 @@
 var apiModel = require("../DbHelper");
 
 //增加一篇文章
-let addArticle = (id,mid,articleName,tid,content,state,createDate,createPeople) => {
+let addArticle = (id,mid,articleName,tid,content,state,createDate,createPeople,updateDate) => {
   let _sql = `insert into articles set 
               id="${id}",
               mid="${mid}",
@@ -10,6 +10,7 @@ let addArticle = (id,mid,articleName,tid,content,state,createDate,createPeople) 
               content="${content}",
               state="${state}",
               createDate="${createDate}",
+              updateDate="${updateDate}",
               createPeople="${createPeople}"`;
   return apiModel.query(_sql);
 }
@@ -24,6 +25,13 @@ let getArticlesDataByUser = (userName) => {
   let _sql = `select a.id,a.mid,a.articleName,a.content,a.state,a.createDate,a.createPeople,a.updateDate,a.updatePeople,a.readCount,b.typeName
               from Articles a left JOIN Types b on a.tid=b.id
               where a.createPeople="${userName}";`
+  return apiModel.query(_sql);
+}
+//获取Articles部分数据(state为1,普通用户使用)
+let getArticlesDataByState = (limit) => {
+  let _sql = `select a.id,a.mid,a.articleName,a.content,a.state,a.createDate,a.createPeople,a.updateDate,a.updatePeople,a.readCount,b.typeName
+              from Articles a left JOIN Types b on a.tid=b.id
+              where a.state=1 ORDER BY a.updateDate DESC limit 0,${limit};`//降序,查找0到3的数据
   return apiModel.query(_sql);
 }
 //根据id删除一条数据
@@ -56,5 +64,6 @@ module.exports = {
   getArticlesDataByUser,
   delArticlesOneData,
   updateArticleOneData,
-  getArticleOneData
+  getArticleOneData,
+  getArticlesDataByState
 }

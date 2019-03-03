@@ -1,8 +1,8 @@
 var apiModel = require("../DAL/articles");
 
 //增加一篇文章
-let addArticle = (cb,id,mid,articleName,tid,content,state,createDate,createPeople) => {
-  apiModel.addArticle(id,mid,articleName,tid,content,state,createDate,createPeople).then((result) => {
+let addArticle = (cb,id,mid,articleName,tid,content,state,createDate,createPeople,updateDate) => {
+  apiModel.addArticle(id,mid,articleName,tid,content,state,createDate,createPeople,updateDate).then((result) => {
     if(result.affectedRows > 0){
       return cb("true");
     }else{
@@ -19,6 +19,12 @@ let getArticlesAllData = (cb) => {
 //获取Articles部分数据(普管显示使用的)
 let getArticlesDataByUser = (cb,userName) => {
   apiModel.getArticlesDataByUser(userName).then((result) => {
+    return cb(result);
+  })
+}
+//获取Articles部分数据(state为1的数据,普通用户使用)
+let getArticlesDataByState = (cb,limit) => {
+  apiModel.getArticlesDataByState(limit).then((result) => {
     return cb(result);
   })
 }
@@ -55,5 +61,6 @@ module.exports = {
   getArticlesDataByUser,
   delArticlesOneData,
   updateArticleOneData,
-  getArticleOneData
+  getArticleOneData,
+  getArticlesDataByState
 }

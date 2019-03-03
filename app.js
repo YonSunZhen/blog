@@ -5,9 +5,9 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var session = require('express-session');
 
-var indexRouter = require('./routes/index');
-// var usersRouter = require('./routes/users');
-var adminRouter = require('./routes/admin');
+var indexRouter = require('./routes/index');//后台管理接口
+var adminRouter = require('./routes/admin');//后台登录注册接口
+var blogRouter = require('./routes/blog');//前台博客展示模块
 
 var app = express();
 
@@ -26,6 +26,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', adminRouter);
 app.use('/index', indexRouter);
+app.use('/blog',blogRouter);
 // app.use('/users', usersRouter);
 
 // catch 404 and forward to error handler

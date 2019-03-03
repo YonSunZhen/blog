@@ -82,6 +82,14 @@ import articleList from './components/articleList.vue'
 
 export default {
   name: 'app',
+  // created() {
+  //   this.handleScroll();
+  // },
+  // methods: {
+  //   handleScroll() {
+  //     window.addEventListener('scroll',()=>{console.log(window.scrollY)});
+  //   }
+  // },
   components: {
     articleList
   }
