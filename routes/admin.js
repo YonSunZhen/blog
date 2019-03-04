@@ -1,8 +1,8 @@
 var express = require('express');
 var router = express.Router();
 var time = require('silly-datetime');
-var managersModel = require('../database/Model/managers');
-var managersBll = require('../database/BLL/managers');
+var usersModel = require('../database/Model/users');
+var usersBll = require('../database/BLL/users');
 var uuidv1 = require('uuid/v1');
 
 
@@ -17,7 +17,12 @@ router.post('/register', function(req, res, next) {
   let userName = req.body.username;
   let passWord = req.body.password;
   let mobile = req.body.mobile;
-  let power = req.body.power;
+  let power;
+  if(req.body.power){
+    power = req.body.power;
+  }else{
+    power = null;
+  }
   let remark = req.body.remark;
   let state;
   if(req.body.state){
@@ -26,6 +31,7 @@ router.post('/register', function(req, res, next) {
     state = 0;//默认状态为0(未通过)
   }
   let createDate = time.format(new Date(), 'YYYY-MM-DD HH:mm:ss');
+  let type = req.body.type;//0表示管理员，1表示普通用户
   // let model = {
   //   "userName":userName,
   //   "passWord":passWord,
@@ -33,21 +39,21 @@ router.post('/register', function(req, res, next) {
   //   "mobile":mobile,
   //   "createDate":createDate
   // };
-  let userData = new managersModel.Managers(userName,mobile,state,power,remark,passWord,createDate,id);
+  let userData = new usersModel.Users(userName,mobile,state,power,remark,passWord,createDate,id,type);
   //验证用户是否已存在
-  managersBll.isExist(function(data){
+  usersBll.isExist(function(data){
     if(data === "true"){
       res.send("isExist");
     }else{
-      managersBll.addManager(function(data){
+      usersBll.addUser(function(data){
         if(data === "true"){
           res.send("success");
         }else{
           res.send("fail");
         }
-      },userData)
+      },userData,type)
     }
-  },userName)
+  },userName,type)
 });
 //登录路由
 router.post('/login', function(req, res, next) {
@@ -65,13 +71,17 @@ router.post('/login', function(req, res, next) {
   if(req.session.mPassWord){
     req.session.mPassWors = null;
   }
+  if(req.session.mType){
+    req.session.mType = null;
+  }
   //重新获取数据判断登录
   let userName = req.body.username;
   let password = req.body.password;
-  managersBll.findManager(function(data){
+  let type = req.body.type;
+  usersBll.findUser(function(data){
     if(data === "true"){
       //更新登录时间，上次登陆时间和登陆次数
-      managersBll.getLoginDateAndLoginTimes(function(data){
+      usersBll.getLoginDateAndLoginTimes(function(data){
         console.log(data[0]);
         let loginDate = time.format(new Date(), 'YYYY-MM-DD HH:mm:ss');
         //对登陆时间进行格式化
@@ -79,7 +89,7 @@ router.post('/login', function(req, res, next) {
         //console.log(lastLoginDate);
         let loginTimes = data[0].loginTimes + 1;
         //将数据更新到用户
-        managersBll.updateLogin(function(data){
+        usersBll.updateLogin(function(data){
           if(data === "true"){
             console.log("更新登录成功");
           }
@@ -87,9 +97,10 @@ router.post('/login', function(req, res, next) {
       },userName,password)
 
       req.session.logined = true;
-      //记录登录的用户名和密码
+      //记录登录的用户名和密码和用户类型
       req.session.mName = userName;
       req.session.mPassWord = password;
+      req.session.mType = type;
       if(userName === "superAdmin"){
         req.session.username = "superAdmin";
       }
@@ -98,7 +109,7 @@ router.post('/login', function(req, res, next) {
     }else{
       res.send("fail");
     }
-  },userName,password)
+  },userName,password,type)
   // if(apiModel.findUser(userName,password) === "true"){
   //   console.log(apiModel.findUser(userName,password));
   //   res.send("登录成功");

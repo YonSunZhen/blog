@@ -17,14 +17,14 @@ let addArticle = (id,mid,articleName,tid,content,state,createDate,createPeople,u
 //获取Articles所有数据(超管显示使用的,连接types表,获得typeName)
 let getArticlesAllData = () => {
   let _sql = `select a.id,a.mid,a.articleName,a.content,a.state,a.createDate,a.createPeople,a.updateDate,a.updatePeople,a.readCount,b.typeName
-              from Articles a left JOIN Types b on a.tid=b.id;`
+              from Articles a left JOIN Types b on a.tid=b.id ORDER BY updateDate DESC;`
   return apiModel.query(_sql);
 }
 //获取Articles部分数据(普管显示使用的，连接types表,获得typeName)
 let getArticlesDataByUser = (userName) => {
   let _sql = `select a.id,a.mid,a.articleName,a.content,a.state,a.createDate,a.createPeople,a.updateDate,a.updatePeople,a.readCount,b.typeName
               from Articles a left JOIN Types b on a.tid=b.id
-              where a.createPeople="${userName}";`
+              where a.createPeople="${userName}" ORDER BY updateDate DESC;`
   return apiModel.query(_sql);
 }
 //获取Articles部分数据(state为1,普通用户使用)

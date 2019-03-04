@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
-var managersModel = require('../database/Model/managers');
-var managersBll = require('../database/BLL/managers');
+var usersModel = require('../database/Model/users');
+var usersBll = require('../database/BLL/users');
 var typesBll = require('../database/BLL/types');
 var articlesBll = require('../database/BLL/articles');
 var commentsBll = require('../database/BLL/comments');
@@ -35,14 +35,14 @@ router.get('/', function(req, res, next) {
     res.redirect('/');
   }
 });
-//Managers获取数据
-router.get('/getManagersAllData',function(req,res,next){
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Credentials", true);
-  res.header("Access-Control-Allow-Headers","Content-Type,Origin,Accept");
-  res.header("Access-Control-Allow-Methods", "POST,GET,TRACE,OPTIONS");
-  res.header("X-Powered-By", "3.2.1");
-  managersBll.getManagersAllData(function(result){
+//Users获取数据(管理员管理模块)
+router.get('/getUsersAllDataType0',function(req,res,next){
+//   res.header("Access-Control-Allow-Origin", "*");
+//   res.header("Access-Control-Allow-Credentials", true);
+//   res.header("Access-Control-Allow-Headers","Content-Type,Origin,Accept");
+//   res.header("Access-Control-Allow-Methods", "POST,GET,TRACE,OPTIONS");
+//   res.header("X-Powered-By", "3.2.1");
+  usersBll.getUsersAllDataType0(function(result){
     let code = 0;
     let message = "";
     let count = result.length;
@@ -56,10 +56,47 @@ router.get('/getManagersAllData',function(req,res,next){
     res.json(obj);
   })
 })
-//Managers删除一条数据
-router.post('/delManagersOneData',function(req,res,next){//req,res,next这几个参数的位置不可以变
+//Users获取数据(普通用户管理模块)
+router.get('/getUsersAllDataType1',function(req,res,next){
+  usersBll.getUsersAllDataType1(function(result){
+    let code = 0;
+    let message = "";
+    let count = result.length;
+    let data = result;
+    let obj = {
+      "code":0,
+      "msg":"",
+      "count":count,
+      "data":data
+    };
+    res.json(obj);
+  })
+})
+//Users获取数据(管理员管理模块)
+router.get('/getUsersAllData',function(req,res,next){
+//   res.header("Access-Control-Allow-Origin", "*");
+//   res.header("Access-Control-Allow-Credentials", true);
+//   res.header("Access-Control-Allow-Headers","Content-Type,Origin,Accept");
+//   res.header("Access-Control-Allow-Methods", "POST,GET,TRACE,OPTIONS");
+//   res.header("X-Powered-By", "3.2.1");
+  usersBll.getUsersAllDataType0(function(result){
+    let code = 0;
+    let message = "";
+    let count = result.length;
+    let data = result;
+    let obj = {
+      "code":0,
+      "msg":"",
+      "count":count,
+      "data":data
+    };
+    res.json(obj);
+  })
+})
+//Users删除一条数据
+router.post('/delUsersOneData',function(req,res,next){//req,res,next这几个参数的位置不可以变
   let id = req.body.id;
-  managersBll.delManagersOneData(function(result){
+  usersBll.delUsersOneData(function(result){
     if(result === "true"){
       res.send("success");
     }else{
@@ -67,17 +104,22 @@ router.post('/delManagersOneData',function(req,res,next){//req,res,next这几个
     }
   },id)
 })
-//更改Managers中的一条数据
-router.post('/updataManagersOneData',function(req,res,next){
+//更改Users中的一条数据
+router.post('/updataUsersOneData',function(req,res,next){
   let id = req.body.id;
   let userName = req.body.username;
   let state = Number(req.body.state);
   let mobile = req.body.mobile;
-  let power = req.body.power;
+  let power;
+  if(req.body.power){
+    power = req.body.power;
+  }else{
+    power = null;
+  }
   let remark = req.body.remark;
-  let userData = new managersModel.Managers(userName,mobile,state,power,remark);
+  let userData = new usersModel.Users(userName,mobile,state,power,remark);
   //console.log(userData);
-  managersBll.updataManagersOneData(function(result){
+  usersBll.updataUsersOneData(function(result){
     if(result === "true"){
       res.send("success");
     }else{
@@ -85,10 +127,10 @@ router.post('/updataManagersOneData',function(req,res,next){
     }
   },userData,id)
 })
-//根据id获取模型(Managers表)
+//根据id获取模型(Users表)
 router.post('/getModel',function(req,res,next){
   let id = req.body.id;
-  managersBll.getModel(function(result){
+  usersBll.getModel(function(result){
     // console.log("haha");
     res.send(result);
   },id)
@@ -96,9 +138,10 @@ router.post('/getModel',function(req,res,next){
 
 //types表查询所有数据
 router.get('/getTypesAllData',function(req,res,next){
-  console.log("7777");
-  console.log(req.session.mName);
-  console.log(req.session.mPassWord);
+  //console.log("7777");
+  //console.log(req.session.mName);
+  //console.log(req.session.mPassWord);
+  //console.log(req.session.mType);
   typesBll.getTypesAllData(function(result){
     let code = 0;
     let message = "";
@@ -116,10 +159,15 @@ router.get('/getTypesAllData',function(req,res,next){
 //types表增加一条数据
 router.post('/addType',function(req,res,next){
   let typeName = req.body.typeName;
-  let createPeople = req.body.createPeople;
+  let createPeople = req.session.mName;
   let createDate = time.format(new Date(), 'YYYY-MM-DD HH:mm:ss');
-  let remark = req.body.remark;
-  let state = 0;//添加时状态默认为不通过
+  let state;
+  if(createPeople === "superAdmin"){
+    state = 1;
+  }else{
+    state = 0;
+  }
+  let remark = req.body.remark;//添加时状态默认为不通过
   typesBll.addType(function(result){
     if(result === "true"){
       res.send("success");
@@ -150,9 +198,14 @@ router.post('/getTypesOneData',function(req,res,next){
 router.post('/updateType',function(req,res,next){
   let id = req.body.id;
   let typeName = req.body.typeName;
-  let updatePeople = req.body.updatePeople;
+  let updatePeople = req.session.mName;
   let updateDate = time.format(new Date(), 'YYYY-MM-DD HH:mm:ss');
-  let state = req.body.state;
+  let state;
+  if(req.session.mName === "superAdmin"){
+    state = req.body.state;
+  }else{
+    state = 0;
+  }
   let remark = req.body.remark;
   typesBll.updateType(function(result){
     if(result === "true"){
@@ -179,7 +232,7 @@ router.get('/getTypesAdopt',function(req,res,next){
 
 //articles表增加一条数据
 router.post('/addOneArticle',function(req,res,next){
-  managersBll.findManagerId(function(result){
+  usersBll.findUserId(function(result){
     let id = uuidv1();
     let mid = result[0].id;
     let articleName = req.body.articleName;
@@ -353,7 +406,7 @@ router.post('/updateCommentState',function(req,res,next){
 
 //Replys表添加一条数据
 router.post('/addReply',function(req,res,next){
-  managersBll.findManagerId(function(result1){
+  usersBll.findUserId(function(result1){
     let from_uid = result1[0].id;
     let comment_id = req.body.comment_id;
     //console.log("2345");
@@ -430,6 +483,9 @@ router.get('/Mindex', function(req, res, next) {
 router.get('/manager', function(req, res, next) {
   res.render('manager', { title: 'Hey', message: '这是用户管理页面'});
 });
+router.get('/user', function(req, res, next) {
+  res.render('user', { title: 'Hey', message: '这是用户管理页面'});
+});
 router.get('/addArticle', function(req, res, next) {
   let data = [];
   //如果是超管登录即可获取所有的文章类型
@@ -445,7 +501,7 @@ router.get('/addArticle', function(req, res, next) {
       res.render('addArticle', {data:data});
     })
   }else{//普管只能获取他特有的权限
-    managersBll.getPowerByUser(function(result1){
+    usersBll.getPowerByUser(function(result1){
       //将普管的power字段由字符串转化为数组
       if(result1[0].power.indexOf(",") == -1){
         typesBll.getTypesOneData(function(result){
@@ -503,7 +559,7 @@ router.get('/manageArticle', function(req, res, next) {
       res.render('manageArticle', {data:data});
     })
   }else{//普管只能获取他特有的权限
-    managersBll.getPowerByUser(function(result1){
+    usersBll.getPowerByUser(function(result1){
       //将普管的power字段由字符串转化为数组
       if(result1[0].power.indexOf(",") == -1){
         typesBll.getTypesOneData(function(result){

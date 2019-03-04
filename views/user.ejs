@@ -10,7 +10,7 @@
   <title>管理员管理</title>
 </head>
 <body>
-  <table id="manager" lay-filter="manager"></table>
+  <table id="user" lay-filter="user"></table>
   <script src="/javascripts/layui/layui.js"></script>
   <!-- 右边操作 -->
   <script type="text/html" id="bar">
@@ -20,7 +20,7 @@
   <!-- 头部操作 -->
   <script type="text/html" id="toolbar">
     <div class="layui-btn-container">
-      <button class="layui-btn layui-btn-sm" lay-event="addUser">添加管理员</button>
+      <button class="layui-btn layui-btn-sm" lay-event="addUser">添加普通用户</button>
     </div>
   </script>
   <script>
@@ -35,17 +35,16 @@
       var selectM = layui.selectM;
       //第一个实例
       var table1 = table.render({
-        elem: '#manager',
+        elem: '#user',
         width:1150,
         height: 540,
-        url: '/index/getUsersAllDataType0' ,//数据接口
+        url: '/index/getUsersAllDataType1' ,//数据接口
         page: true ,//开启分页
         toolbar:'#toolbar',//开启头部工具栏
         cols: [[ //表头
           {type:'checkbox',fixed:'left'},
           {field:'',title:'序号',type:'numbers',width:80},
           {field: 'userName', title: '用户名', width:100},
-          {field: 'power', title: '权限', width:110},
           {field: 'state', title: '状态', width:80,templet:function(d){
             if(d.state === 1){
               return '通过';
@@ -87,7 +86,7 @@
         ]]
       });
       //监听行工具栏事件
-      table.on('tool(manager)',function(obj){
+      table.on('tool(user)',function(obj){
         let data = obj.data;//获取当前行所有数据
         let id = data.id;//获取选中行的id
         let layEvent = obj.event;//获取点击的是哪个操作按钮
@@ -140,35 +139,23 @@
                       let mobile = $("#mobile").val();
                       let state = $("#state").val();
                       let remark = $("#remark").val();
-                      let power;
-                      if(tagIns2.selected.length < 1){
-                        // layer.confirm('请选择权限!',function(index){
-                        //   //layer.close(index);//关闭对话框
-                        // })
-                        alert("请选择权限!");
-                      }else{
-                        power = tagIns2.selected[0].id;
-                        for(let i = 1;i < tagIns2.selected.length;i++){
-                          power += ','+tagIns2.selected[i].id;
-                        }
-                        $.ajax({
-                          type:"POST",
-                          url:"/index/updataUsersOneData",
-                          data:{'id':id,'username':username,'mobile':mobile,'state':state,'power':power,'remark':remark},
-                          success:function(result){
-                            if(result === "success"){
-                              layer.confirm("更新成功!",function(index){
-                                layer.close(index);//关闭对话框
-                              })
-                              table1.reload();//重载表格
-                            }else{
-                              layer.confirm("更新失败!",function(index){
-                                layer.close(index);//关闭对话框
-                              })
-                            }
+                      $.ajax({
+                        type:"POST",
+                        url:"/index/updataUsersOneData",
+                        data:{'id':id,'username':username,'mobile':mobile,'state':state,'remark':remark},
+                        success:function(result){
+                          if(result === "success"){
+                            layer.confirm("更新成功!",function(index){
+                              layer.close(index);//关闭对话框
+                            })
+                            table1.reload();//重载表格
+                          }else{
+                            layer.confirm("更新失败!",function(index){
+                              layer.close(index);//关闭对话框
+                            })
                           }
-                        })
-                      }
+                        }
+                      })
                       // console.log(state);
                     },
                     btn2:function(index, layero){
@@ -177,11 +164,6 @@
                     content:'<div class="login-item">\
                               <span>用户名：</span>\
                               <input class="form-text" type="text" placeholder="请输入用户名"  id="username">\
-                            </div>\
-                            <div class="login-item">\
-                              <span>权限：</span>\
-                              <div id="power">\
-                              </div>\
                             </div>\
                             <div class="login-item">\
                               <span>手机号：</span>\
@@ -226,7 +208,7 @@
         }
       });
       //监听头部工具栏事件
-      table.on('toolbar(manager)',function(obj){
+      table.on('toolbar(user)',function(obj){
         switch(obj.event){
           case 'addUser':
             // console.log("4444");
@@ -237,7 +219,7 @@
                 //console.log(data);
                 var index2 = layer.open({
                   type:0,
-                  title:'添加用户',
+                  title:'添加普通用户',
                   btn:['提交','取消'],
                   //按钮的回调操作
                   btn1:function(index, layero){
@@ -247,18 +229,7 @@
                     let password1 = $("#password1").val();
                     let password2 = $("#password2").val();
                     let remark = $("#remark1").val();
-                    let power;
-                    if(tagIns1.selected.length < 1){
-                      // layer.confirm('请选择权限!',function(index){
-                      //   //layer.close(index);//关闭对话框
-                      // })
-                      alert('请选择权限!');
-                    }else{
-                      power = tagIns1.selected[0].id;
-                      for(let i = 1;i < tagIns1.selected.length;i++){
-                        power += ','+tagIns1.selected[i].id;
-                      }
-                      if(password1 != password2){
+                    if(password1 != password2){
                         // layer.confirm('两次密码输入不一致!',function(index){
                         //   //layer.close(index);//关闭对话框
                         // })
@@ -267,7 +238,7 @@
                         $.ajax({
                           type:"POST",
                           url:"/register",
-                          data:{'username':username,'mobile':mobile,'state':state,'password':password1,'power':power,'remark':remark,'type':0},
+                          data:{'username':username,'mobile':mobile,'state':state,'password':password1,'remark':remark,'type':1},
                           success:function(result){
                             if(result === "isExist"){
                               layer.confirm("用户名已存在,请重新输入!",function(index){
@@ -282,12 +253,10 @@
                               layer.confirm("添加失败!",function(index){
                                 layer.close(index);//关闭对话框
                               })
-                            }
+                            }                  
                           }
                         })
                       }
-
-                    }
 
                     // console.log(state);
                   },
@@ -297,10 +266,6 @@
                   content:'<div class="login-item">\
                             <span class="user-icon"></span>\
                             <input class="form-text" type="text" placeholder="请输入用户名"  id="username1">\
-                          </div>\
-                          <div class="login-item">\
-                            <div id="power1" style="margin:0 auto;">\
-                            </div>\
                           </div>\
                           <div class="login-item">\
                             <span class="user-icon"></span>\

@@ -140,7 +140,7 @@
                   type:'POST',
                   url:'/register',
                   async:true,
-                  data:{'username':username,'password':password,'mobile':mobile,'power':power,'remark':remark},
+                  data:{'username':username,'password':password,'mobile':mobile,'power':power,'remark':remark,'type':0},
                   success:function(result){
                     if(result === 'success'){
                       alert("成功提交注册信息,待超管审核通过!");
@@ -170,7 +170,7 @@
           type:'POST',
           url:'/login',
           async:true,
-          data:{'username':username1,'password':password1},
+          data:{'username':username1,'password':password1,'type':0},
           success:function(result){
             console.log(result);
             if(result === "success"){

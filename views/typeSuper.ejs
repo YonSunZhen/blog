@@ -10,7 +10,7 @@
   <title>博客类型管理</title>
 </head>
 <body>
-  <table id="type" lay-filter="manager"></table>
+  <table id="type" lay-filter="type"></table>
   <script src="/javascripts/layui/layui.js"></script>
   <!-- 右边操作 -->
   <script type="text/html" id="bar">
@@ -66,7 +66,7 @@
         ]]
       });
       //监听行工具栏事件
-      table.on('tool(manager)',function(obj){
+      table.on('tool(type)',function(obj){
         let data = obj.data;//获取当前行所有数据
         let id = data.id;//获取选中行的id
         let layEvent = obj.event;//获取点击的是哪个操作按钮
@@ -118,13 +118,13 @@
             //按钮的回调操作
             btn1:function(index, layero){
               let typeName = $("#typeName").val();
-              let updatePeople = $("#updatePeople").val();
+              // let updatePeople = $("#updatePeople").val();
               let state = $("#state").val();
               let remark = $("#remark").val();
               $.ajax({
                 type:"POST",
                 url:"/index/updateType",
-                data:{'id':id,'typeName':typeName,'updatePeople':updatePeople,'state':state,'remark':remark},
+                data:{'id':id,'typeName':typeName,'state':state,'remark':remark},
                 success:function(result){
                   if(result === "success"){
                     layer.confirm('更新成功！',function(index){
@@ -146,10 +146,6 @@
             content:'<div class="login-item">\
                       <span>类型名：</span>\
                       <input class="form-text" type="text"  id="typeName">\
-                    </div>\
-                    <div class="login-item">\
-                      <span>更新人：</span>\
-                      <input class="form-text" type="text"  id="updatePeople">\
                     </div>\
                     <div class="login-item">\
                       <span>状态：</span>\
@@ -179,7 +175,7 @@
         }
       });
       //监听头部工具栏事件
-      table.on('toolbar(manager)',function(obj){
+      table.on('toolbar(type)',function(obj){
         switch(obj.event){
           case 'addType':
             // console.log("4444");
@@ -190,12 +186,12 @@
               //按钮的回调操作
               btn1:function(index, layero){
                 let typeName = $("#typeName1").val();
-                let createPeople = $("#createPeople1").val();
+                // let createPeople = $("#createPeople1").val();
                 let remark = $("#remark1").val();
                 $.ajax({
                   type:"POST",
                   url:"/index/addType",
-                  data:{'typeName':typeName,'createPeople':createPeople,'remark':remark},
+                  data:{'typeName':typeName,'remark':remark},
                   success:function(result){
                     if(result === "success"){
                       alert("添加成功！");
@@ -213,10 +209,6 @@
               content:'<div class="login-item">\
                         <span class="user-icon"></span>\
                         <input class="form-text" type="text" placeholder="请输入类型名"  id="typeName1">\
-                      </div>\
-                      <div class="login-item">\
-                        <span class="user-icon"></span>\
-                        <input class="form-text" type="text" placeholder="请输入创建者"  id="createPeople1">\
                       </div>\
                       <div class="login-item">\
                         <span class="user-icon"></span>\

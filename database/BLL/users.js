@@ -1,9 +1,9 @@
-var apiModel = require('../DAL/managers');
+var apiModel = require('../DAL/users');
 
 //登录验证
-var findManager = (cb, userName, password) => {
+var findUser = (cb, userName, password, type) => {
   //利用回调函数
-  apiModel.findManager(userName,password).then((result) => {
+  apiModel.findUser(userName,password, type).then((result) => {
     if(result.length > 0 && result[0].state === 1){
       console.log(result[0]);
       return cb("true");
@@ -26,9 +26,9 @@ var findManager = (cb, userName, password) => {
 }
 
 //验证用户名是否存在
-var isExist = (cb, userName) => {
+var isExist = (cb, userName, type) => {
   //利用回调函数
-  apiModel.isExist(userName).then((result) => {
+  apiModel.isExist(userName, type).then((result) => {
     if(result.length > 0){
       console.log(result);
       return cb("true");
@@ -40,8 +40,8 @@ var isExist = (cb, userName) => {
 }
 
 //增加一个用户
-var addManager = (cb, model) => {
-  apiModel.addManager(model).then((result) => {
+var addUser = (cb, model) => {
+  apiModel.addUser(model).then((result) => {
     if(result.affectedRows > 0){
       return cb("true");
     }else{
@@ -50,15 +50,22 @@ var addManager = (cb, model) => {
   })
 }
 
-//获取Managers所有数据
-var getManagersAllData = (cb) => {
-  apiModel.getManagersAllData().then((result) => {
+//获取Users所有数据(管理员管理模块)
+var getUsersAllDataType0 = (cb) => {
+  apiModel.getUsersAllDataType0().then((result) => {
+    return cb(result);
+  })
+}
+
+//获取Users所有数据(普通用户管理模块)
+var getUsersAllDataType1 = (cb) => {
+  apiModel.getUsersAllDataType1().then((result) => {
     return cb(result);
   })
 }
 //根据id删除一条数据
-var delManagersOneData = (cb,id) => {
-  apiModel.delManagersOneData(id).then((result) => {
+var delUsersOneData = (cb,id) => {
+  apiModel.delUsersOneData(id).then((result) => {
     if(result.affectedRows > 0){
       return cb("true");
     }else{
@@ -66,9 +73,9 @@ var delManagersOneData = (cb,id) => {
     }
   })
 }
-//更改Managers中的一条数据
-var updataManagersOneData = (cb,model,id) => {
-  apiModel.updataManagersOneData(model,id).then((result) => {
+//更改Users中的一条数据
+var updataUsersOneData = (cb,model,id) => {
+  apiModel.updataUsersOneData(model,id).then((result) => {
     if(result.affectedRows > 0){
       return cb("true");
     }else{
@@ -99,9 +106,9 @@ var updateLogin = (cb,loginDate,lastLoginDate,loginTimes,userName,passWord) => {
   })
 }
 //根据用户名和密码得到用户id（用户articles表的mid）
-var findManagerId = (cb, userName, password) => {
+var findUserId = (cb, userName, password) => {
   //利用回调函数
-  apiModel.findManager(userName,password).then((result) => {
+  apiModel.findUser(userName,password).then((result) => {
     return cb(result);
   })
 }
@@ -112,15 +119,16 @@ var getPowerByUser = (cb,userName,passWord) => {
   })
 }
 module.exports = {
-  addManager,
+  addUser,
   isExist,
-  findManager,
-  getManagersAllData,
-  delManagersOneData,
-  updataManagersOneData,
+  findUser,
+  getUsersAllDataType0,
+  getUsersAllDataType1,
+  delUsersOneData,
+  updataUsersOneData,
   getModel,
   getLoginDateAndLoginTimes,
   updateLogin,
-  findManagerId,
+  findUserId,
   getPowerByUser
 }

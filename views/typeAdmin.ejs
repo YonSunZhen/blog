@@ -10,13 +10,12 @@
   <title>博客类型管理</title>
 </head>
 <body>
-  <table id="type" lay-filter="manager"></table>
+  <table id="type" lay-filter="type"></table>
   <script src="/javascripts/layui/layui.js"></script>
   <!-- 右边操作 -->
-  <!-- <script type="text/html" id="bar">
+  <script type="text/html" id="bar">
     <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
-    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
-  </script> -->
+  </script>
   <!-- 头部操作 -->
   <script type="text/html" id="toolbar">
     <div class="layui-btn-container">
@@ -62,11 +61,11 @@
           }},
           {field: 'updatePeople', title: '更新人', width: 100},
           {field: 'remark', title: '备注', width: 100},    
-          // {field: 'right', title: '操作',align:'center', width: 150, toolbar:'#bar'}
+          {field: 'right', title: '操作',align:'center', width: 80, toolbar:'#bar'}
         ]]
       });
       //监听头部工具栏事件
-      table.on('toolbar(manager)',function(obj){
+      table.on('toolbar(type)',function(obj){
         switch(obj.event){
           case 'addType':
             // console.log("4444");
@@ -77,19 +76,19 @@
               //按钮的回调操作
               btn1:function(index, layero){
                 let typeName = $("#typeName1").val();
-                let createPeople = $("#createPeople1").val();
+                // let createPeople = $("#createPeople1").val();
                 let remark = $("#remark1").val();
                 $.ajax({
                   type:"POST",
                   url:"/index/addType",
-                  data:{'typeName':typeName,'createPeople':createPeople,'remark':remark},
+                  data:{'typeName':typeName,'remark':remark},
                   success:function(result){
                     if(result === "success"){
-                      alert("添加成功！");
+                      alert("申请类型提交成功,待超管审核通过!");
                       layer.close(index2);//关闭对话框
                       table1.reload();//重载表格
                     }else{
-                      alert("添加失败！");
+                      alert("申请类型提交失败!");
                     }          
                   }
                 })
@@ -103,15 +102,75 @@
                       </div>\
                       <div class="login-item">\
                         <span class="user-icon"></span>\
-                        <input class="form-text" type="text" placeholder="请输入创建者"  id="createPeople1">\
-                      </div>\
-                      <div class="login-item">\
-                        <span class="user-icon"></span>\
                         <input class="form-text" type="text" placeholder="请输入备注"  id="remark1">\
                       </div>'
             });
           break;
         };
+      });
+
+      //监听行工具栏事件
+      table.on('tool(type)',function(obj){
+        let data = obj.data;//获取当前行所有数据
+        let id = data.id;//获取选中行的id
+        let layEvent = obj.event;//获取点击的是哪个操作按钮
+        let tr = obj.tr;//获取当前行tr的DOM对象
+        if(layEvent === 'edit'){
+          var index1 = layer.open({
+            type:0,
+            title:'编辑类型',
+            btn:['提交','取消'],
+            //按钮的回调操作
+            btn1:function(index, layero){
+              let typeName = $("#typeName").val();
+              // let updatePeople = $("#updatePeople").val();
+              // let state = $("#state").val();
+              let remark = $("#remark").val();
+              $.ajax({
+                type:"POST",
+                url:"/index/updateType",
+                data:{'id':id,'typeName':typeName,'remark':remark},
+                success:function(result){
+                  if(result === "success"){
+                    layer.confirm('申请更新类型提交成功,待超管审核!',function(index){
+                      table1.reload();//重载表格
+                      layer.close(index);//关闭对话框
+                    })
+                  }else{
+                    layer.confirm('更新失败！',function(index){
+                      layer.close(index);//关闭对话框
+                    })
+                  }
+                }
+              })
+              // console.log(state);
+            },
+            btn2:function(index, layero){
+              // console.log("999");
+            },
+            content:'<div class="login-item">\
+                      <span>类型名：</span>\
+                      <input class="form-text" type="text"  id="typeName">\
+                    </div>\
+                    <div class="login-item">\
+                        <span>备注：</span>\
+                      <input class="form-text" type="text" id="remark">\
+                    </div>'
+          });
+          $.ajax({
+            type:"POST",
+            url:"/index/getTypesOneData",
+            sync:true,
+            data:{"id":id},
+            success:function(data){
+              $("#typeName").val(data[0].typeName);
+              $("#updatePeople").val(data[0].updatePeople);
+              $("#state").val(data[0].state);
+              $("#remark").val(data[0].remark);
+              //console.log(data);
+            }
+          })
+        }
       });
     })
   </script>

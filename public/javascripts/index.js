@@ -7,8 +7,11 @@ layui.use(['element','jquery'],function(){
     $(".iframe").attr('src','/index/Mindex');
   })
   
-  $("#user").click(function(){
+  $("#manager").click(function(){
     $(".iframe").attr('src','/index/manager');
+	})
+  $("#user").click(function(){
+    $(".iframe").attr('src','/index/user');
 	})
 
 	$("#addArticle").click(function(){

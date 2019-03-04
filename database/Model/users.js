@@ -1,4 +1,4 @@
-function Managers(userName,mobile,state,power,remark,passWord,createDate,id,loginDate,loginTimes,lastLoginDate){
+function Users(userName,mobile,state,power,remark,passWord,createDate,id,type,loginDate,loginTimes,lastLoginDate){
   this.userName = userName;
   this.passWord = passWord;
   this.state = state;
@@ -6,6 +6,7 @@ function Managers(userName,mobile,state,power,remark,passWord,createDate,id,logi
   this.createDate = createDate;
   this.loginDate = loginDate;
   this.id = id;
+  this.type = type;
   this.power = power;
   this.remark = remark;
   this.loginTimes = loginTimes;
@@ -13,5 +14,5 @@ function Managers(userName,mobile,state,power,remark,passWord,createDate,id,logi
 }
 
 module.exports = {
-  Managers
+  Users
 }
