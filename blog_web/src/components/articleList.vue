@@ -21,6 +21,12 @@
         </ul>
       </div>
     </div>
+    <div class="loading" v-show="isShowLoading">
+      <img src="../assets/image/loading.gif" alt="">
+    </div>
+    <div class="loading" v-show="isShowWord">
+      <p>数据已完全加载</p>
+    </div>
   </div>
 </template>
 
@@ -32,11 +38,15 @@
     name: 'articleList',
     data: function() {
       return {
-        articleList: []
+        articleList: [],
+        limit: 6,
+        isShowLoading: false,
+        isShowWord: false,
+        articleLength: 0
       }
     },
     props: {
-      msg: String
+      typeid: Number
     },
     computed: {
       // 转化时间格式
@@ -52,22 +62,42 @@
       }
     },
     created() {
-      this._getArticleList();
+      this._getArticleList(this.limit,'1','haha');
       this.handleScroll();
     },
     methods: {
-      _getArticleList() {
-        getArticleList(6).then((res) => {
+      _getArticleList(limit,state,id) {
+        getArticleList(limit,state,id).then((res) => {
           this.articleList = res;
+          console.log("文章:");
           console.log(res);
         })
       },
       handleScroll() {
         window.addEventListener('scroll',()=>{
           // console.log(window.scrollY);
+          // console.log(this.typeid);
           if(this.getScrollBottomHeight() <= 0){
-            console.log("success");
-            console.log(this.getScrollBottomHeight());
+            this.isShowLoading = true;
+            setTimeout(() => {//必须使用箭头函数，不然this指向的是window对象
+              this.articleLength = this.articleList.length;
+              this.limit += 3;
+              if(this.typeid == 0 || this.typeid == 19){//0表示刚进入首页渲染,19表示是类型为最新的id,类型中不能有id==0的
+                this._getArticleList(this.limit,'1','haha');
+                if(this.articleLength == this.articleList.length){
+                  this.isShowLoading = false;
+                  this.isShowWord = true;
+                }
+              }else{
+                this._getArticleList(this.limit,'0',this.typeid);
+                if(this.articleLength == this.articleList.length){
+                  this.isShowLoading = false;
+                  this.isShowWord = true;
+                }
+              }
+              
+              // console.log("success");
+            },500)
           }
         });
       },
@@ -103,6 +133,17 @@
       getScrollBottomHeight() {
         return this.getPageHeight() - this.getScrollTop() - this.getWindowHeight();
       }
+    },
+    watch: {
+      typeid: function(){
+        //表示类型为最新的那个
+        if(this.typeid == 19){
+          this._getArticleList(this.limit,'1','haha');
+        }else{
+          this._getArticleList(this.limit,'0',this.typeid);
+        }
+        console.log(this.typeid);
+      }
     }
   }
 </script>
@@ -128,6 +169,13 @@
         margin 8px 8px 8px 0px
         font-size 12px
         color #717171
+
+  .loading
+    text-align: center
+    padding-bottom: 25px
+    img 
+      width: 40px
+      height: 40px
 
 
 </style>

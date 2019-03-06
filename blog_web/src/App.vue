@@ -56,20 +56,14 @@
       <div class="right-main">
         <div class="type">
           <ul>
-            <li>
-              <a href="" class="active">最新</a>
-            </li>
-            <li>
-              <a href="">Github</a>
-            </li>
-            <li>
-              <a href="">孙永镇</a>
+            <li v-for="(item,index) in typeList" :key="item.id">
+              <a href="javascript:;" @click="navChange(index,item.id)" :class="{active: isActive == index}">{{item.name}}</a>
             </li>
             <div class="clear"></div>
           </ul>
         </div>
         <div class="list">
-          <articleList msg="Welcome to Your Vue.js App"/>
+          <articleList :typeid="typeId"/>
         </div>
         <div class="hosted"></div>
       </div>
@@ -78,22 +72,39 @@
 </template>
 
 <script>
-import articleList from './components/articleList.vue'
+  import articleList from './components/articleList.vue'
+  import {getTypeList} from './api/typeList'
 
-export default {
-  name: 'app',
-  // created() {
-  //   this.handleScroll();
-  // },
-  // methods: {
-  //   handleScroll() {
-  //     window.addEventListener('scroll',()=>{console.log(window.scrollY)});
-  //   }
-  // },
-  components: {
-    articleList
+  export default {
+    name: 'app',
+    data: function(){
+      return {
+        typeList: [],
+        isActive: 0,
+        typeId: 0
+      }
+    },
+    created() {
+      this._getTypeList();
+    },
+    methods: {
+      _getTypeList() {
+        getTypeList().then((res) => {
+          this.typeList = res;
+          console.log("类型:");
+          console.log(this.typeList);
+        })
+      },
+      navChange(index,typeId) {
+        this.isActive = index;
+        this.typeId = typeId;
+        // console.log(typeId);
+      }
+    },
+    components: {
+      articleList
+    }
   }
-}
 </script>
 
 <style scoped lang="stylus">

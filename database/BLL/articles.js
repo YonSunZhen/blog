@@ -28,6 +28,12 @@ let getArticlesDataByState = (cb,limit) => {
     return cb(result);
   })
 }
+//根据文章类型id获取Articles部分数据(state为1,普通用户使用)
+let getArticlesDataByTypeId = (cb,limit,typeId) => {
+  apiModel.getArticlesDataByTypeId(limit,typeId).then((result) => {
+    return cb(result);
+  })
+}
 //根据id删除一条数据
 let delArticlesOneData = (cb,id) => {
   apiModel.delArticlesOneData(id).then((result) => {
@@ -62,5 +68,6 @@ module.exports = {
   delArticlesOneData,
   updateArticleOneData,
   getArticleOneData,
-  getArticlesDataByState
+  getArticlesDataByState,
+  getArticlesDataByTypeId
 }

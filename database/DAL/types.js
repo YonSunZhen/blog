@@ -39,7 +39,7 @@ let updateType = (id,typeName,updateDate,updatePeople,state,remark) => {
 }
 //查询出所有通过的类型（增加文章页面初始化类型使用）
 let getTypesAdopt = () => {
-  let _sql =  `select * from types where state=1;`
+  let _sql =  `select * from types where state=1 ORDER BY createDate;`
   return apiModel.query(_sql);
 }
 

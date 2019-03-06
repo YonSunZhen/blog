@@ -29,9 +29,16 @@ let getArticlesDataByUser = (userName) => {
 }
 //获取Articles部分数据(state为1,普通用户使用)
 let getArticlesDataByState = (limit) => {
-  let _sql = `select a.id,a.mid,a.articleName,a.content,a.state,a.createDate,a.createPeople,a.updateDate,a.updatePeople,a.readCount,b.typeName
+  let _sql = `select a.id,a.mid,a.tid,a.articleName,a.content,a.state,a.createDate,a.createPeople,a.updateDate,a.updatePeople,a.readCount,b.typeName
               from Articles a left JOIN Types b on a.tid=b.id
               where a.state=1 ORDER BY a.updateDate DESC limit 0,${limit};`//降序,查找0到3的数据
+  return apiModel.query(_sql);
+}
+//根据文章类型id获取Articles部分数据(state为1,普通用户使用)(有问题)
+let getArticlesDataByTypeId = (limit,typeId) => {
+  let _sql = `select a.id,a.mid,a.tid,a.articleName,a.content,a.state,a.createDate,a.createPeople,a.updateDate,a.updatePeople,a.readCount,b.typeName
+              from Articles a left JOIN Types b on a.tid=b.id
+              where a.state=1 AND a.tid=${typeId} ORDER BY a.updateDate DESC limit 0,${limit};`//降序,查找0到3的数据
   return apiModel.query(_sql);
 }
 //根据id删除一条数据
@@ -65,5 +72,6 @@ module.exports = {
   delArticlesOneData,
   updateArticleOneData,
   getArticleOneData,
-  getArticlesDataByState
+  getArticlesDataByState,
+  getArticlesDataByTypeId
 }
