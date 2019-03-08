@@ -94,8 +94,7 @@
                   this.isShowLoading = false;
                   this.isShowWord = true;
                 }
-              }
-              
+              }          
               // console.log("success");
             },500)
           }

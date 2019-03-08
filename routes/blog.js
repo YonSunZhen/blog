@@ -15,16 +15,13 @@ function crossDomain(res){
 
 //显示文章列表（渲染首页）
 router.post('/getArticlesDataByState',function(req,res,next){
-
   crossDomain(res);
   let limit = req.body.limit;
   let state = req.body.state;
   let typeId = req.body.typeId;
-  console.log(state);
+  // console.log(state);
   if(state == 0){
     articlesBll.getArticlesDataByTypeId(function(result){
-      console.log("555");
-      console.log(typeId);
       let code = 0;
       let message = "";
       let count = result.length;
@@ -35,15 +32,10 @@ router.post('/getArticlesDataByState',function(req,res,next){
         "count":count,
         "data":data
       };
-      console.log("666");
-      console.log(result);
       res.send(data);
     },limit,typeId);
   }else{
     articlesBll.getArticlesDataByState(function(result){
-      // console.log(limit);
-      console.log("caonima");
-      console.log(result);
       let code = 0;
       let message = "";
       let count = result.length;
