@@ -2,7 +2,7 @@
   <div id="articleList">
     <div class="item" v-for="item in articleListChanged" :key="item.id">
       <div class="title">
-        <router-link to="/articleDetail">{{item.articleName}}</router-link>
+        <a :href="'articleDetail.html?id='+item.id">{{item.articleName}}</a>
       </div>
       <div class="info">
         <ul>
@@ -22,7 +22,7 @@
       </div>
     </div>
     <div class="loading" v-show="isShowLoading">
-      <img src="../assets/image/loading.gif" alt="">
+      <img src="../../../assets/image/loading.gif" alt="">
     </div>
     <div class="loading" v-show="isShowWord">
       <p>数据已完全加载</p>
@@ -33,7 +33,7 @@
 
 <script>
 
-  import {getArticleList} from '../api/articleList'
+  import {getArticleList} from '../../../api/articleList'
 
   export default {
     name: 'articleList',
@@ -150,7 +150,7 @@
 
 <style scoped lang="stylus">
 
-  @import "../assets/css/public.styl"
+  @import "../../../assets/css/public.styl"
 
   .item
     width 600px
