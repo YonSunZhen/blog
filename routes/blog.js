@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var articlesBll = require('../database/BLL/articles');
 var typesBll = require('../database/BLL/types');
+var commentsBll = require('../database/BLL/comments');
 var time = require('silly-datetime');//获取时间
 var uuidv1 = require('uuid/v1');//生成36位guid
 
@@ -67,6 +68,24 @@ router.get('/getTypesAdopt',function(req,res,next){
     }
     res.send(array);
   })
+})
+
+//Articles根据id获取一条数据
+router.post('/getArticleOneData',function(req,res,next){
+  crossDomain(res);
+  let id = req.body.id;
+  articlesBll.getArticleOneData(function(result){
+    res.send(result);
+  },id)
+})
+
+//根据文章id获取关于这篇文章的所有评论
+router.post('/getCommentsByArticleId',function(req,res,next){
+  crossDomain(res);
+  let id = req.body.id;
+  commentsBll.getCommentsByArticleId(function(result){
+    res.send(result);
+  },id)
 })
 
 module.exports = router;

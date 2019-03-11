@@ -61,7 +61,9 @@ let updateArticleOneData = (id,articleName,tid,content,state,updateDate,updatePe
 }
 //根据id获取Articles中的一条数据
 let getArticleOneData = (id) => {
-  let _sql = `select * from articles where id="${id}";`
+  let _sql = `select a.*,b.typeName
+              from Articles a left JOIN Types b on a.tid=b.id
+              where a.id="${id}";`
   return apiModel.query(_sql);
 }
 

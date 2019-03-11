@@ -27,7 +27,6 @@
     <div class="loading" v-show="isShowWord">
       <p>数据已完全加载</p>
     </div>
-    <router-view></router-view>
   </div>
 </template>
 
@@ -40,7 +39,7 @@
     data: function() {
       return {
         articleList: [],
-        limit: 6,
+        limit: 0,
         isShowLoading: false,
         isShowWord: false,
         articleLength: 0
@@ -63,10 +62,16 @@
       }
     },
     created() {
+      this.getLimitByWindowHeight();//修改了limit的值
       this._getArticleList(this.limit,'1','haha');
       this.handleScroll();
     },
     methods: {
+      getLimitByWindowHeight() {
+        let articleCount = (this.getWindowHeight() - 134)/80//134为右边三上部分的高度，80为每条文章占据的高度 
+        this.limit = parseInt(articleCount);
+        console.log(this.limit);
+      },
       _getArticleList(limit,state,id) {
         getArticleList(limit,state,id).then((res) => {
           this.articleList = res;

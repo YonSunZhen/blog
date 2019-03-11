@@ -36,10 +36,16 @@ let updateCommentState = (id,state) => {
   let _sql = `update Comments set state="${state}" where id="${id}";`
   return apiModel.query(_sql); 
 }
+//根据文章id获取关于这篇文章的所有评论
+let getCommentsByArticleId = (articleID) => {
+  let _sql = `select c.*, u.userName as from_userName from Comments c left JOIN Users u on c.from_uid=u.id where c.article_id="${articleID}";`
+  return apiModel.query(_sql); 
+}
 
 module.exports = {
   getCommentsAllData,
   getCommentsByUser,
   delComment,
-  updateCommentState
+  updateCommentState,
+  getCommentsByArticleId
 }

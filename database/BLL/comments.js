@@ -32,10 +32,17 @@ let updateCommentState = (cb,id,state) => {
     }
   })
 }
+//根据文章id获取关于这篇文章的所有评论
+let getCommentsByArticleId = (cb,articleID) => {
+  apiModel.getCommentsByArticleId(articleID).then((result) => {
+    return cb(result);
+  })
+}
 
 module.exports = {
   getCommentsAllData,
   getCommentsByUser,
   delComment,
-  updateCommentState
+  updateCommentState,
+  getCommentsByArticleId
 }
