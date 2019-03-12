@@ -70,7 +70,7 @@
       getLimitByWindowHeight() {
         let articleCount = (this.getWindowHeight() - 134)/80//134为右边三上部分的高度，80为每条文章占据的高度 
         this.limit = parseInt(articleCount);
-        console.log(this.limit);
+        // console.log(this.limit);
       },
       _getArticleList(limit,state,id) {
         getArticleList(limit,state,id).then((res) => {

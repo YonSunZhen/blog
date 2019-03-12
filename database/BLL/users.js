@@ -6,10 +6,10 @@ var findUser = (cb, userName, password, type) => {
   apiModel.findUser(userName,password, type).then((result) => {
     if(result.length > 0 && result[0].state === 1){
       console.log(result[0]);
-      return cb("true");
+      return cb(result);
     }else{
       // console.log(result);
-      return cb("false");
+      return cb(result);
     }
   })
 

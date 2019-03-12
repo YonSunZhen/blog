@@ -41,6 +41,18 @@
     <div class="right-aside">
       <div class="right-nav">
         <ul>
+          <li v-show="isLogin">
+            <span class="username">{{username}}</span>
+          </li>
+          <li v-show="isLogin">
+            <a href="javascript:;" @click="logout()">注销</a>
+          </li>
+          <li v-show="!isLogin">
+            <a href="javascript:;" @click="dialogFormLogin = true">登录</a>
+          </li>
+          <li v-show="!isLogin">
+            <a href="javascript:;" @click="dialogFormRegister = true">注册</a>
+          </li>
           <li>
             <a href="">友链</a>
           </li>
@@ -67,12 +79,54 @@
         </div>
         <div class="hosted"></div>
       </div>
-    </div>   
+    </div>  
+    <!-- 登录窗口 -->
+    <el-dialog title="登录" :visible.sync="dialogFormLogin" width="25%">
+      <el-form :model="form">
+        <el-form-item label="请输用户名" :label-width="formLabelWidth" style="margin-bottom:22px;">
+          <el-input v-model="form.name" autocomplete="off" ref="username"></el-input>
+        </el-form-item>
+        <el-form-item label="请输入密码" :label-width="formLabelWidth">
+          <el-input v-model="form.password" autocomplete="off" ref="password" show-password></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="login()" style="border:1px solid #DCDFE6;padding:12px 20px;">登录</el-button>
+        <el-button @click="dialogFormLogin = false" style="border:1px solid #DCDFE6;padding:12px 20px;">取 消</el-button>
+      </div>
+    </el-dialog> 
+    <!-- 注册窗口 -->
+    <el-dialog title="注册" :visible.sync="dialogFormRegister" width="25%">
+      <el-form :model="form">
+        <el-form-item label="请输用户名" :label-width="formLabelWidth" style="margin-bottom:22px;">
+          <el-input v-model="form.name" autocomplete="off" ref="username1"></el-input>
+        </el-form-item>
+        <el-form-item label="请输入手机号码" :label-width="formLabelWidth" style="margin-bottom:22px;">
+          <el-input v-model="form.mobile" autocomplete="off" ref="mobile"></el-input>
+        </el-form-item>
+        <el-form-item label="请输入密码" :label-width="formLabelWidth" style="margin-bottom:22px;">
+          <el-input v-model="form.password" autocomplete="off" show-password ref="password1"></el-input>
+        </el-form-item>
+        <el-form-item label="请再次输入密码" :label-width="formLabelWidth" style="margin-bottom:22px;">
+          <el-input v-model="form.againPassword" autocomplete="off" show-password ref="passwordAgain"></el-input>
+        </el-form-item>
+        <el-form-item label="请输入备注信息" :label-width="formLabelWidth" style="margin-bottom:22px;">
+          <el-input v-model="form.remark"  ref="remark"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="register()" style="border:1px solid #DCDFE6;padding:12px 20px;">注册</el-button>
+        <el-button @click="dialogFormRegister = false" style="border:1px solid #DCDFE6;padding:12px 20px;">取 消</el-button>
+      </div>
+    </el-dialog> 
+
   </div>
 </template>
 
 <script>
   import articleList from './components/articleList.vue'
+  import {login} from '../../api/login'
+  import {register} from '../../api/register'
   import {getTypeList} from '../../api/typeList'
 
   export default {
@@ -81,13 +135,95 @@
       return {
         typeList: [],
         isActive: 0,
-        typeId: 0
+        typeId: 0,
+        dialogFormRegister: false,
+        dialogFormLogin: false,
+        form: {
+          name: '',
+          region: '',
+          date1: '',
+          date2: '',
+          delivery: false,
+          type: [],
+          resource: '',
+          desc: ''
+        },
+        formLabelWidth: '120px',//修改标签的宽度,
+        isLogin: false,
+        username: ''
       }
     },
     created() {
+      this.init();
       this._getTypeList();
     },
     methods: {
+      //刷新页面时
+      init() {
+        if(sessionStorage.isLogin != "false"){
+          // console.log("699");
+          this.isLogin = sessionStorage.isLogin;
+          // console.log(this.isLogin);
+        }else{
+          this.isLogin = false;
+        }
+        if(sessionStorage.username){
+          this.username = sessionStorage.username;
+        }
+        // console.log("888");
+        // console.log(this.isLogin);
+      },
+      login() {
+        let username = this.$refs.username.value;
+        let password = this.$refs.password.value;
+        login(username,password).then((res) => {
+          if(res.state == "success"){
+            this.dialogFormLogin = false;//关闭窗口
+            sessionStorage.isLogin = true;
+            sessionStorage.username = username;
+            sessionStorage.uid = res.data[0].id;
+            this.username = sessionStorage.username;
+            this.isLogin = sessionStorage.isLogin;
+            // console.log("666");
+            // console.log(sessionStorage.isLogin);
+            alert("登录成功!");
+            console.log(res.data[0].id);
+          }else{
+            alert("账号不存在或输入密码有误!");
+          }
+        })
+      },
+      register() {
+        let username = this.$refs.username1.value;
+        let password = this.$refs.password1.value;
+        let passwordAgain = this.$refs.passwordAgain.value;
+        let mobile = this.$refs.mobile.value;
+        let remark = this.$refs.remark.value;
+        let state = 1;
+        let type = 1;//1表示普通用户
+        if(password != passwordAgain){
+          alert("两次密码输入不一致，请重新输入!")
+        }else{
+          register(username,password,mobile,remark,state,type).then((res) => {
+            if(res == "isExist"){
+              alert("用户名已存在，请重新输入!");
+            }else if(res == "success"){
+              this.dialogFormRegister = false;//关闭窗口
+              alert("注册成功!");
+            }else if(res == "fail"){
+              alert("注册失败!");
+            }
+          })
+        }
+      },
+      logout() {
+        sessionStorage.isLogin = false;
+        sessionStorage.username = '';
+        sessionStorage.uid = null;
+        console.log(sessionStorage.isLogin);
+        this.isLogin = false;
+        this.username = sessionStorage.username;
+      },
       _getTypeList() {
         getTypeList().then((res) => {
           this.typeList = res;
@@ -157,6 +293,8 @@
   .right-aside
     margin-left: 318px
     .right-nav
+      margin 0px
+      padding 0px
       width 100%
       position fixed
       top 0
@@ -166,6 +304,10 @@
       background-color #fff
       ul
         float: left
+        .username
+          color #009800
+          font-size 18px
+          font-weight bold
         li
           float: left
           line-height 40px

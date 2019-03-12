@@ -31,14 +31,14 @@ let addUser = (model) => {
               createDate="${model.createDate}",
               power="${model.power}",
               type="${model.type}",
-              remark="${model.remark}"`;
+              remark="${model.remark}";`
   console.log(1);
   return apiModel.query(_sql);
 }
 
 //验证用户（登录）
 let findUser = (userName, password, type) => {
-  let _sql = `select * from Users where userName="${userName}" AND passWord="${password}" AND type="${type}"; `
+  let _sql = `select id from Users where userName="${userName}" AND passWord="${password}" AND type="${type}"; `
   // console.log(1);
   return apiModel.query(_sql);
 }

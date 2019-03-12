@@ -39,10 +39,22 @@ let getCommentsByArticleId = (cb,articleID) => {
   })
 }
 
+//添加一条评论
+let addOneComment = (cb,id, articleID, typeID, content, state, from_uid, createDate) => {
+  apiModel.addOneComment(id, articleID, typeID, content, state, from_uid, createDate).then((result) => {
+    if(result.affectedRows > 0){
+      return cb("true");
+    }else{
+      return cb("false");
+    }
+  })
+}
+
 module.exports = {
   getCommentsAllData,
   getCommentsByUser,
   delComment,
   updateCommentState,
-  getCommentsByArticleId
+  getCommentsByArticleId,
+  addOneComment
 }

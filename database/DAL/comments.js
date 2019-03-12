@@ -41,11 +41,24 @@ let getCommentsByArticleId = (articleID) => {
   let _sql = `select c.*, u.userName as from_userName from Comments c left JOIN Users u on c.from_uid=u.id where c.article_id="${articleID}";`
   return apiModel.query(_sql); 
 }
+//添加一条评论
+let addOneComment = (id, articleID, typeID, content, state, from_uid, createDate) => {
+  let _sql = `insert into Comments set 
+              id = "${id}",
+              articleID="${articleID}",
+              typeID="${typeID}",
+              content="${content}",
+              state="${state}",
+              createDate="${createDate}",
+              from_uid="${from_uid}";`
+  return apiModel.query(_sql);
+}
 
 module.exports = {
   getCommentsAllData,
   getCommentsByUser,
   delComment,
   updateCommentState,
-  getCommentsByArticleId
+  getCommentsByArticleId,
+  addOneComment
 }

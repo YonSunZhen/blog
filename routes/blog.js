@@ -3,6 +3,8 @@ var router = express.Router();
 var articlesBll = require('../database/BLL/articles');
 var typesBll = require('../database/BLL/types');
 var commentsBll = require('../database/BLL/comments');
+var usersModel = require('../database/Model/users');
+var usersBll = require('../database/BLL/users');
 var time = require('silly-datetime');//获取时间
 var uuidv1 = require('uuid/v1');//生成36位guid
 
@@ -86,6 +88,82 @@ router.post('/getCommentsByArticleId',function(req,res,next){
   commentsBll.getCommentsByArticleId(function(result){
     res.send(result);
   },id)
+})
+
+//前台登录接口
+router.post('/login', function(req, res, next) {
+  crossDomain(res);
+  //重新登录时清除先前的数据(如果存在的话)
+  if(req.session.logined){
+    req.session.logined = null;
+  }
+  if(req.session.username){
+    req.session.username = null;
+  }
+  if(req.session.mName){
+    req.session.mName = null;
+  }
+  if(req.session.mPassWord){
+    req.session.mPassWors = null;
+  }
+  if(req.session.mType){
+    req.session.mType = null;
+  }
+  //重新获取数据判断登录
+  let userName = req.body.username;
+  let password = req.body.password;
+  let type = req.body.type;
+  usersBll.findUser(function(data1){
+    if(data1.length > 0){
+      //更新登录时间，上次登陆时间和登陆次数
+      usersBll.getLoginDateAndLoginTimes(function(data){
+        console.log(data[0]);
+        let loginDate = time.format(new Date(), 'YYYY-MM-DD HH:mm:ss');
+        //对登陆时间进行格式化
+        let lastLoginDate = time.format(data[0].loginDate,'YYYY-MM-DD HH:mm:ss');
+        //console.log(lastLoginDate);
+        let loginTimes = data[0].loginTimes + 1;
+        //将数据更新到用户
+        usersBll.updateLogin(function(data){
+          if(data === "true"){
+            console.log("更新登录成功");
+          }
+        },loginDate,lastLoginDate,loginTimes,userName,password)
+      },userName,password)
+
+      req.session.logined = true;
+      //记录登录的用户名和密码和用户类型
+      req.session.mName = userName;
+      req.session.mPassWord = password;
+      req.session.mType = type;
+      if(userName === "superAdmin"){
+        req.session.username = "superAdmin";
+      }
+      // console.log("100");
+      res.send({"data":data1,"state":"success"});
+    }else{
+      res.send({"data":'',"state":"fail"});
+    }
+  },userName,password,type)
+});
+
+//前台添加评论接口
+router.post('/addOneComment',function(req,res,next){
+  crossDomain(res);
+  let id = uuidv1();
+  let articleID = req.body.articleID;
+  let typeID = req.body.typeID;
+  let content = req.body.content;
+  let state = 1;
+  let from_uid = req.body.from_uid;
+  let createDate = time.format(new Date(), 'YYYY-MM-DD HH:mm:ss');
+  commentsBll.addOneComment(function(result){
+    if(result == "true") {
+      res.send("success");
+    }else{
+      res.send("fail");
+    }
+  },id, articleID, typeID, content, state, from_uid, createDate)
 })
 
 module.exports = router;

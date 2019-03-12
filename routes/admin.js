@@ -5,6 +5,14 @@ var usersModel = require('../database/Model/users');
 var usersBll = require('../database/BLL/users');
 var uuidv1 = require('uuid/v1');
 
+function crossDomain(res){
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Credentials", true);
+  res.header("Access-Control-Allow-Headers","Origin,X-Requested-With,Content-Type,Accept,Connection,User-Agent,Cookie");
+  res.header("Access-Control-Allow-Methods", "PUT,POST,GET,TRACE,OPTIONS,DELETE");
+  // res.header("X-Powered-By", "Jetty");
+}
+
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -12,6 +20,7 @@ router.get('/', function(req, res, next) {
 });
 //注册路由
 router.post('/register', function(req, res, next) {
+  crossDomain(res)
   let id = uuidv1();
   console.log(id);
   let userName = req.body.username;
@@ -43,12 +52,15 @@ router.post('/register', function(req, res, next) {
   //验证用户是否已存在
   usersBll.isExist(function(data){
     if(data === "true"){
+      // console.log("已存在");
       res.send("isExist");
     }else{
       usersBll.addUser(function(data){
         if(data === "true"){
+          // console.log("成功");
           res.send("success");
         }else{
+          // console.log("失败");
           res.send("fail");
         }
       },userData,type)
@@ -57,7 +69,7 @@ router.post('/register', function(req, res, next) {
 });
 //登录路由
 router.post('/login', function(req, res, next) {
-  var b;
+  crossDomain(res);
   //重新登录时清除先前的数据(如果存在的话)
   if(req.session.logined){
     req.session.logined = null;
@@ -79,7 +91,7 @@ router.post('/login', function(req, res, next) {
   let password = req.body.password;
   let type = req.body.type;
   usersBll.findUser(function(data){
-    if(data === "true"){
+    if(data.length > 0){
       //更新登录时间，上次登陆时间和登陆次数
       usersBll.getLoginDateAndLoginTimes(function(data){
         console.log(data[0]);
@@ -104,7 +116,7 @@ router.post('/login', function(req, res, next) {
       if(userName === "superAdmin"){
         req.session.username = "superAdmin";
       }
-      console.log("100");
+      // console.log("100");
       res.send("success");
     }else{
       res.send("fail");

@@ -38,25 +38,25 @@
             <span class="gt-counts">2条评论</span>
             <div class="gt-user">
               <div class="gt-user-inner">
-                <span>未登录用户</span>
+                <span>{{msg}}</span>
               </div>
             </div>
           </div>
           <div class="gt-error">
-            Error: Not Found. 
+            
           </div>
           <div class="gt-header">
             <div href="" class="gt-avatar">
               <img src="" alt="" >
             </div>
             <div class="gt-header-comment">
-              <textarea name="" id="" class="gt-header-textarea" placeholder="说点什么呢"></textarea>
+              <textarea name="" id="" class="gt-header-textarea" placeholder="说点什么呢" ref="commentContent"></textarea>
               <div class="gt-header-preview markdown-body hide"></div>
               <div class="gt-header-controls">
-                <button class="gt-btn-login">
+                <button class="gt-btn-login" ref="submit" @click="addComment()">
                   <span class="gt-btn-text">提交</span>
                 </button>
-                <button class="gt-btn-login">
+                <button class="gt-btn-login" v-show="!isLogin"  @click="dialogFormLogin = true">
                   <span class="gt-btn-text">登录</span>
                 </button>
               </div>
@@ -123,20 +123,55 @@
       </div>
     </main>
     <footer></footer>
+
+    <!-- 登录窗口 -->
+    <el-dialog title="登录" :visible.sync="dialogFormLogin" width="25%">
+      <el-form :model="form">
+        <el-form-item label="请输用户名" :label-width="formLabelWidth" style="margin-bottom:22px;">
+          <el-input v-model="form.name" autocomplete="off" ref="username"></el-input>
+        </el-form-item>
+        <el-form-item label="请输入密码" :label-width="formLabelWidth">
+          <el-input v-model="form.password" autocomplete="off" ref="password" show-password></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="login()" style="border:1px solid #DCDFE6;padding:12px 20px;">登录</el-button>
+        <el-button @click="dialogFormLogin = false" style="border:1px solid #DCDFE6;padding:12px 20px;">取 消</el-button>
+      </div>
+    </el-dialog> 
+
   </div>
 </template>
 
 <script>
 
   import { getArticleDetail } from '../../api/articleDetail';
-  import { getArticleComments } from '../../api/comment';
+  import { getArticleComments, addOneComment } from '../../api/comment';
+  import {login} from '../../api/login'
   export default {
     name: 'articleDetail',
     data: function(){
       return {
         id: '',
         articleDetail: [],
-        comments: []
+        comments: [],
+        msg: '未登录用户',
+        isLogin: false,
+        uid: '',
+        tid: '',//文章类型id
+        username: '',
+        dialogFormLogin: false,
+        formLabelWidth: '120px',//修改标签的宽度
+        form: {
+          name: '',
+          region: '',
+          date1: '',
+          date2: '',
+          delivery: false,
+          type: [],
+          resource: '',
+          desc: ''
+        }
       }
     },
     computed: {
@@ -164,16 +199,68 @@
       }
     },
     created() {
+      this.init();
       this.getArticleID();//获取这篇文章的id
       this._getArticleDetail(this.id);
       this._getArticleComments(this.id);
     },
     methods: {
+      login() {
+        let username = this.$refs.username.value;
+        let password = this.$refs.password.value;
+        login(username,password).then((res) => {
+          if(res.state == "success"){
+            this.dialogFormLogin = false;//关闭窗口
+            sessionStorage.isLogin = true;
+            sessionStorage.username = username;
+            sessionStorage.uid = res.data[0].id;
+            this.username = sessionStorage.username;
+            this.isLogin = sessionStorage.isLogin;
+            // console.log("666");
+            // console.log(sessionStorage.isLogin);
+            alert("登录成功!");
+            window.location.reload();
+            // console.log(res.data[0].id);
+          }else{
+            alert("账号不存在或输入密码有误!");
+          }
+        })
+      },
+      //提交评论
+      addComment() {
+        if(sessionStorage.isLogin == "false"){
+          // console.log("333");
+          alert("您还未登录，请先登录！");
+        }else{
+          let content = this.$refs.commentContent.value;
+          let articleID = this.id;
+          console.log(articleID);
+          let typeID= this.tid;
+          let from_uid = this.uid;
+          addOneComment(articleID, typeID, content, from_uid).then((res) => {
+            console.log(res);
+          })
+          // console.log(commentContent);
+        }
+      },
+      //获取登录用户名和登录用户id
+      init() {
+        console.log("123");
+        this.uid = sessionStorage.uid;
+        this.username = sessionStorage.username;
+        if(sessionStorage.username){
+          this.msg = '已登录用户:' + sessionStorage.username;
+        }
+        if(sessionStorage.isLogin == "true"){
+          this.isLogin = true;
+        }
+      },
       _getArticleComments(id){
         getArticleComments(id).then((res) => {
           this.comments = res;
           console.log("评论：");
           console.log(this.comments);
+          // console.log(sessionStorage.isLogin);
         })
       },
       getArticleID() {
