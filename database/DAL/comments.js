@@ -38,15 +38,15 @@ let updateCommentState = (id,state) => {
 }
 //根据文章id获取关于这篇文章的所有评论
 let getCommentsByArticleId = (articleID) => {
-  let _sql = `select c.*, u.userName as from_userName from Comments c left JOIN Users u on c.from_uid=u.id where c.article_id="${articleID}";`
+  let _sql = `select c.*, u.userName as from_userName from Comments c left JOIN Users u on c.from_uid=u.id where c.article_id="${articleID}" AND c.state=1 ORDER BY createDate DESC;`
   return apiModel.query(_sql); 
 }
 //添加一条评论
 let addOneComment = (id, articleID, typeID, content, state, from_uid, createDate) => {
   let _sql = `insert into Comments set 
               id = "${id}",
-              articleID="${articleID}",
-              typeID="${typeID}",
+              article_id="${articleID}",
+              type_id="${typeID}",
               content="${content}",
               state="${state}",
               createDate="${createDate}",

@@ -223,6 +223,7 @@
         console.log(sessionStorage.isLogin);
         this.isLogin = false;
         this.username = sessionStorage.username;
+        alert("注销账户成功!");
       },
       _getTypeList() {
         getTypeList().then((res) => {

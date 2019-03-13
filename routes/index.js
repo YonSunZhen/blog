@@ -9,6 +9,15 @@ var replysBll = require('../database/BLL/replys');
 var time = require('silly-datetime');
 var uuidv1 = require('uuid/v1');
 var multer = require('multer');
+
+//跨域处理
+function crossDomain(res){
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Credentials", true);
+  res.header("Access-Control-Allow-Headers","Origin,X-Requested-With,Content-Type,Accept,Connection,User-Agent,Cookie");
+  res.header("Access-Control-Allow-Methods", "PUT,POST,GET,TRACE,OPTIONS,DELETE");
+}
+
 //配置上传文件时服务器文件夹的相关信息
 var storage = multer.diskStorage({
   //如果destination是一个函数，必须手动创建上传文件夹
@@ -382,6 +391,7 @@ router.get('/getCommentsAllData',function(req,res,next){
 })
 //Comments表根据id删除一条评论
 router.post('/delComment',function(req,res,next){
+  crossDomain(res)
   let id = req.body.id;
   commentsBll.delComment(function(result){
     if(result == "true"){
@@ -444,6 +454,7 @@ router.post('/addReply',function(req,res,next){
 })
 //Replys表获取一条评论的所有回复
 router.post('/getReplysByCommentID',function(req,res,next){
+  crossDomain(res)
   let comment_id = req.body.comment_id;
   //console.log(comment_id);
   replysBll.getReplysByCommentID(function(result){
