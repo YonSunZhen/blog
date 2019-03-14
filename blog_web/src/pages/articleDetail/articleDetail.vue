@@ -47,7 +47,7 @@
           </div>
           <div class="gt-header">
             <div href="" class="gt-avatar">
-              <img src="" alt="" >
+              <img src="../../assets/image/head.jpg" class="avatar" alt="">
             </div>
             <div class="gt-header-comment">
               <textarea name="" id="" class="gt-header-textarea" placeholder="说点什么呢" ref="commentContent"></textarea>
@@ -60,7 +60,7 @@
                   <span class="gt-btn-text">登录</span>
                 </button>
                 <button class="gt-btn-login" v-show="isLogin" @click="logout()">
-                  <span class="gt-btn-text">注销1</span>
+                  <span class="gt-btn-text">注销</span>
                 </button>
               </div>
             </div>
@@ -80,16 +80,26 @@
                         <span class="date">  ({{item.createDate}})</span>
                         <span class="opt-box">
                           <!-- <a href="">查看回复</a> -->
-                          <a href="javascript:;" class="reply" :class="{hide: item.from_uid == uid}" @click="reply(item.from_uid,item.id)">回复</a>
-                          <a href="javascript:;" class="delete" :class="{hide: item.from_uid != uid}" @click="delComment(item.id)">删除</a>
+                          <a href="javascript:;" class="reply" :class="{hide: item.from_uid == uid || isLogin == false}" @click="reply(item.from_uid,item.id)">回复</a>
+                          <a href="javascript:;" class="delete" :class="{hide: item.from_uid != uid||isLogin == false}" @click="delComment(item.id)">删除</a>
                         </span>
                       </div>
                     </div>
                     <div class="clear"></div>
                   </li>
-                  <li class="reply-box">
+             <!-- <li class="reply-box" >
+                    <ul class="comment-list-reply" v-if="replyList">
+                      {{replyList}}
+                      <li class="comment-line-box" v-for="item1 in replyList" :key="item1.id" >
+                        {{replyList['36b42170-456c-11e9-b141-4b692ef55ec0']}}
+                     {{item1}}
+                      </li>
+                    </ul>
+                  </li> -->
+
+               <!-- <li class="reply-box" >
                     <ul class="comment-list-reply">
-                      <li class="comment-line-box" v-for="item1 in replyList[item.id]" :key="item1.id">
+                      <li class="comment-line-box" v-for="item1 in replyList['36b42170-456c-11e9-b141-4b692ef55ec0']">
                         <a href="" class="avatar-link">
                           <img src="../../assets/image/csdn.jpg" class="avatar" alt="">
                         </a>
@@ -101,6 +111,34 @@
                           </div>
                         </div>
                         <div class="clear"></div>
+                      </li>
+                    </ul>
+                  </li> -->
+
+                  <li class="reply-box" >
+                    <ul class="comment-list-reply">
+                      <li class="comment-line-box" v-for="item1 in replyList" :key="item1.id">
+                        
+                        <template v-if="item1[0]['comment_id']===item.id">
+                          <div v-for="replyItem in item1" :key="replyItem.id">
+                            <a href="" class="avatar-link">
+                              <img src="../../assets/image/csdn.jpg" class="avatar" alt="">
+                            </a>
+                            <div class="right-box">
+                              <div class="info-box">
+                                <span class="name">{{replyItem.from_userName}}@{{replyItem.to_userName}}:</span>
+                                <span class="comment">{{replyItem.content}}</span>
+                                <span class="date">({{replyItem.createDate}})</span>
+                                <span class="opt-box">
+                                <a href="javascript:;" class="reply" :class="{hide: replyItem.from_uid == uid || isLogin == false}" @click="replyToReply(replyItem.from_uid,item.id,replyItem.id)">回复</a>
+                                <a href="javascript:;" class="delete" :class="{hide: replyItem.from_uid != uid||isLogin == false}" @click="delReply(replyItem.id)">删除</a>
+                              </span>
+                              </div>
+                            </div>
+                            <div class="clear"></div> 
+                          </div>
+                        </template>
+                      
                       </li>
                     </ul>
                   </li>
@@ -130,7 +168,7 @@
     </el-dialog> 
 
     <!-- 回复窗口 -->
-    <el-dialog title="回复" :visible.sync="dialogFormReply" width="25%">
+    <el-dialog title="回复评论" :visible.sync="dialogFormReply" width="25%">
       <el-form :model="form">
         <el-form-item label="请输入回复内容" :label-width="formLabelWidth" style="margin-bottom:22px;">
           <el-input v-model="form.name" autocomplete="off" ref="reply"></el-input>
@@ -142,19 +180,33 @@
       </div>
     </el-dialog> 
 
+    <!-- 回复回复窗口 -->
+    <el-dialog title="回复" :visible.sync="dialogFormReply1" width="25%">
+      <el-form :model="form">
+        <el-form-item label="请输入回复内容" :label-width="formLabelWidth" style="margin-bottom:22px;">
+          <el-input v-model="form.name" autocomplete="off" ref="reply1"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary"  @click="addReplyToReply()" style="border:1px solid #DCDFE6;padding:12px 20px;">提交</el-button>
+        <el-button @click="dialogFormReply1 = false" style="border:1px solid #DCDFE6;padding:12px 20px;">取 消</el-button>
+      </div>
+    </el-dialog> 
+
   </div>
 </template>
 
 <script>
 
-  import { getArticleDetail } from '../../api/articleDetail';
+  import { getArticleDetail, updateArticleReadCount } from '../../api/articleDetail';
   import { getArticleComments, addOneComment, delComment} from '../../api/comment';
-  import { addReply, getReplysByCommentID} from '../../api/reply';
+  import { addReply, getReplysByCommentID, delReply} from '../../api/reply';
   import {login} from '../../api/login'
   export default {
     name: 'articleDetail',
     data: function(){
       return {
+        arr:[],
         id: '',
         articleDetail: [],
         comments: [],
@@ -165,10 +217,13 @@
         username: '',
         from_uid: '',//用于addReply()
         comment_id: '',//用于addReply()
-        replyList: {},
+        reply_id: '',
+        replyList: [],
         commentID: [],
+        // readCount: 0,
         dialogFormLogin: false,
         dialogFormReply: false,
+        dialogFormReply1: false,
         formLabelWidth: '120px',//修改标签的宽度
         form: {
           name: '',
@@ -211,7 +266,10 @@
       this.getArticleID();//获取这篇文章的id
       this._getArticleComments(this.id);//这里有点问题
       this._getArticleDetail(this.id);
-      // this._getAllReply();
+      this._updateArticleReadCount(this.id,this.readCount);
+      console.log(this.articleDetail);
+      console.log(this.comments);
+      console.log(this.replyList);
     },
     methods: {
       //登录
@@ -241,7 +299,7 @@
         sessionStorage.isLogin = false;
         sessionStorage.username = '';
         sessionStorage.uid = null;
-        console.log(sessionStorage.isLogin);
+        // console.log(sessionStorage.isLogin);
         this.isLogin = false;
         this.username = sessionStorage.username;
         this.msg = '未登录用户';
@@ -258,7 +316,7 @@
             alert("请先输入评论内容")
           }else{
             let articleID = this.id;
-            console.log(articleID);
+            // console.log(articleID);
             let typeID= this.articleDetail[0].tid;
             let from_uid = this.uid;
             addOneComment(articleID, typeID, content, from_uid).then((res) => {
@@ -283,9 +341,19 @@
           }
         })
       },
+      //删除回复
+      delReply(id) {
+        delReply(id).then((res) => {
+          if(res == "success") {
+            this._getArticleComments(this.id);//重新加载评论
+            alert("删除成功!");
+          }else{
+            alert("删除失败!");
+          }
+        })
+      },
       //获取登录用户名和登录用户id
       init() {
-        console.log("123");
         this.uid = sessionStorage.uid;
         this.username = sessionStorage.username;
         if(sessionStorage.username){
@@ -303,35 +371,38 @@
             // let key = this.comments[i].id;
             this.commentID.push(this.comments[i].id);
           }
-          console.log("评论：");
-          console.log(this.comments);
-          console.log("评论id");
-          console.log(this.commentID);
-          console.log("tyu");
-          console.log( this.comments[1].id);
           //获取所有评论的回复
+          if(this.replyList.length > 0){
+            this.replyList = [];
+          }
           for(let i = 0;i < this.comments.length;i++){
             getReplysByCommentID(this.comments[i].id).then((res) => {
-              console.log(res);
-              this.replyList[ this.commentID[i]] = res;
+              if(res&&Array.isArray(res)&&res.length>0){
+                this.replyList.push(res);
+              }
             })
           }
           console.log("所有回复");
           console.log(this.replyList);
-          // console.log(sessionStorage.isLogin);
         })
       },
       getArticleID() {
         let id = window.location.href.split('=')[1];
         this.id = id;
-        this._getArticleComments(this.id);
-        console.log(this.id);
       },
       _getArticleDetail(id){
+        // let that = this;
         getArticleDetail(id).then((res) => {
+          // if(res[0].readCount){
+          //   that.readCount = res[0].readCount;
+          //   // this.readCount += 1;
+          // }else{
+          //   that.readCount = 0;
+          // } 
           this.articleDetail = res;
-          console.log("文章详情：");
-          console.log(this.articleDetail[0]);
+          // console.log("5555");
+          // console.log(res[0].readCount);
+          // console.log(that.readCount);
         })
       },
       //向评论增加一条回复
@@ -339,24 +410,41 @@
         let comment_id = this.comment_id;
         let content = this.$refs.reply.value;
         let reply_type = 0;
-        let from_uid = this.from_uid;
-        let to_uid = this.uid;
-        console.log(comment_id );
-        console.log(content );
-        console.log(reply_type );
-        console.log(from_uid );
-        console.log(to_uid );
+        let from_uid = this.uid;
+        let to_uid = this.from_uid;
         addReply(comment_id,reply_type,content,from_uid,to_uid).then((res) => {
           if(res == "error"){
             alert("您不能向自己回复!");
           }else if(res == "success"){
+            this._getArticleComments(this.id);
+            this.dialogFormReply = false;
             alert("回复成功!");
           }else{
             alert("回复失败!");
           }
         })
       },
-      //点击回复事件
+      //向回复增加一条回复
+      addReplyToReply() {
+        let comment_id = this.comment_id;
+        let content = this.$refs.reply1.value;
+        let reply_type = 1;
+        let from_uid = this.uid;
+        let to_uid = this.from_uid;
+        let reply_id = this.reply_id;
+        addReply(comment_id,reply_type,content,from_uid,to_uid,reply_id).then((res) => {
+          if(res == "error"){
+            alert("您不能向自己回复!");
+          }else if(res == "success"){
+            this._getArticleComments(this.id);
+            this.dialogFormReply1 = false;
+            alert("回复成功!");
+          }else{
+            alert("回复失败!");
+          }
+        })
+      },
+      //点击回复评论事件
       reply(from_uid,comment_id) {
         if(sessionStorage.isLogin == "false" || sessionStorage.isLogin == null){
           alert("您还未登录，请先登录!");
@@ -366,6 +454,27 @@
           // console.log(this.comment_id);
           this.dialogFormReply = true;
         }
+      },
+      //点击回复回复事件
+      replyToReply(from_uid,comment_id,reply_id) {
+        if(sessionStorage.isLogin == "false" || sessionStorage.isLogin == null){
+          alert("您还未登录，请先登录!");
+        }else{
+          this.from_uid = from_uid;
+          this.comment_id = comment_id;
+          this.reply_id = reply_id;
+          this.dialogFormReply1 = true;
+        }
+      },
+      //更新文章的阅读量
+      _updateArticleReadCount(id){
+        updateArticleReadCount(id).then((res) => {
+          if(res == "success"){
+            console.log("更新成功");
+          }else{
+            console.log("更新失败");
+          }
+        })
       }
     }
     
@@ -447,6 +556,11 @@
             .gt-avatar
               width 3em
               height 3em
+              img 
+                width 3em
+                height 3em
+                display block
+                border-radius 50%
             .gt-header-comment
               -webkit-box-flex 1
               flex 1
@@ -591,6 +705,16 @@
                                 color: #999
                                 vertical-align: top
                                 display: inline-block
+                              .opt-box 
+                                vertical-align: top
+                                display: inline-block
+                                margin-left: 16px
+                                font-size: 12px
+                                color: #6b6b6b
+                                .reply
+                                  margin-left 10px
+                                .delete
+                                  margin-left 10px
 
                   
                   

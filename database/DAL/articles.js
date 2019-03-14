@@ -66,6 +66,14 @@ let getArticleOneData = (id) => {
               where a.id="${id}";`
   return apiModel.query(_sql);
 }
+//更改Articles中的阅读数
+let updateArticleReadCount = (id,readCount) => {
+  let _sql = `update articles set 
+              readCount="${readCount}"
+              where id="${id}";
+              `
+  return apiModel.query(_sql); 
+}
 
 module.exports = {
   addArticle,
@@ -75,5 +83,6 @@ module.exports = {
   updateArticleOneData,
   getArticleOneData,
   getArticlesDataByState,
-  getArticlesDataByTypeId
+  getArticlesDataByTypeId,
+  updateArticleReadCount
 }

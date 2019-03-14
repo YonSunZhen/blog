@@ -21,6 +21,13 @@ let getReplysByCommentID = (comment_id) => {
               one left JOIN Users on one.to_uid = Users.id ORDER BY createDate`;//默认是升序
   return apiModel.query(_sql);
 }
+//根据评论id获取一条评论的所有通过的回复
+let getReplysByCommentIDState1 = (comment_id) => {
+  let _sql = `select one.*,Users.userName as to_userName from 
+                (select r.*,m.userName as from_userName from Replys r left JOIN Users m on r.from_uid = m.id where comment_id="${comment_id}") 
+              one left JOIN Users on one.to_uid = Users.id where one.state=1 ORDER BY createDate`;//默认是升序
+  return apiModel.query(_sql);
+}
 //根据id删除一条回复
 let delReply = (id) => {
   let _sql = `delete from Replys where id="${id}";`
@@ -36,5 +43,6 @@ module.exports = {
   addReply,
   getReplysByCommentID,
   delReply,
-  updateReplyState
+  updateReplyState,
+  getReplysByCommentIDState1
 }

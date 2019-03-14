@@ -16,6 +16,12 @@ let getReplysByCommentID = (cb,comment_id) => {
     return cb(result);
   })
 }
+//根据评论id获取一条评论的所有通过的回复
+let getReplysByCommentIDState1 = (cb,comment_id) => {
+  apiModel.getReplysByCommentIDState1(comment_id).then((result) => {
+    return cb(result);
+  })
+}
 //根据id删除一条回复
 let delReply = (cb,id) => {
   apiModel.delReply(id).then((result) => {
@@ -41,5 +47,6 @@ module.exports = {
   addReply,
   getReplysByCommentID,
   delReply,
-  updateReplyState
+  updateReplyState,
+  getReplysByCommentIDState1
 }

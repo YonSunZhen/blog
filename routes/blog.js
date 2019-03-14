@@ -171,14 +171,10 @@ router.post('/addOneComment',function(req,res,next){
 router.post('/addReply',function(req,res,next){
   crossDomain(res);
   let comment_id = req.body.comment_id;
-  // console.log("2345");
-  // console.log(comment_id);
   let content = req.body.content;
   let to_uid = req.body.to_uid;
   let reply_type = req.body.reply_type;
   let from_uid = req.body.from_uid;
-  //console.log("234");
-  //console.log(reply_type);
   let id = uuidv1();
   let reply_id;
   if(reply_type == '1'){//reply_type为1时，表示回复的是回复，reply_id等于回复的id
@@ -188,19 +184,8 @@ router.post('/addReply',function(req,res,next){
     console.log("出错了");
     reply_id = req.body.comment_id;
   }
-  //console.log("23456");
-  //console.log(reply_id);
   let state = 1;
   let createDate = time.format(new Date(), 'YYYY-MM-DD HH:mm:ss');
-  // console.log("comment_id"+comment_id);
-  // console.log("content"+content);
-  // console.log("to_uid"+to_uid);
-  // console.log("reply_type"+reply_type);
-  // console.log("id"+id);
-  // console.log("state"+state);
-  // console.log("createDate"+createDate);
-  // console.log("comment_id"+comment_id);
-  // console.log("reply_id"+reply_id);
   //当回复人和被回复人一样时
   if(from_uid == to_uid){
     res.send("error");
@@ -213,6 +198,23 @@ router.post('/addReply',function(req,res,next){
       }
     },id,comment_id,reply_id,reply_type,content,state,from_uid,to_uid,createDate)
   }
+})
+//更新文章的阅读量
+router.post('/updateArticleReadCount',function(req,res,next){
+  crossDomain(res);
+  let id = req.body.id;
+  articlesBll.getArticleOneData(function(result1){
+    let readCount = result1[0].readCount;
+    console.log(readCount);
+    readCount += 1;
+    articlesBll.updateArticleReadCount(function(result){
+      if(result == "true") {
+        res.send("success");
+      }else{
+        res.send("fail");
+      }
+    },id, readCount)
+  },id)
 })
 
 module.exports = router;

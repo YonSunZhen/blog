@@ -60,6 +60,16 @@ let getArticleOneData = (cb,id) => {
     return cb(result);
   })
 }
+//更改Articles中的阅读数
+let updateArticleReadCount = (cb,id,readCount) => {
+  apiModel.updateArticleReadCount(id,readCount).then((result) => {
+    if(result.affectedRows > 0){
+      return cb("true");
+    }else{
+      return cb("false");
+    }
+  })
+}
 
 module.exports = {
   addArticle,
@@ -69,5 +79,6 @@ module.exports = {
   updateArticleOneData,
   getArticleOneData,
   getArticlesDataByState,
-  getArticlesDataByTypeId
+  getArticlesDataByTypeId,
+  updateArticleReadCount
 }

@@ -454,7 +454,7 @@ router.post('/addReply',function(req,res,next){
 })
 //Replys表获取一条评论的所有回复
 router.post('/getReplysByCommentID',function(req,res,next){
-  crossDomain(res)
+  crossDomain(res);
   let comment_id = req.body.comment_id;
   //console.log(comment_id);
   replysBll.getReplysByCommentID(function(result){
@@ -463,8 +463,20 @@ router.post('/getReplysByCommentID',function(req,res,next){
     res.send(result);
   },comment_id)
 })
+//Replys表获取一条评论的所有通过的回复
+router.post('/getReplysByCommentIDState1',function(req,res,next){
+  crossDomain(res);
+  let comment_id = req.body.comment_id;
+  //console.log(comment_id);
+  replysBll.getReplysByCommentIDState1(function(result){
+    //console.log("2222");
+    //console.log(result);
+    res.send(result);
+  },comment_id)
+})
 //Replys表删除一条数据
 router.post('/delReply',function(req,res,next){
+  crossDomain(res);
   let id = req.body.id;
   replysBll.delReply(function(result){
     if(result == "true"){

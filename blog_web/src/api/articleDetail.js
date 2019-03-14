@@ -10,3 +10,14 @@ export function getArticleDetail(id) {
       return Promise.resolve(res.data)
     })
 }
+//更新文章的阅读量
+export function updateArticleReadCount(id) {
+  var params = new URLSearchParams();
+  const url = host + '/blog/updateArticleReadCount';
+  params.append('id',id);
+  // params.append('readCount',readCount);
+  return axios.post(url,params)
+    .then((res) => {
+      return Promise.resolve(res.data)
+    })
+}
