@@ -8,6 +8,7 @@ var usersBll = require('../database/BLL/users');
 var replysBll = require('../database/BLL/replys');
 var time = require('silly-datetime');//获取时间
 var uuidv1 = require('uuid/v1');//生成36位guid
+var crypto = require("crypto");
 
 function crossDomain(res){
   res.header("Access-Control-Allow-Origin", "*");
@@ -112,7 +113,9 @@ router.post('/login', function(req, res, next) {
   }
   //重新获取数据判断登录
   let userName = req.body.username;
-  let password = req.body.password;
+  let password1 = req.body.password;
+  let md5 = crypto.createHash("md5");//创建并返回一个哈希对象
+  let password = md5.update(password1).digest("hex");
   let type = req.body.type;
   usersBll.findUser(function(data1){
     if(data1.length > 0){

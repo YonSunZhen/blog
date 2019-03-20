@@ -4,6 +4,9 @@ var time = require('silly-datetime');
 var usersModel = require('../database/Model/users');
 var usersBll = require('../database/BLL/users');
 var uuidv1 = require('uuid/v1');
+var crypto = require("crypto");
+
+
 
 function crossDomain(res){
   res.header("Access-Control-Allow-Origin", "*");
@@ -24,7 +27,10 @@ router.post('/register', function(req, res, next) {
   let id = uuidv1();
   console.log(id);
   let userName = req.body.username;
-  let passWord = req.body.password;
+  let passWord1 = req.body.password;
+  let md5 = crypto.createHash("md5");
+  console.log(md5);
+  let passWord = md5.update(passWord1).digest("hex");
   let mobile = req.body.mobile;
   let power;
   if(req.body.power){
@@ -63,7 +69,7 @@ router.post('/register', function(req, res, next) {
           // console.log("失败");
           res.send("fail");
         }
-      },userData,type)
+      },userData)
     }
   },userName,type)
 });
@@ -88,7 +94,10 @@ router.post('/login', function(req, res, next) {
   }
   //重新获取数据判断登录
   let userName = req.body.username;
-  let password = req.body.password;
+  let password1 = req.body.password;
+  let md5 = crypto.createHash("md5");//创建并返回一个哈希对象
+  console.log(md5);
+  let password = md5.update(password1).digest("hex");
   let type = req.body.type;
   usersBll.findUser(function(data){
     if(data.length > 0){

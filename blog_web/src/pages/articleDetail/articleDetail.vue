@@ -368,7 +368,6 @@
           this.comments = res;
           //将所有的评论的id存进数组commentID
           for(let i = 0;i < this.comments.length; i++){
-            // let key = this.comments[i].id;
             this.commentID.push(this.comments[i].id);
           }
           //获取所有评论的回复
