@@ -151,23 +151,47 @@
                         for(let i = 1;i < tagIns2.selected.length;i++){
                           power += ','+tagIns2.selected[i].id;
                         }
-                        $.ajax({
-                          type:"POST",
-                          url:"/index/updataUsersOneData",
-                          data:{'id':id,'username':username,'mobile':mobile,'state':state,'power':power,'remark':remark},
-                          success:function(result){
-                            if(result === "success"){
-                              layer.confirm("更新成功!",function(index){
-                                layer.close(index);//关闭对话框
-                              })
-                              table1.reload();//重载表格
-                            }else{
-                              layer.confirm("更新失败!",function(index){
-                                layer.close(index);//关闭对话框
-                              })
+                        if(username1 != username){
+                          $.ajax({
+                            type:"POST",
+                            url:"/index/updataUsersOneData",
+                            data:{'id':id,'username':username,'mobile':mobile,'state':state,'remark':remark,'type':type},
+                            success:function(result){
+                              if(result === "success"){
+                                layer.confirm("更新成功!",function(index){
+                                  layer.close(index);//关闭对话框
+                                })
+                                table1.reload();//重载表格
+                              }else if(result === "isExist"){
+                                layer.confirm("用户名已存在，请重新输入!",function(index){
+                                  layer.close(index);//关闭对话框
+                                })
+                              }else{
+                                layer.confirm("更新失败!",function(index){
+                                  layer.close(index);//关闭对话框
+                                })
+                              }
                             }
-                          }
-                        })
+                          })
+                        }else{
+                          $.ajax({
+                            type:"POST",
+                            url:"/index/updataUsersOneData1",
+                            data:{'id':id,'username':username,'mobile':mobile,'state':state,'remark':remark,'type':type},
+                            success:function(result){
+                              if(result === "success"){
+                                layer.confirm("更新成功!",function(index){
+                                  layer.close(index);//关闭对话框
+                                })
+                                table1.reload();//重载表格
+                              }else{
+                                layer.confirm("更新失败!",function(index){
+                                  layer.close(index);//关闭对话框
+                                })
+                              }
+                            }
+                          })
+                        }
                       }
                       // console.log(state);
                     },
@@ -205,7 +229,9 @@
                   $("#state").val(data[0].state);
                   $("#power").val(data[0].power);
                   $("#remark").val(data[0].remark);
+                  let username1 = data[0].userName;
                   let power = data[0].power;
+                  let type = data[0].type;
 
                   //初始化多选框（编辑用户）
                   var tagIns2 = selectM({

@@ -1,13 +1,13 @@
 var express = require('express');
 var router = express.Router();
-var time = require('silly-datetime');
+var time = require('silly-datetime');//
 var usersModel = require('../database/Model/users');
-var usersBll = require('../database/BLL/users');
-var uuidv1 = require('uuid/v1');
-var crypto = require("crypto");
+var usersBll = require('../database/BLL/users');//引入users表数据访问层
+var uuidv1 = require('uuid/v1');//随机生成36位guid
+var crypto = require("crypto");//密码加密处理
 
 
-
+//跨域处理代码
 function crossDomain(res){
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Credentials", true);
@@ -23,14 +23,14 @@ router.get('/', function(req, res, next) {
 });
 //注册路由
 router.post('/register', function(req, res, next) {
-  crossDomain(res)
+  crossDomain(res);//跨域处理
   let id = uuidv1();
   console.log(id);
   let userName = req.body.username;
   let passWord1 = req.body.password;
-  let md5 = crypto.createHash("md5");
+  let md5 = crypto.createHash("md5");//密码加密处理
   console.log(md5);
-  let passWord = md5.update(passWord1).digest("hex");
+  let passWord = md5.update(passWord1).digest("hex");//密码加密处理
   let mobile = req.body.mobile;
   let power;
   if(req.body.power){
@@ -47,27 +47,20 @@ router.post('/register', function(req, res, next) {
   }
   let createDate = time.format(new Date(), 'YYYY-MM-DD HH:mm:ss');
   let type = req.body.type;//0表示管理员，1表示普通用户
-  // let model = {
-  //   "userName":userName,
-  //   "passWord":passWord,
-  //   "state":state,
-  //   "mobile":mobile,
-  //   "createDate":createDate
-  // };
   let userData = new usersModel.Users(userName,mobile,state,power,remark,passWord,createDate,id,type);
   //验证用户是否已存在
   usersBll.isExist(function(data){
     if(data === "true"){
       // console.log("已存在");
-      res.send("isExist");
+      res.send("isExist");//返回请求数据
     }else{
       usersBll.addUser(function(data){
         if(data === "true"){
           // console.log("成功");
-          res.send("success");
+          res.send("success");//返回请求数据
         }else{
           // console.log("失败");
-          res.send("fail");
+          res.send("fail");//返回请求数据
         }
       },userData)
     }
@@ -96,7 +89,7 @@ router.post('/login', function(req, res, next) {
   let userName = req.body.username;
   let password1 = req.body.password;
   let md5 = crypto.createHash("md5");//创建并返回一个哈希对象
-  console.log(md5);
+  // console.log(md5);
   let password = md5.update(password1).digest("hex");
   let type = req.body.type;
   usersBll.findUser(function(data){

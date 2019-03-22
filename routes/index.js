@@ -119,6 +119,39 @@ router.post('/updataUsersOneData',function(req,res,next){
   let userName = req.body.username;
   let state = Number(req.body.state);
   let mobile = req.body.mobile;
+  let type = req.body.type;
+  console.log(type);
+  let power;
+  if(req.body.power){
+    power = req.body.power;
+  }else{
+    power = null;
+  }
+  let remark = req.body.remark;
+  let userData = new usersModel.Users(userName,mobile,state,power,remark);
+  //console.log(userData);
+  usersBll.isExist(function(result1){
+    if(result1 === "true"){
+      res.send("isExist");//返回请求数据
+    }else{
+      usersBll.updataUsersOneData(function(result){
+        if(result === "true"){
+          res.send("success");
+        }else{
+          res.send("fail");
+        }
+      },userData,id)
+    }
+  },userName,type)
+})
+//更改Users中的一条数据
+router.post('/updataUsersOneData1',function(req,res,next){
+  let id = req.body.id;
+  let userName = req.body.username;
+  let state = Number(req.body.state);
+  let mobile = req.body.mobile;
+  // let type = req.body.type;
+  // console.log(type);
   let power;
   if(req.body.power){
     power = req.body.power;

@@ -12,17 +12,6 @@ var findUser = (cb, userName, password, type) => {
       return cb(result);
     }
   })
-
-  // return new Promise((resolve,reject) => {
-  //   apiModel.findUser(userName,password).then((result) =>  {
-  //     if(result.length > 0){
-  //       console.log(result);
-  //       resolve("true");
-  //       // res.send("登录成功");
-  //       // return true;
-  //     }
-  //   })
-  // })
 }
 
 //验证用户名是否存在
@@ -38,7 +27,6 @@ var isExist = (cb, userName, type) => {
     }
   })
 }
-
 //增加一个用户
 var addUser = (cb, model) => {
   apiModel.addUser(model).then((result) => {
