@@ -11,16 +11,19 @@ var uuidv1 = require('uuid/v1');//生成36位guid
 var crypto = require("crypto");
 
 function crossDomain(res){
-  res.header("Access-Control-Allow-Origin", "*");
+  const origin = URL.parse(ctx.get('origin') || ctx.get('referer') || '');
+  console.log('-------------------',`${origin.protocol}//${origin.host}`);
+  res.header('Access-Control-Allow-Origin', `${origin.protocol}//${origin.host}`);
   res.header("Access-Control-Allow-Credentials", true);
-  res.header("Access-Control-Allow-Headers","Origin,X-Requested-With,Content-Type,Accept,Connection,User-Agent,Cookie");
+  res.header("Access-Control-Allow-Headers","Origin,X-Requested-With,Content-Type,Accept,Connection,User-Agent,Cookie,Cache-Control");
   res.header("Access-Control-Allow-Methods", "PUT,POST,GET,TRACE,OPTIONS,DELETE");
   // res.header("X-Powered-By", "Jetty");
 }
 
+
 //显示文章列表（渲染首页）
 router.post('/getArticlesDataByState',function(req,res,next){
-  crossDomain(res);
+  // crossDomain(res);
   let limit = req.body.limit;
   let state = req.body.state;
   let typeId = req.body.typeId;
@@ -60,7 +63,7 @@ router.post('/getArticlesDataByState',function(req,res,next){
 
 //显示类型列表（渲染首页）
 router.get('/getTypesAdopt',function(req,res,next){
-  crossDomain(res);
+  // crossDomain(res);
   typesBll.getTypesAdopt(function(result){
     //console.log(result);
     let array = [];
@@ -76,7 +79,7 @@ router.get('/getTypesAdopt',function(req,res,next){
 
 //Articles根据id获取一条数据
 router.post('/getArticleOneData',function(req,res,next){
-  crossDomain(res);
+  // crossDomain(res);
   let id = req.body.id;
   articlesBll.getArticleOneData(function(result){
     res.send(result);
@@ -85,7 +88,7 @@ router.post('/getArticleOneData',function(req,res,next){
 
 //根据文章id获取关于这篇文章的所有评论
 router.post('/getCommentsByArticleId',function(req,res,next){
-  crossDomain(res);
+  // crossDomain(res);
   let id = req.body.id;
   commentsBll.getCommentsByArticleId(function(result){
     res.send(result);
@@ -94,7 +97,7 @@ router.post('/getCommentsByArticleId',function(req,res,next){
 
 //前台登录接口
 router.post('/login', function(req, res, next) {
-  crossDomain(res);
+  // crossDomain(res);
   //重新登录时清除先前的数据(如果存在的话)
   if(req.session.logined){
     req.session.logined = null;
@@ -153,7 +156,7 @@ router.post('/login', function(req, res, next) {
 
 //前台添加评论接口
 router.post('/addOneComment',function(req,res,next){
-  crossDomain(res);
+  // crossDomain(res);
   let id = uuidv1();
   let articleID = req.body.articleID;
   let typeID = req.body.typeID;
@@ -172,7 +175,7 @@ router.post('/addOneComment',function(req,res,next){
 
 //对评论增加一条回复
 router.post('/addReply',function(req,res,next){
-  crossDomain(res);
+  // crossDomain(res);
   let comment_id = req.body.comment_id;
   let content = req.body.content;
   let to_uid = req.body.to_uid;
@@ -204,7 +207,7 @@ router.post('/addReply',function(req,res,next){
 })
 //更新文章的阅读量
 router.post('/updateArticleReadCount',function(req,res,next){
-  crossDomain(res);
+  // crossDomain(res);
   let id = req.body.id;
   articlesBll.getArticleOneData(function(result1){
     let readCount = result1[0].readCount;
