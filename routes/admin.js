@@ -68,7 +68,7 @@ router.post('/register', function(req, res, next) {
 });
 //登录路由
 router.post('/login', function(req, res, next) {
-  crossDomain(res);
+  // crossDomain(res);
   //重新登录时清除先前的数据(如果存在的话)
   if(req.session.logined){
     req.session.logined = null;

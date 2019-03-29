@@ -22,7 +22,7 @@ var apiModel = require('../DbHelper');
 
 //增加用户（注册）
 let addUser = (model) => {
-  let _sql = `insert into Users set 
+  let _sql = `insert into users set 
               id = "${model.id}",
               userName="${model.userName}",
               passWord="${model.passWord}",
@@ -38,36 +38,36 @@ let addUser = (model) => {
 
 //验证用户（登录）
 let findUser = (userName, password, type) => {
-  let _sql = `select id from Users where userName="${userName}" AND passWord="${password}" AND type="${type}"; `
+  let _sql = `select id from users where userName="${userName}" AND passWord="${password}" AND type="${type}"; `
   // console.log(1);
   return apiModel.query(_sql);
 }
 
 //验证用户是否已存在（注册）
 let isExist = (userName,type) => {
-  let _sql = `select * from Users where userName="${userName}" AND type="${type}"; `
+  let _sql = `select * from users where userName="${userName}" AND type="${type}"; `
   // console.log(1);
   return apiModel.query(_sql);
 }
 
 //获取Users所有数据（除了超管,管理员管理模块）
 let getUsersAllDataType0 = () => {
-  let _sql = `select * from Users where userName != "superAdmin" AND type=0 ORDER BY createDate DESC;`
+  let _sql = `select * from users where userName != "superAdmin" AND type=0 ORDER BY createDate DESC;`
   return apiModel.query(_sql);
 }
 //获取Users所有数据（除了超管,普通用户管理模块）
 let getUsersAllDataType1 = () => {
-  let _sql = `select * from Users where type=1 ORDER BY createDate DESC;`
+  let _sql = `select * from users where type=1 ORDER BY createDate DESC;`
   return apiModel.query(_sql);
 }
 //根据id删除一条数据
 let delUsersOneData = (id) => {
-  let _sql = `delete from Users where id="${id}";`
+  let _sql = `delete from users where id="${id}";`
   return apiModel.query(_sql);
 }
 //更改Users中的一条数据
 let updataUsersOneData = (model,id) => {
-  let _sql = `update Users set 
+  let _sql = `update users set 
               userName="${model.userName}",
               state="${model.state}",
               mobile="${model.mobile}",
@@ -79,17 +79,17 @@ let updataUsersOneData = (model,id) => {
 }
 //根据id获取一条数据(模型)
 let getModel = (id) => {
-  let _sql = `select * from Users where id="${id}";`
+  let _sql = `select * from users where id="${id}";`
   return apiModel.query(_sql);
 }
 //根据用户名和密码查找出登陆时间和登陆次数
 let getLoginDateAndLoginTimes = (userName,passWord) => {
-  let _sql = `select loginDate,loginTimes from Users where userName="${userName}" AND passWord="${passWord}"; `
+  let _sql = `select loginDate,loginTimes from users where userName="${userName}" AND passWord="${passWord}"; `
   return apiModel.query(_sql);
 }
 //更新用户的登陆时间，登陆次数等
 let updateLogin = (loginDate,lastLoginDate,loginTimes,userName,passWord) => {
-  let _sql = `update Users set
+  let _sql = `update users set
               loginDate="${loginDate}",
               lastLoginDate="${lastLoginDate}",
               loginTimes="${loginTimes}"
@@ -99,7 +99,7 @@ let updateLogin = (loginDate,lastLoginDate,loginTimes,userName,passWord) => {
 }
 //根据普通管理员用户名和密码获取普管的权限
 let getPowerByUser = (userName,passWord) => {
-  let _sql = `select power from Users where userName="${userName}" AND passWord="${passWord}"; `
+  let _sql = `select power from users where userName="${userName}" AND passWord="${passWord}"; `
   return apiModel.query(_sql);
 }
 module.exports = {
