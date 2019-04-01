@@ -15,7 +15,7 @@ var app = express();
 app.all('*', function (req, res, next) {
   // //Access-Control-Allow-Headers ,可根据浏览器的F12查看,把对应的粘贴在这里就行
   const origin = URL.parse(req.headers['origin'] || req.headers['referer'] || '');
-  console.log(origin);
+  // console.log(origin);
   res.header('Access-Control-Allow-Origin', `${origin.protocol}//${origin.host}`);
   res.header("Access-Control-Allow-Credentials", true);
   res.header("Access-Control-Allow-Headers","Origin,X-Requested-With,Content-Type,Accept,Connection,User-Agent,Cookie");

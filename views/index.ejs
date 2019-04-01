@@ -4,6 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><!-- 移动端的窗口 -->
   <title>请求集合</title>
+  <link rel='stylesheet' href='/stylesheets/public.css' />
+  <link rel='stylesheet' href='/stylesheets/admin.css' />
   <link rel="stylesheet" href="/javascripts/layui/css/layui.css">
   <link rel="stylesheet" type="text/css" href="/stylesheets/index.css">
 </head>
@@ -19,8 +21,7 @@
           <%-username%>
         </a>
         <dl class="layui-nav-child">
-          <dd><a href="">基本资料</a></dd>
-          <dd><a href="">修改密码</a></dd>
+          <dd><a href="javascript:;" id="editOwnData">个人资料</a></dd>
         </dl>
       </li>
       <li class="layui-nav-item"><a href="/logout">退出</a></li>
@@ -85,6 +86,144 @@
   </div>
 </div>
 <script src="/javascripts/layui/layui.js"></script>
-<script type="text/javascript" src="/javascripts/index.js"></script>
+<!-- <script type="text/javascript" src="/javascripts/index.js"></script> -->
+<script>
+  layui.use(['element','jquery','layer','form'],function(){
+	var elenemt = layui.element;
+  var $ = layui.$;
+  var layer = layui.layer;
+  var form = layui.form;
+
+  $("#Mindex").click(function(){
+    console.log("000");
+    $(".iframe").attr('src','/index/Mindex');
+  })
+  
+  $("#manager").click(function(){
+    $(".iframe").attr('src','/index/manager');
+	})
+  $("#user").click(function(){
+    $(".iframe").attr('src','/index/user');
+	})
+
+	$("#addArticle").click(function(){
+	 	$(".iframe").attr('src','/index/addArticle');
+  })
+
+	$("#manageArticle").click(function(){
+	 	$(".iframe").attr('src','/index/manageArticle');
+  })
+
+  $("#comment").click(function(){
+    $(".iframe").attr('src','/index/comment');
+  })
+
+  $("#editOwnData").click(function(){
+    $.ajax({
+      type:"POST",
+      url:"/index/getModel1",
+      sync:true,
+      // data:{"id":id},
+      success:function(data){
+        console.log(data);
+        
+        var index1 = layer.open({
+          type:0,
+          title:'修改个人信息',
+          btn:['提交','取消'],
+          //按钮的回调操作
+          btn1:function(index, layero){
+            let username = $("#username").val();
+            let password = $("#password").val();
+            let passwordAgain = $("#passwordAgain").val();
+            let mobile = $("#mobile").val();
+            let remark = $("#remark").val();
+
+            if(password === passwordAgain){
+              if(username1 != username){
+                $.ajax({
+                  type:"POST",
+                  url:"/index/updataUsersOneData2",
+                  data:{'username':username,'mobile':mobile,'remark':remark,'password':password},
+                  success:function(result){
+                    if(result === "success"){
+                      layer.confirm("修改成功!",function(index){
+                        layer.close(index);//关闭对话框
+                      })
+                      // table1.reload();//重载表格
+                    }else if(result === "isExist"){
+                      layer.confirm("用户名已存在，请重新输入!",function(index){
+                        layer.close(index);//关闭对话框
+                      })
+                    }else{
+                      layer.confirm("更新失败!",function(index){
+                        layer.close(index);//关闭对话框
+                      })
+                    }
+                  }
+                })
+              }else{
+                $.ajax({
+                  type:"POST",
+                  url:"/index/updataUsersOneData3",
+                  data:{'username':username,'mobile':mobile,'remark':remark,'password':password},
+                  success:function(result){
+                    if(result === "success"){
+                      layer.confirm("更新成功!",function(index){
+                        layer.close(index);//关闭对话框
+                      })
+                      // table1.reload();//重载表格
+                    }else{
+                      layer.confirm("更新失败!",function(index){
+                        layer.close(index);//关闭对话框
+                      })
+                    }
+                  }
+                })
+              }
+            }else{
+              layer.confirm("两次密码输入不一致，请重新输入!",function(index){
+                layer.close(index);//关闭对话框
+              })
+            }
+
+          },
+          btn2:function(index, layero){
+            // console.log("999");
+          },
+          content:'<div class="login-item">\
+                    <span>用户名：</span>\
+                    <input class="form-text" type="text" placeholder="请输入用户名"  id="username">\
+                  </div>\
+                  <div class="login-item">\
+                    <span>手机号：</span>\
+                    <input class="form-text" type="text" placeholder="请输入手机号"  id="mobile">\
+                  </div>\
+                  <div class="login-item">\
+                    <span>密码：</span>\
+                    <input class="form-text" type="password" placeholder="请输入密码"  id="password">\
+                  </div>\
+                  <div class="login-item">\
+                    <span>密码：</span>\
+                    <input class="form-text" type="password" placeholder="请再次输入密码"  id="passwordAgain">\
+                  </div>\
+                  <div class="login-item">\
+                    <span>备注：</span><br>\
+                    <input class="form-text" type="text" placeholder="请输入备注信息"  id="remark">\
+                  </div>'
+        });
+
+        $("#username").val(data[0].userName);
+        $("#mobile").val(data[0].mobile);
+        $("#remark").val(data[0].remark);
+        // let username1 = data[0].userName;
+        // let power = data[0].power;
+        // let type = data[0].type;
+      }
+    })
+  })
+
+});
+</script>
 </body>
 </html>

@@ -45,7 +45,7 @@
           {type:'checkbox',fixed:'left'},
           {field:'',title:'序号',type:'numbers',width:80},
           {field: 'userName', title: '用户名', width:100},
-          {field: 'power', title: '权限', width:110},
+          {field: 'power', title: '权限', width:80},
           {field: 'state', title: '状态', width:80,templet:function(d){
             if(d.state === 1){
               return '通过';
@@ -61,11 +61,11 @@
             }
           }},
           {field: 'mobile', title: '手机号', width:110} ,
-          {field: 'createDate', title: '创建时间', width: 110,templet:function(d){
+          {field: 'createDate', title: '创建时间', width: 100,templet:function(d){
             let old = d.createDate;
             return new Date(old).toLocaleDateString()+" "+new Date(old).toLocaleTimeString();
           }},
-          {field: 'loginDate', title: '登录时间', width: 170, sort: true,templet:function(d){
+          {field: 'loginDate', title: '登录时间', width: 100, sort: true,templet:function(d){
             if(d.loginDate){
               let old = d.loginDate;
               return new Date(old).toLocaleDateString()+" "+new Date(old).toLocaleTimeString();
@@ -82,8 +82,8 @@
             }   
           }},
           {field: 'loginTimes', title: '登录次数', width: 90},
-          {field: 'remark', title: '备注信息', width: 150},
-          {field: 'right', title: '操作',align:'center', width: 150, toolbar:'#bar'}
+          {field: 'remark', title: '备注信息', width: 110},
+          {field: 'right', title: '操作',align:'center', width: 120, toolbar:'#bar'}
         ]]
       });
       //监听行工具栏事件

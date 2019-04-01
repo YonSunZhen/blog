@@ -71,6 +71,16 @@ var updataUsersOneData = (cb,model,id) => {
     }
   })
 }
+//更改Users中的一条数据(更改个人信息用的)
+var updataUsersOwnData = (cb,id,userName,passWord,mobile,remark) => {
+  apiModel.updataUsersOneData(model,id,userName,passWord,mobile,remark).then((result) => {
+    if(result.affectedRows > 0){
+      return cb("true");
+    }else{
+      return cb("false");
+    }
+  })
+}
 //根据id获取一条数据(模型)
 var getModel = (cb,id) => {
   apiModel.getModel(id).then((result) => {
@@ -118,5 +128,6 @@ module.exports = {
   getLoginDateAndLoginTimes,
   updateLogin,
   findUserId,
-  getPowerByUser
+  getPowerByUser,
+  updataUsersOwnData
 }

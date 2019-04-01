@@ -62,7 +62,7 @@
             let old = d.createDate;
             return new Date(old).toLocaleDateString()+" "+new Date(old).toLocaleTimeString();
           }},
-          {field: 'updateDate', title: '更新时间', width: 170, sort: true,templet:function(d){
+          {field: 'updateDate', title: '更新时间', width: 110, sort: true,templet:function(d){
             if(d.updateDate){
               let old = d.updateDate;
               return new Date(old).toLocaleDateString()+" "+new Date(old).toLocaleTimeString();

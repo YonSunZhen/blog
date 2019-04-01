@@ -22,7 +22,8 @@ function crossDomain(res){
 var storage = multer.diskStorage({
   //如果destination是一个函数，必须手动创建上传文件夹
   destination:function(req,file,cb){
-    cb(null,'public/upload');
+    //这里的路径名是基于整个项目目录的绝对路径
+    cb(null,'./public/upload');
   },
   filename:function(req,file,cb){
     const filenameArr = file.originalname.split('.');
@@ -169,6 +170,76 @@ router.post('/updataUsersOneData1',function(req,res,next){
     }
   },userData,id)
 })
+//更改Users中的一条数据（更改个人信息用的）
+router.post('/updataUsersOneData2',function(req,res,next){
+  let id = req.body.id;
+  let userName = req.body.username;
+  let state = Number(req.body.state);
+  let mobile = req.body.mobile;
+  let type = req.body.type;
+  console.log(type);
+  let power;
+  if(req.body.power){
+    power = req.body.power;
+  }else{
+    power = null;
+  }
+  let remark = req.body.remark;
+  let userData = new usersModel.Users(userName,mobile,state,power,remark);
+  //console.log(userData);
+  usersBll.isExist(function(result1){
+    if(result1 === "true"){
+      res.send("isExist");//返回请求数据
+    }else{
+      usersBll.updataUsersOneData(function(result){
+        if(result === "true"){
+          res.send("success");
+        }else{
+          res.send("fail");
+        }
+      },userData,id)
+    }
+  },userName,type)
+})
+//更改Users中的一条数据（更改个人信息用的）
+router.post('/updataUsersOneData3',function(req,res,next){
+
+  let userName = req.body.username;
+  let mobile = req.body.mobile;
+  let remark = req.body.remark;
+  let password = req.body.password;
+  usersBll.findUser(function(result1){
+    // console.log(result1[0].id);
+    let id = result1[0].id;
+    usersBll.updataUsersOwnData(function(result){
+      if(result === "true"){
+        res.send("success");
+      }else{
+        res.send("fail");
+      }
+    },id,userName,password,mobile,remark)
+  },req.session.mName,req.session.mPassWord,req.session.mType);
+
+
+  
+  // let type = req.body.type;
+  // console.log(type);
+  
+  
+  let userData = new usersModel.Users(userName,mobile,state,power,remark);
+
+})
+//根据id获取模型(Users表，更改个人信息用的)
+router.post('/getModel1',function(req,res,next){
+  usersBll.findUser(function(result1){
+    // console.log(result1[0].id);
+    let id = result1[0].id;
+    usersBll.getModel(function(result2){
+      // console.log("haha");
+      res.send(result2);
+    },id)
+  },req.session.mName,req.session.mPassWord,req.session.mType)
+})
 //根据id获取模型(Users表)
 router.post('/getModel',function(req,res,next){
   let id = req.body.id;
@@ -281,6 +352,7 @@ router.post('/addOneArticle',function(req,res,next){
     let tid = req.body.tid;
     let content = req.body.content;
     let state;
+    // console.log(req.session.mName);
     if(req.session.mName === "superAdmin"){
       state = 1;//超管添加的文章默认状态通过
     }else{
@@ -288,7 +360,6 @@ router.post('/addOneArticle',function(req,res,next){
     }
     let createDate = time.format(new Date(), 'YYYY-MM-DD HH:mm:ss');
     let updateDate = time.format(new Date(), 'YYYY-MM-DD HH:mm:ss');
-    let createPeople = result[0].userName;
     articlesBll.addArticle(function(result){
       if(result === "true"){
         res.send("success");
@@ -296,17 +367,17 @@ router.post('/addOneArticle',function(req,res,next){
       }else{
         res.send("fail");
       }
-    },id,mid,articleName,tid,content,state,createDate,createPeople,updateDate)
+    },id,mid,articleName,tid,content,state,createDate,req.session.mName,updateDate)
     //console.log(result[0].id); 
   },req.session.mName,req.session.mPassWord)
 })
 //上传图片到服务器
 router.post('/uploadPic',upload.array('photo',10), function(req,res,next){
-  //console.log("图片上传成功");
-  //console.log(req.files);
+  console.log("图片上传成功");
+  console.log(req.files);
   const array = [];
   for(let i = 0;i < req.files.length; i++){
-    const arr = "http://localhost:3000/upload/" + req.files[i].filename;
+    const arr = "/upload/" + req.files[i].filename;
     array.push(arr);
   }
   const picData = {
