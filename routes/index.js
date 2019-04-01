@@ -9,6 +9,7 @@ var replysBll = require('../database/BLL/replys');
 var time = require('silly-datetime');
 var uuidv1 = require('uuid/v1');
 var multer = require('multer');
+var crypto = require("crypto");//密码加密处理
 
 //跨域处理
 function crossDomain(res){
@@ -172,75 +173,64 @@ router.post('/updataUsersOneData1',function(req,res,next){
 })
 //更改Users中的一条数据（更改个人信息用的）
 router.post('/updataUsersOneData2',function(req,res,next){
-  let id = req.body.id;
   let userName = req.body.username;
-  let state = Number(req.body.state);
   let mobile = req.body.mobile;
-  let type = req.body.type;
-  console.log(type);
-  let power;
-  if(req.body.power){
-    power = req.body.power;
-  }else{
-    power = null;
-  }
   let remark = req.body.remark;
-  let userData = new usersModel.Users(userName,mobile,state,power,remark);
+  let id = req.body.id;
   //console.log(userData);
   usersBll.isExist(function(result1){
     if(result1 === "true"){
       res.send("isExist");//返回请求数据
     }else{
-      usersBll.updataUsersOneData(function(result){
+      usersBll.updataUsersOwnData(function(result){
         if(result === "true"){
           res.send("success");
         }else{
           res.send("fail");
         }
-      },userData,id)
+      },id,userName,mobile,remark)
     }
-  },userName,type)
+  },userName,req.session.mType)
 })
 //更改Users中的一条数据（更改个人信息用的）
 router.post('/updataUsersOneData3',function(req,res,next){
-
   let userName = req.body.username;
   let mobile = req.body.mobile;
   let remark = req.body.remark;
-  let password = req.body.password;
-  usersBll.findUser(function(result1){
-    // console.log(result1[0].id);
-    let id = result1[0].id;
-    usersBll.updataUsersOwnData(function(result){
-      if(result === "true"){
-        res.send("success");
-      }else{
-        res.send("fail");
-      }
-    },id,userName,password,mobile,remark)
-  },req.session.mName,req.session.mPassWord,req.session.mType);
-
-
-  
-  // let type = req.body.type;
-  // console.log(type);
-  
-  
-  let userData = new usersModel.Users(userName,mobile,state,power,remark);
-
+  let id = req.body.id;
+  usersBll.updataUsersOwnData(function(result){
+    if(result === "true"){
+      res.send("success");
+    }else{
+      res.send("fail");
+    }
+  },id,userName,mobile,remark)
 })
-//根据id获取模型(Users表，更改个人信息用的)
-router.post('/getModel1',function(req,res,next){
-  usersBll.findUser(function(result1){
-    // console.log(result1[0].id);
-    let id = result1[0].id;
-    usersBll.getModel(function(result2){
-      // console.log("haha");
-      res.send(result2);
-    },id)
-  },req.session.mName,req.session.mPassWord,req.session.mType)
+//更改用户密码
+router.post('/updataUserPassword',function(req,res,next){
+  let userName = req.body.username;
+  let passWord1 = req.body.passWord;
+  let passwordAgain1 = req.body.passwordAgain;
+  let md51 = crypto.createHash("md5");//密码加密处理
+  let passWord = md51.update(passWord1).digest("hex");//密码加密处理
+  let md52 = crypto.createHash("md5");//密码加密处理
+  let passwordAgain = md52.update(passwordAgain1).digest("hex");//密码加密处理
+  let type = req.body.type;
+  let id = req.body.id;
+  usersBll.findUser(function(result0){
+    if(result0.length > 0){
+      usersBll.updataUserPassword(function(result){
+        if(result === "true"){
+          res.send("success");
+        }else{
+          res.send("fail");
+        }
+      },id,userName,passwordAgain)
+    }else{
+      res.send("error");
+    }
+  },userName,passWord,type)
 })
-//根据id获取模型(Users表)
 router.post('/getModel',function(req,res,next){
   let id = req.body.id;
   usersBll.getModel(function(result){

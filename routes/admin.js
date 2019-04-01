@@ -94,6 +94,8 @@ router.post('/login', function(req, res, next) {
   let type = req.body.type;
   usersBll.findUser(function(data){
     if(data.length > 0){
+      //用户id，记录在浏览器的localstorage中
+      let uid = data[0].id;
       //更新登录时间，上次登陆时间和登陆次数
       usersBll.getLoginDateAndLoginTimes(function(data){
         console.log(data[0]);
@@ -119,9 +121,9 @@ router.post('/login', function(req, res, next) {
         req.session.username = "superAdmin";
       }
       // console.log("100");
-      res.send("success");
+      res.send({"uid":uid,"state":"success"});
     }else{
-      res.send("fail");
+      res.send({"uid":0,"state":"fail"});
     }
   },userName,password,type)
   // if(apiModel.findUser(userName,password) === "true"){

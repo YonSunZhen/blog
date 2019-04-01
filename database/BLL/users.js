@@ -72,8 +72,18 @@ var updataUsersOneData = (cb,model,id) => {
   })
 }
 //更改Users中的一条数据(更改个人信息用的)
-var updataUsersOwnData = (cb,id,userName,passWord,mobile,remark) => {
-  apiModel.updataUsersOneData(model,id,userName,passWord,mobile,remark).then((result) => {
+var updataUsersOwnData = (cb,id,userName,mobile,remark) => {
+  apiModel.updataUsersOwnData(id,userName,mobile,remark).then((result) => {
+    if(result.affectedRows > 0){
+      return cb("true");
+    }else{
+      return cb("false");
+    }
+  })
+}
+//更改用户密码
+var updataUserPassword = (cb,id,userName,passWord) => {
+  apiModel.updataUserPassword(id,userName,passWord).then((result) => {
     if(result.affectedRows > 0){
       return cb("true");
     }else{
@@ -129,5 +139,6 @@ module.exports = {
   updateLogin,
   findUserId,
   getPowerByUser,
-  updataUsersOwnData
+  updataUsersOwnData,
+  updataUserPassword
 }

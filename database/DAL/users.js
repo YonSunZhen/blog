@@ -78,12 +78,20 @@ let updataUsersOneData = (model,id) => {
   return apiModel.query(_sql);
 }
 //更改Users中的一条数据(更改个人信息用的)
-let updataUsersOwnData = (id,userName,passWord,mobile,remark) => {
+let updataUsersOwnData = (id,userName,mobile,remark) => {
   let _sql = `update users set 
               userName="${userName}",
-              passWord="${passWord}",
               mobile="${mobile}",
               remark="${remark}"
+              where id="${id}";
+              `
+  return apiModel.query(_sql);
+}
+//更改用户密码
+let updataUserPassword = (id,userName,passWord) => {
+  let _sql = `update users set 
+              userName="${userName}",
+              passWord="${passWord}"
               where id="${id}";
               `
   return apiModel.query(_sql);
@@ -125,5 +133,6 @@ module.exports = {
   getLoginDateAndLoginTimes,
   updateLogin,
   getPowerByUser,
-  updataUsersOwnData
+  updataUsersOwnData,
+  updataUserPassword
 }

@@ -173,7 +173,8 @@
           data:{'username':username1,'password':password1,'type':0},
           success:function(result){
             console.log(result);
-            if(result === "success"){
+            if(result.state === "success"){
+              localStorage.setItem("uid",result.uid);
               window.location.href = '/index';
             }else{
               // console.log(result);

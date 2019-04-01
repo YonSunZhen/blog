@@ -16,12 +16,13 @@
     <!-- 头部区域（可配合layui已有的水平导航） -->
     <ul class="layui-nav layui-layout-right">
       <li class="layui-nav-item">
-        <a href="javascript:;">
+        <a href="javascript:;" id="myName">
           <img src="/images/head.jpg" class="layui-nav-img">
           <%-username%>
         </a>
         <dl class="layui-nav-child">
           <dd><a href="javascript:;" id="editOwnData">个人资料</a></dd>
+          <dd><a href="javascript:;" id="editOwnPassword">修改密码</a></dd>
         </dl>
       </li>
       <li class="layui-nav-item"><a href="/logout">退出</a></li>
@@ -118,12 +119,14 @@
     $(".iframe").attr('src','/index/comment');
   })
 
+  //修改个人信息
   $("#editOwnData").click(function(){
+    let id = localStorage.uid;
     $.ajax({
       type:"POST",
-      url:"/index/getModel1",
+      url:"/index/getModel",
       sync:true,
-      // data:{"id":id},
+      data:{"id":id},
       success:function(data){
         console.log(data);
         
@@ -134,29 +137,27 @@
           //按钮的回调操作
           btn1:function(index, layero){
             let username = $("#username").val();
-            let password = $("#password").val();
-            let passwordAgain = $("#passwordAgain").val();
             let mobile = $("#mobile").val();
             let remark = $("#remark").val();
-
-            if(password === passwordAgain){
+            console.log(id);
+            if(username != username1 || mobile != mobile1 || remark != remark1){
               if(username1 != username){
                 $.ajax({
                   type:"POST",
                   url:"/index/updataUsersOneData2",
-                  data:{'username':username,'mobile':mobile,'remark':remark,'password':password},
+                  data:{'id':id,'username':username,'mobile':mobile,'remark':remark},
                   success:function(result){
                     if(result === "success"){
                       layer.confirm("修改成功!",function(index){
                         layer.close(index);//关闭对话框
-                      })
-                      // table1.reload();//重载表格
+                      });
+                      $("#myName").html("<img src='/images/head.jpg' class='layui-nav-img'>"+username);                     
                     }else if(result === "isExist"){
                       layer.confirm("用户名已存在，请重新输入!",function(index){
                         layer.close(index);//关闭对话框
                       })
                     }else{
-                      layer.confirm("更新失败!",function(index){
+                      layer.confirm("修改失败!",function(index){
                         layer.close(index);//关闭对话框
                       })
                     }
@@ -166,23 +167,24 @@
                 $.ajax({
                   type:"POST",
                   url:"/index/updataUsersOneData3",
-                  data:{'username':username,'mobile':mobile,'remark':remark,'password':password},
+                  data:{'id':id,'username':username,'mobile':mobile,'remark':remark},
                   success:function(result){
                     if(result === "success"){
-                      layer.confirm("更新成功!",function(index){
+                      layer.confirm("修改成功!",function(index){
                         layer.close(index);//关闭对话框
-                      })
-                      // table1.reload();//重载表格
+                      });
+                      $("#myName").html("<img src='/images/head.jpg' class='layui-nav-img'>"+username); 
                     }else{
-                      layer.confirm("更新失败!",function(index){
+                      layer.confirm("修改失败!",function(index){
                         layer.close(index);//关闭对话框
                       })
                     }
                   }
                 })
               }
+
             }else{
-              layer.confirm("两次密码输入不一致，请重新输入!",function(index){
+              layer.confirm("您还没修改数据!",function(index){
                 layer.close(index);//关闭对话框
               })
             }
@@ -200,14 +202,6 @@
                     <input class="form-text" type="text" placeholder="请输入手机号"  id="mobile">\
                   </div>\
                   <div class="login-item">\
-                    <span>密码：</span>\
-                    <input class="form-text" type="password" placeholder="请输入密码"  id="password">\
-                  </div>\
-                  <div class="login-item">\
-                    <span>密码：</span>\
-                    <input class="form-text" type="password" placeholder="请再次输入密码"  id="passwordAgain">\
-                  </div>\
-                  <div class="login-item">\
                     <span>备注：</span><br>\
                     <input class="form-text" type="text" placeholder="请输入备注信息"  id="remark">\
                   </div>'
@@ -216,11 +210,75 @@
         $("#username").val(data[0].userName);
         $("#mobile").val(data[0].mobile);
         $("#remark").val(data[0].remark);
-        // let username1 = data[0].userName;
-        // let power = data[0].power;
-        // let type = data[0].type;
+        let username1 = data[0].userName;
+        let mobile1 = data[0].mobile;
+        let remark1 = data[0].remark;
       }
     })
+  })
+
+  //修改密码
+  $("#editOwnPassword").click(function(){
+    let id = localStorage.uid;
+    var index2 = layer.open({
+      type:0,
+      title:'修改密码',
+      btn:['提交','取消'],
+      //按钮的回调操作
+      btn1:function(index, layero){
+        let username = $("#username1").val();
+        let password = $("#passwordOld").val();
+        let passwordNew = $("#passwordNew").val();
+        let passwordAgain = $("#passwordAgain").val();
+        // let type = 0;
+
+        if(passwordNew === passwordAgain){
+          $.ajax({
+            type:"POST",
+            url:"/index/updataUserPassword",
+            data:{'id':id,'username':username,'passWord':password,'passwordAgain':passwordAgain,'type':0},
+            success:function(result){
+              if(result === "success"){
+                layer.confirm("修改成功!",function(index){
+                  layer.close(index);//关闭对话框
+                })
+              }else if(result === "error"){
+                alert("用户名或密码有误，请重新输入!");
+                // layer.confirm("用户名或密码有误，请重新输入!",function(index){
+                //   layer.close(index);//关闭对话框
+                // })
+              }else{
+                alert("修改失败!");
+                // layer.confirm("修改失败!",function(index){
+                //   layer.close(index);//关闭对话框
+                // })
+              }
+            }
+          })
+        }else{
+          layer.confirm("两次密码输入不一致，请重新输入!",function(index){
+            layer.close(index);//关闭对话框
+          })
+        }
+
+      },
+      btn2:function(index, layero){
+        // console.log("999");
+      },
+      content:'<div class="login-item">\
+                <input class="form-text" type="text" placeholder="请输入用户名"  id="username1">\
+              </div>\
+              <div class="login-item">\
+                <input class="form-text" type="password" placeholder="请输入原始密码"  id="passwordOld">\
+              </div>\
+              <div class="login-item">\
+                <input class="form-text" type="password" placeholder="请输入新密码"  id="passwordNew">\
+              </div>\
+              <div class="login-item">\
+                <input class="form-text" type="password" placeholder="请再次输入密码"  id="passwordAgain">\
+              </div>'
+    })
+
   })
 
 });
