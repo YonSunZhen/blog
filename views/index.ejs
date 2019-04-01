@@ -241,7 +241,8 @@
               if(result === "success"){
                 layer.confirm("修改成功!",function(index){
                   layer.close(index);//关闭对话框
-                })
+                });
+                window.location.href = '/logout';
               }else if(result === "error"){
                 alert("用户名或密码有误，请重新输入!");
                 // layer.confirm("用户名或密码有误，请重新输入!",function(index){
