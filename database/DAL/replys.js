@@ -24,7 +24,7 @@ let getReplysByCommentID = (comment_id) => {
 //根据评论id获取一条评论的所有通过的回复
 let getReplysByCommentIDState1 = (comment_id) => {
   let _sql = `select one.*,users.userName as to_userName from 
-                (select r.*,m.userName as from_userName from replys r left JOIN Users m on r.from_uid = m.id where comment_id="${comment_id}") 
+                (select r.*,m.userName as from_userName from replys r left JOIN users m on r.from_uid = m.id where comment_id="${comment_id}") 
               one left JOIN users on one.to_uid = users.id where one.state=1 ORDER BY createDate`;//默认是升序
   return apiModel.query(_sql);
 }
