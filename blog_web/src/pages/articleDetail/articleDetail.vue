@@ -513,10 +513,12 @@
       margin 0 auto 
       margin-top 30px
       .articleDetail
+        width 800px
+        margin 0 auto
         padding 0px 30px 20px 20px
         word-break break-word
         .support-author
-          width 720px
+          width 800px
           padding 25px
           margin-bottom 40px
           border-left 4px solid #49be38
@@ -529,7 +531,10 @@
             font-weight bold
       .comment
         width 800px 
+        margin 0 auto
         .gt-container
+          width 800px
+          margin 0 auto
           box-sizing border-box
           font-size 16px
           .gt-meta
