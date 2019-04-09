@@ -18,7 +18,7 @@
       <li class="layui-nav-item">
         <a href="javascript:;" id="myName">
           <img src="/images/head.jpg" class="layui-nav-img">
-          <%-username%>
+          <%-userName%>
         </a>
         <dl class="layui-nav-child">
           <dd><a href="javascript:;" id="editOwnData">个人资料</a></dd>
@@ -121,7 +121,7 @@
 
   //修改个人信息
   $("#editOwnData").click(function(){
-    let id = localStorage.uid;
+    let id = sessionStorage.getItem("userid");
     $.ajax({
       type:"POST",
       url:"/index/getModel",
@@ -219,7 +219,7 @@
 
   //修改密码
   $("#editOwnPassword").click(function(){
-    let id = localStorage.uid;
+    let id = sessionStorage.getItem("userid");
     var index2 = layer.open({
       type:0,
       title:'修改密码',

@@ -174,8 +174,12 @@
           success:function(result){
             console.log(result);
             if(result.state === "success"){
-              localStorage.setItem("uid",result.uid);
-              window.location.href = '/index';
+              if(sessionStorage.getItem("userid")){
+                sessionStorage.setItem("userid",null);
+              }else{
+                sessionStorage.setItem("userid",result.uid);
+                window.location.href = '/index';
+              }
             }else{
               // console.log(result);
               alert("账户不存在或密码错误!");

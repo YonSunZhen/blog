@@ -38,9 +38,9 @@ router.get('/', function(req, res, next) {
   //console.log(req.session.logined);
   if(req.session.logined){
     if(req.session.username === "superAdmin"){
-      res.render('index', { title: 'Express',superAdmin: true,username:req.session.mName});
+      res.render('index', { title: 'Express',superAdmin: true,userName:req.session.mName});
     }else{
-      res.render('index', { title: 'Express',superAdmin: false,username:req.session.mName});
+      res.render('index', { title: 'Express',superAdmin: false,userName:req.session.mName});
     }  
   }else{
     res.redirect('/');

@@ -81,6 +81,7 @@ router.get('/getTypesAdopt',function(req,res,next){
 router.post('/getArticleOneData',function(req,res,next){
   // crossDomain(res);
   let id = req.body.id;
+  console.log(id);
   articlesBll.getArticleOneData(function(result){
     res.send(result);
   },id)
@@ -105,15 +106,15 @@ router.post('/login', function(req, res, next) {
   if(req.session.username){
     req.session.username = null;
   }
-  if(req.session.mName){
-    req.session.mName = null;
-  }
-  if(req.session.mPassWord){
-    req.session.mPassWors = null;
-  }
-  if(req.session.mType){
-    req.session.mType = null;
-  }
+  // if(req.session.mName){
+  //   req.session.mName = null;
+  // }
+  // if(req.session.mPassWord){
+  //   req.session.mPassWors = null;
+  // }
+  // if(req.session.mType){
+  //   req.session.mType = null;
+  // }
   //重新获取数据判断登录
   let userName = req.body.username;
   let password1 = req.body.password;
@@ -140,9 +141,9 @@ router.post('/login', function(req, res, next) {
 
       req.session.logined = true;
       //记录登录的用户名和密码和用户类型
-      req.session.mName = userName;
-      req.session.mPassWord = password;
-      req.session.mType = type;
+      // req.session.mName = userName;
+      // req.session.mPassWord = password;
+      // req.session.mType = type;
       if(userName === "superAdmin"){
         req.session.username = "superAdmin";
       }
