@@ -48,48 +48,50 @@ router.get('/', function(req, res, next) {
 });
 //Users获取数据(管理员管理模块)
 router.get('/getUsersAllDataType0',function(req,res,next){
-//   res.header("Access-Control-Allow-Origin", "*");
-//   res.header("Access-Control-Allow-Credentials", true);
-//   res.header("Access-Control-Allow-Headers","Content-Type,Origin,Accept");
-//   res.header("Access-Control-Allow-Methods", "POST,GET,TRACE,OPTIONS");
-//   res.header("X-Powered-By", "3.2.1");
-  usersBll.getUsersAllDataType0(function(result){
-    let code = 0;
-    let message = "";
-    let count = result.length;
-    let data = result;
-    let obj = {
-      "code":0,
-      "msg":"",
-      "count":count,
-      "data":data
-    };
-    res.json(obj);
-  })
+  let page = req.query.page;
+  let limit = req.query.limit;
+  let first = 10 * (page - 1);
+  // console.log(page);
+  usersBll.getUsersAllDataType0(function(result0){
+    let count = result0.length;
+    usersBll.getUsersAllDataType0(function(result){
+      let code = 0;
+      let message = "";
+      let data = result;
+      let obj = {
+        "code":0,
+        "msg":"",
+        "count":count,
+        "data":data
+      };
+      res.json(obj);
+    },first,limit);
+  },0,100000)
 })
 //Users获取数据(普通用户管理模块)
 router.get('/getUsersAllDataType1',function(req,res,next){
-  usersBll.getUsersAllDataType1(function(result){
-    let code = 0;
-    let message = "";
-    let count = result.length;
-    let data = result;
-    let obj = {
-      "code":0,
-      "msg":"",
-      "count":count,
-      "data":data
-    };
-    res.json(obj);
-  })
+  let page = req.query.page;
+  let limit = req.query.limit;
+  let first = 10 * (page - 1);
+  console.log(page);
+  usersBll.getUsersAllDataType1(function(result0){
+    let count = result0.length;
+    usersBll.getUsersAllDataType1(function(result){
+      let code = 0;
+      let message = "";
+      let data = result;
+      let obj = {
+        "code":0,
+        "msg":"",
+        "count":count,
+        "data":data
+      };
+      res.json(obj);
+    },first,limit);
+  },0,100000)
 })
-//Users获取数据(管理员管理模块)
+//Users获取数据(管理员管理模块)有什么用？
 router.get('/getUsersAllData',function(req,res,next){
-//   res.header("Access-Control-Allow-Origin", "*");
-//   res.header("Access-Control-Allow-Credentials", true);
-//   res.header("Access-Control-Allow-Headers","Content-Type,Origin,Accept");
-//   res.header("Access-Control-Allow-Methods", "POST,GET,TRACE,OPTIONS");
-//   res.header("X-Powered-By", "3.2.1");
   usersBll.getUsersAllDataType0(function(result){
     let code = 0;
     let message = "";
@@ -378,36 +380,43 @@ router.post('/uploadPic',upload.array('photo',10), function(req,res,next){
 })
 //articles表显示数据（初始化表格）
 router.get('/getArticlesAllData',function(req,res,next){
-  //console.log("成功");
+  let page = req.query.page;
+  let limit = req.query.limit;
+  let first = 10 * (page - 1);
   if(req.session.mName === "superAdmin"){
-    articlesBll.getArticlesAllData(function(result){
-      let code = 0;
-      let message = "";
-      let count = result.length;
-      let data = result;
-      let obj = {
-        "code":0,
-        "msg":"",
-        "count":count,
-        "data":data
-      };
-      //console.log("成功1");
-      res.json(obj);
-    })
+    articlesBll.getArticlesAllData(function(result0){
+      let count = result0.length;
+      articlesBll.getArticlesAllData(function(result){
+        let code = 0;
+        let message = "";
+        let data = result;
+        let obj = {
+          "code":0,
+          "msg":"",
+          "count":count,
+          "data":data
+        };
+        //console.log("成功1");
+        res.json(obj);
+      },first,limit)
+    },0,10000)
   }else{
-    articlesBll.getArticlesDataByUser(function(result){
-      let code = 0;
-      let message = "";
-      let count = result.length;
-      let data = result;
-      let obj = {
-        "code":0,
-        "msg":"",
-        "count":count,
-        "data":data
-      };
-      res.json(obj);
-    },req.session.mName)
+    articlesBll.getArticlesDataByUser(function(result0){
+      let count = result0.length;
+      articlesBll.getArticlesDataByUser(function(result){
+        let code = 0;
+        let message = "";
+        let data = result;
+        let obj = {
+          "code":0,
+          "msg":"",
+          "count":count,
+          "data":data
+        };
+        //console.log("成功1");
+        res.json(obj);
+      },req.session.mName,first,limit)
+    },req.session.mName,0,10000)
   }
 })
 //Articles删除一条数据
@@ -451,36 +460,46 @@ router.post('/getArticleOneData',function(req,res,next){
 
 //Comments表显示数据(初始化表格)
 router.get('/getCommentsAllData',function(req,res,next){
+  let page = req.query.page;
+  let limit = req.query.limit;
+  let first = 10 * (page - 1);
+  console.log(page);
+  console.log(limit);
+  console.log(first);
   if(req.session.mName === "superAdmin"){
-    commentsBll.getCommentsAllData(function(result){
-      console.log(result);
-      let code = 0;
-      let message = "";
-      let count = result.length;
-      let data = result;
-      let obj = {
-        "code":0,
-        "msg":"",
-        "count":count,
-        "data":data
-      };
-      res.json(obj);
-    })
+    commentsBll.getCommentsAllData(function(result0){
+      let count = result0.length;
+      commentsBll.getCommentsAllData(function(result){
+        // console.log(result);
+        let code = 0;
+        let message = "";
+        let data = result;
+        let obj = {
+          "code":0,
+          "msg":"",
+          "count":count,
+          "data":data
+        };
+        res.json(obj);
+      },first,limit)
+    },0,10000)
   }else{
-    commentsBll.getCommentsByUser(function(result){
-      console.log(result);
-      let code = 0;
-      let message = "";
-      let count = result.length;
-      let data = result;
-      let obj = {
-        "code":0,
-        "msg":"",
-        "count":count,
-        "data":data
-      };
-      res.json(obj);
-    },req.session.mName)
+    commentsBll.getCommentsByUser(function(result0){
+      let count = result0.length;
+      commentsBll.getCommentsByUser(function(result){
+        // console.log(result);
+        let code = 0;
+        let message = "";
+        let data = result;
+        let obj = {
+          "code":0,
+          "msg":"",
+          "count":count,
+          "data":data
+        };
+        res.json(obj);
+      },req.session.mName,first,limit)
+    },req.session.mName,0,10000)
   }
 })
 //Comments表根据id删除一条评论

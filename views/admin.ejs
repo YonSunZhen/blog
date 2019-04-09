@@ -174,12 +174,17 @@
           success:function(result){
             console.log(result);
             if(result.state === "success"){
-              if(sessionStorage.getItem("userid")){
-                sessionStorage.setItem("userid",null);
-              }else{
-                sessionStorage.setItem("userid",result.uid);
-                window.location.href = '/index';
-              }
+              // if(sessionStorage.getItem("userid")){
+              //   console.log("haha");
+              //   sessionStorage.clear()
+              //   sessionStorage.setItem("userid",result.uid);
+              // }else{
+              //   console.log("lala");
+              //   sessionStorage.setItem("userid",result.uid);
+              //   window.location.href = '/index';
+              // }
+              sessionStorage.setItem("userid",result.uid);
+              window.location.href = '/index';
             }else{
               // console.log(result);
               alert("账户不存在或密码错误!");

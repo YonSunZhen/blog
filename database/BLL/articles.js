@@ -11,13 +11,13 @@ let addArticle = (cb,id,mid,articleName,tid,content,state,createDate,createPeopl
   })
 }
 //获取Articles所有数据(超管显示使用的)
-let getArticlesAllData = (cb) => {  
-  apiModel.getArticlesAllData().then((result) => {
+let getArticlesAllData = (cb,first,limit) => {  
+  apiModel.getArticlesAllData(first,limit).then((result) => {
     return cb(result);
   })
 }
 //获取Articles部分数据(普管显示使用的)
-let getArticlesDataByUser = (cb,userName) => {
+let getArticlesDataByUser = (cb,userName,first,limit) => {
   apiModel.getArticlesDataByUser(userName).then((result) => {
     return cb(result);
   })

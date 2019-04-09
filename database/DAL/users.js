@@ -51,13 +51,13 @@ let isExist = (userName,type) => {
 }
 
 //获取Users所有数据（除了超管,管理员管理模块）
-let getUsersAllDataType0 = () => {
-  let _sql = `select * from users where userName != "superAdmin" AND type=0 ORDER BY createDate DESC;`
+let getUsersAllDataType0 = (first,limit) => {//first表示检索起止为，从0开始，limit表示检索个数
+  let _sql = `select * from users where userName != "superAdmin" AND type=0 ORDER BY createDate DESC limit ${first},${limit};`
   return apiModel.query(_sql);
 }
 //获取Users所有数据（除了超管,普通用户管理模块）
-let getUsersAllDataType1 = () => {
-  let _sql = `select * from users where type=1 ORDER BY createDate DESC;`
+let getUsersAllDataType1 = (first,limit) => {
+  let _sql = `select * from users where type=1 ORDER BY createDate DESC limit ${first},${limit};`
   return apiModel.query(_sql);
 }
 //根据id删除一条数据

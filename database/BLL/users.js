@@ -39,15 +39,15 @@ var addUser = (cb, model) => {
 }
 
 //获取Users所有数据(管理员管理模块)
-var getUsersAllDataType0 = (cb) => {
-  apiModel.getUsersAllDataType0().then((result) => {
+var getUsersAllDataType0 = (cb,first,limit) => {
+  apiModel.getUsersAllDataType0(first,limit).then((result) => {
     return cb(result);
   })
 }
 
 //获取Users所有数据(普通用户管理模块)
-var getUsersAllDataType1 = (cb) => {
-  apiModel.getUsersAllDataType1().then((result) => {
+var getUsersAllDataType1 = (cb,first,limit) => {
+  apiModel.getUsersAllDataType1(first,limit).then((result) => {
     return cb(result);
   })
 }
