@@ -18,7 +18,7 @@ let getArticlesAllData = (cb,first,limit) => {
 }
 //获取Articles部分数据(普管显示使用的)
 let getArticlesDataByUser = (cb,userName,first,limit) => {
-  apiModel.getArticlesDataByUser(userName).then((result) => {
+  apiModel.getArticlesDataByUser(userName,first,limit).then((result) => {
     return cb(result);
   })
 }

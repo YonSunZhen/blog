@@ -55,18 +55,18 @@ router.get('/getUsersAllDataType0',function(req,res,next){
   usersBll.getUsersAllDataType0(function(result0){
     let count = result0.length;
     usersBll.getUsersAllDataType0(function(result){
-      let code = 0;
-      let message = "";
       let data = result;
       let obj = {
         "code":0,
         "msg":"",
         "count":count,
         "data":data
-      };
+      }
+      console.log(obj);
       res.json(obj);
+
     },first,limit);
-  },0,100000)
+  },0,10000)
 })
 //Users获取数据(普通用户管理模块)
 router.get('/getUsersAllDataType1',function(req,res,next){
@@ -235,8 +235,28 @@ router.post('/updataUserPassword',function(req,res,next){
 })
 router.post('/getModel',function(req,res,next){
   let id = req.body.id;
-  usersBll.getModel(function(result){
-    // console.log("haha");
+  usersBll.getModel(function(result){    
+    let power = result[0].power.split(',');
+    console.log('33333333');
+    console.log(result[0].power);
+    if(result[0].power !== 'null'){
+      let powerArray = [];
+      for(let i = 0;i < power.length; i++){
+        typesBll.getTypesOneData(function(result1){
+          powerArray.push(result1[0].typeName);
+          if(powerArray.length == power.length){
+            console.log('-------');
+            // console.log(powerArray);
+            let powerStr = powerArray.toString();
+            console.log(powerStr);
+            result[0].power = powerStr;
+            
+          }
+        },power[i])
+      }
+    }else{
+      console.log("为null");
+    }
     res.send(result);
   },id)
 })
@@ -641,29 +661,43 @@ router.get('/addArticle', function(req, res, next) {
       //将普管的power字段由字符串转化为数组
       if(result1[0].power.indexOf(",") == -1){
         typesBll.getTypesOneData(function(result){
-          data[0] = {
-            'tid':result1[0].power,
-            'typeName':result[0].typeName
-          };
-          data.push(req.session.mName);//判断更改文章框是否出现状态文本框使用（只有超管有）
-          res.render('addArticle', {data:data});
+          if(result.length > 0){
+            data[0] = {
+              'tid':result1[0].power,
+              'typeName':result[0].typeName
+            };
+            data.push(req.session.mName);//判断更改文章框是否出现状态文本框使用（只有超管有）
+            res.render('addArticle', {data:data});
+          }else{
+            data[0] = {
+              'tid':result1[0].power,
+              'typeName':'暂无'
+            };
+            data.push(req.session.mName);//判断更改文章框是否出现状态文本框使用（只有超管有）
+            res.render('addArticle', {data:data});
+          }
         },result1[0].power)
       }else{
         let arr = result1[0].power.split(",");
         for(let i = 0;i < arr.length;i++){
           let typeName;
           typesBll.getTypesOneData(function(result){
-            typeName = result[0].typeName;
-            //console.log("8888");
-            //console.log(typeName);
-            data.push({
-              'tid':arr[i],
-              'typeName':typeName
-            });
-            data.push(req.session.mName);//判断更改文章框是否出现状态文本框使用（只有超管有）
-            //console.log("9999");
-            //console.log(data);
-            if(i == arr.length-1){
+            if(result.length > 0){
+              typeName = result[0].typeName;
+              data.push({
+                'tid':arr[i],
+                'typeName':typeName
+              });
+              data.push(req.session.mName);//判断更改文章框是否出现状态文本框使用（只有超管有）
+              if(i == arr.length-1){
+                res.render('addArticle', {data:data});
+              }
+            }else{
+              data[0] = {
+                'tid':result1[0].power,
+                'typeName':'暂无'
+              };
+              data.push(req.session.mName);//判断更改文章框是否出现状态文本框使用（只有超管有）
               res.render('addArticle', {data:data});
             }
           },arr[i])
@@ -699,29 +733,45 @@ router.get('/manageArticle', function(req, res, next) {
       //将普管的power字段由字符串转化为数组
       if(result1[0].power.indexOf(",") == -1){
         typesBll.getTypesOneData(function(result){
-          data[0] = {
-            'tid':result1[0].power,
-            'typeName':result[0].typeName
-          };
-          data.push(req.session.mName);//判断更改文章框是否出现状态文本框使用（只有超管有）
-          res.render('manageArticle', {data:data});
+          // console.log('-------');
+          // console.log(result);
+          if(result.length > 0){
+            data[0] = {
+              'tid':result1[0].power,
+              'typeName':result[0].typeName
+            };
+            data.push(req.session.mName);//判断更改文章框是否出现状态文本框使用（只有超管有）
+            res.render('manageArticle', {data:data});
+          }else{
+            data[0] = {
+              'tid':result1[0].power,
+              'typeName':'暂无'
+            };
+            data.push(req.session.mName);//判断更改文章框是否出现状态文本框使用（只有超管有）
+            res.render('manageArticle', {data:data});
+          }
         },result1[0].power)
       }else{
         let arr = result1[0].power.split(",");
         for(let i = 0;i < arr.length;i++){
           let typeName;
           typesBll.getTypesOneData(function(result){
-            typeName = result[0].typeName;
-            //console.log("8888");
-            //console.log(typeName);
-            data.push({
-              'tid':arr[i],
-              'typeName':typeName
-            });
-            data.push(req.session.mName);//判断更改文章框是否出现状态文本框使用（只有超管有）
-            //console.log("9999");
-            //console.log(data);
-            if(i == arr.length-1){//获取完最后一个时渲染页面
+            if(result.length > 0){
+              typeName = result[0].typeName;
+              data.push({
+                'tid':arr[i],
+                'typeName':typeName
+              });
+              data.push(req.session.mName);//判断更改文章框是否出现状态文本框使用（只有超管有）
+              if(i == arr.length-1){
+                res.render('manageArticle', {data:data});
+              }
+            }else{
+              data[0] = {
+                'tid':result1[0].power,
+                'typeName':'暂无'
+              };
+              data.push(req.session.mName);//判断更改文章框是否出现状态文本框使用（只有超管有）
               res.render('manageArticle', {data:data});
             }
           },arr[i])
