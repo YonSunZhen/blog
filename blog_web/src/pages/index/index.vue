@@ -5,7 +5,7 @@
         <img src="../../assets/image/head.jpg" alt="">
       </div>
       <div class="intro-word">
-        <h2>皮皮虾</h2>
+        <h2>我们的博客</h2>
         <p>天马行空，爱生活，爱coding</p>
       </div>
       <div class="sns">
@@ -53,11 +53,11 @@
           <li v-show="!isLogin">
             <a href="javascript:;" @click="dialogFormRegister = true">注册</a>
           </li>
-          <li>
-            <a href="">友链</a>
+          <li v-show="isLogin" @click="initOwnMsg()">
+            <a href="javascript:;">个人信息</a>
           </li>
-          <li>
-            <a href="">关于我</a>
+          <li v-show="isLogin" @click="dialogFormEditPwd = true">
+            <a href="javascript:;">修改密码</a>
           </li>
         </ul>
         <div class="search">
@@ -84,7 +84,7 @@
     <el-dialog title="登录" :visible.sync="dialogFormLogin" width="25%">
       <el-form :model="form">
         <el-form-item label="请输用户名" :label-width="formLabelWidth" style="margin-bottom:22px;">
-          <el-input v-model="form.name" autocomplete="off" ref="username"></el-input>
+          <el-input v-model="form.username" autocomplete="off" ref="username"></el-input>
         </el-form-item>
         <el-form-item label="请输入密码" :label-width="formLabelWidth">
           <el-input v-model="form.password" autocomplete="off" ref="password" show-password></el-input>
@@ -99,16 +99,16 @@
     <el-dialog title="注册" :visible.sync="dialogFormRegister" width="25%">
       <el-form :model="form">
         <el-form-item label="请输用户名" :label-width="formLabelWidth" style="margin-bottom:22px;">
-          <el-input v-model="form.name" autocomplete="off" ref="username1"></el-input>
+          <el-input v-model="form.username1" autocomplete="off" ref="username1"></el-input>
         </el-form-item>
         <el-form-item label="请输入手机号码" :label-width="formLabelWidth" style="margin-bottom:22px;">
           <el-input v-model="form.mobile" autocomplete="off" ref="mobile"></el-input>
         </el-form-item>
         <el-form-item label="请输入密码" :label-width="formLabelWidth" style="margin-bottom:22px;">
-          <el-input v-model="form.password" autocomplete="off" show-password ref="password1"></el-input>
+          <el-input v-model="form.password1" autocomplete="off" show-password ref="password1"></el-input>
         </el-form-item>
         <el-form-item label="请再次输入密码" :label-width="formLabelWidth" style="margin-bottom:22px;">
-          <el-input v-model="form.againPassword" autocomplete="off" show-password ref="passwordAgain"></el-input>
+          <el-input v-model="form.passwordAgain" autocomplete="off" show-password ref="passwordAgain"></el-input>
         </el-form-item>
         <el-form-item label="请输入备注信息" :label-width="formLabelWidth" style="margin-bottom:22px;">
           <el-input v-model="form.remark"  ref="remark"></el-input>
@@ -119,6 +119,46 @@
         <el-button @click="dialogFormRegister = false" style="border:1px solid #DCDFE6;padding:12px 20px;">取 消</el-button>
       </div>
     </el-dialog> 
+    <!-- 个人信息窗口 -->
+    <el-dialog title="编辑信息" :visible.sync="dialogFormOwnMsg" width="25%">
+      <el-form :model="form">
+        <el-form-item label="请输用户名" :label-width="formLabelWidth" style="margin-bottom:22px;">
+          <el-input v-model="form.username2" autocomplete="off" ref="username2"></el-input>
+        </el-form-item>
+        <el-form-item label="请输入手机号码" :label-width="formLabelWidth" style="margin-bottom:22px;">
+          <el-input v-model="form.mobile2" autocomplete="off" ref="mobile2"></el-input>
+        </el-form-item>
+        <el-form-item label="请输入备注信息" :label-width="formLabelWidth" style="margin-bottom:22px;">
+          <el-input v-model="form.remark2"  ref="remark2"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="editOwnMsg()" style="border:1px solid #DCDFE6;padding:12px 20px;">提交信息</el-button>
+        <el-button @click="dialogFormOwnMsg = false" style="border:1px solid #DCDFE6;padding:12px 20px;">取 消</el-button>
+      </div>
+    </el-dialog>
+    <!-- 修改密码窗口 -->
+    <el-dialog title="修改密码" :visible.sync="dialogFormEditPwd" width="25%">
+      <el-form :model="form">
+        <el-form-item label="请输用户名" :label-width="formLabelWidth" style="margin-bottom:22px;">
+          <el-input v-model="form.username3" autocomplete="off" ref="username3"></el-input>
+        </el-form-item>
+        <el-form-item label="请输入原密码" :label-width="formLabelWidth" style="margin-bottom:22px;">
+          <el-input v-model="form.password3" autocomplete="off" ref="password3" show-password></el-input>
+        </el-form-item>
+        <el-form-item label="请输入新密码" :label-width="formLabelWidth" style="margin-bottom:22px;">
+          <el-input v-model="form.newPassword"  ref="newPassword" show-password></el-input>
+        </el-form-item>
+        <el-form-item label="请再次输入密码" :label-width="formLabelWidth" style="margin-bottom:22px;">
+          <el-input v-model="form.againPassword"  ref="againPassword" show-password></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="updatePwd()" style="border:1px solid #DCDFE6;padding:12px 20px;">提交修改</el-button>
+        <el-button @click="dialogFormEditPwd = false" style="border:1px solid #DCDFE6;padding:12px 20px;">取 消</el-button>
+      </div>
+    </el-dialog>
+
 
   </div>
 </template>
@@ -128,6 +168,7 @@
   import {login} from '../../api/login'
   import {register} from '../../api/register'
   import {getTypeList} from '../../api/typeList'
+  import {getUserModel,editUser1,editUser2,updataUserPassword} from '../../api/editUser'
 
   export default {
     name: 'app',
@@ -136,8 +177,12 @@
         typeList: [],
         isActive: 0,
         typeId: 0,
+        userId: 0,
+
         dialogFormRegister: false,
         dialogFormLogin: false,
+        dialogFormOwnMsg: false,
+        dialogFormEditPwd: false,
         form: {
           name: '',
           region: '',
@@ -150,7 +195,9 @@
         },
         formLabelWidth: '120px',//修改标签的宽度,
         isLogin: false,
-        username: ''
+        username: '',
+        mobile: '',
+        remark: ''
       }
     },
     created() {
@@ -178,12 +225,15 @@
         let password = this.$refs.password.value;
         login(username,password).then((res) => {
           if(res.state == "success"){
+            // console.log('---------');
+            // console.log(res);
             this.dialogFormLogin = false;//关闭窗口
             sessionStorage.isLogin = true;
             sessionStorage.username = username;
             sessionStorage.uid = res.data[0].id;
             this.username = sessionStorage.username;
             this.isLogin = sessionStorage.isLogin;
+            // this.userId =res.data[0].id;
             // console.log("666");
             // console.log(sessionStorage.isLogin);
             alert("登录成功!");
@@ -235,7 +285,72 @@
       navChange(index,typeId) {
         this.isActive = index;
         this.typeId = typeId;
-        // console.log(typeId);
+      },
+      initOwnMsg() {
+        this.dialogFormOwnMsg = true;
+        getUserModel(sessionStorage.uid).then((res) => {
+           this.$refs.username2.value = res[0].userName;
+           this.$refs.mobile2.value = res[0].mobile;
+           this.$refs.remark2.value = res[0].remark;
+           this.username = res[0].userName;
+           this.mobile = res[0].mobile;
+           this.remark = res[0].remark;
+        })
+      },
+      editOwnMsg() {
+        let username = this.$refs.username2.value;
+        let mobile = this.$refs.mobile2.value;
+        let remark = this.$refs.remark2.value;
+        if( this.username != username || this.mobile != mobile || this.remark != remark) {
+          if(this.username != username) {
+            editUser1(sessionStorage.uid,username,mobile,remark).then((res) => {
+              if(res === 'success'){
+                this.username = username;
+                sessionStorage.username = username;
+                this.dialogFormOwnMsg = false;
+                alert('修改成功！');
+              }else if(res === 'isExist') {
+                alert('用户名已存在,请重新输入!');
+              }else{
+                alert('修改失败!');
+              }
+            })
+          }else{
+            editUser2(sessionStorage.uid,username,mobile,remark).then((res) => {
+              if(res === 'success'){
+                this.username = username;
+                this.dialogFormOwnMsg = false;
+                alert('修改成功！');
+              }else{
+                alert('修改失败!');
+              }
+            })
+          }
+        }else{
+          alert("您还未作任何修改!");
+        }
+      },
+      updatePwd() {
+        let username = this.$refs.username3.value;
+        let password = this.$refs.password3.value;
+        let passwordAgain = this.$refs.againPassword.value;
+        let passwordNew = this.$refs.newPassword.value;
+        if(passwordNew !== passwordAgain){
+          alert("两次密码输入不一致,请重新输入！");
+        }else{
+          updataUserPassword(sessionStorage.uid,username,passwordAgain,password).then((res) => {
+            if(res == 'success'){
+              this.logout();
+              this.dialogFormEditPwd = false;
+              // alert('修改成功！');
+            }else if(res == 'error'){
+              alert('账号或原密码输入有误,请重新输入！');
+            }else{
+              alert('修改失败!');
+            }
+          })
+        }
+        
       }
     },
     components: {
@@ -252,7 +367,7 @@
   #app 
     position relative
   .left-aside
-    width: 256px
+    widteth: 256px
     position: fixed 
     left: 0
     top: 0

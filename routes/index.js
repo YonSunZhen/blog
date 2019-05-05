@@ -235,10 +235,10 @@ router.post('/updataUserPassword',function(req,res,next){
 })
 router.post('/getModel',function(req,res,next){
   let id = req.body.id;
-  usersBll.getModel(function(result){    
+  usersBll.getModel(function(result){ 
     let power = result[0].power.split(',');
-    console.log('33333333');
-    console.log(result[0].power);
+    // console.log('33333333');
+    // console.log(result[0].power);
     if(result[0].power !== 'null'){
       let powerArray = [];
       for(let i = 0;i < power.length; i++){
@@ -249,8 +249,7 @@ router.post('/getModel',function(req,res,next){
             // console.log(powerArray);
             let powerStr = powerArray.toString();
             console.log(powerStr);
-            result[0].power = powerStr;
-            
+            result[0].power = powerStr;   
           }
         },power[i])
       }
