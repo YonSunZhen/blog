@@ -88,7 +88,7 @@
             setTimeout(() => {//必须使用箭头函数，不然this指向的是window对象
               this.articleLength = this.articleList.length;
               this.limit += 3;
-              if(this.typeid == 0 || this.typeid == 19){//0表示刚进入首页渲染,19表示是类型为最新的id,类型中不能有id==0的
+              if(this.typeid == 0 || this.typeid == -1){//0表示刚进入首页渲染,19表示是类型为最新的id,类型中不能有id==0的
                 this._getArticleList(this.limit,'1','haha');
                 if(this.articleLength == this.articleList.length){
                   this.isShowLoading = false;
@@ -142,7 +142,7 @@
     watch: {
       typeid: function(){
         //表示类型为最新的那个
-        if(this.typeid == 19){
+        if(this.typeid == -1){
           this._getArticleList(this.limit,'1','haha');
         }else{
           this._getArticleList(this.limit,'0',this.typeid);

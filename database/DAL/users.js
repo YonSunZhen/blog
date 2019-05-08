@@ -38,7 +38,7 @@ let addUser = (model) => {
 
 //验证用户（登录）
 let findUser = (userName, password, type) => {
-  let _sql = `select id from users where userName="${userName}" AND passWord="${password}" AND type="${type}"; `
+  let _sql = `select id from users where userName="${userName}" AND passWord="${password}" AND type="${type}" AND state=1; `
   // console.log(1);
   return apiModel.query(_sql);
 }

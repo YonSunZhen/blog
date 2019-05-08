@@ -60,14 +60,17 @@
             <a href="javascript:;">修改密码</a>
           </li>
         </ul>
-        <div class="search">
+        <!-- <div class="search">
           <input type="search" class="input-search" placeholder="搜索">
           <i class="icon-search"></i>
-        </div>
+        </div> -->
       </div>
       <div class="right-main">
         <div class="type">
           <ul>
+            <li>
+              <a href="javascript:;" @click="navChange(-1,-1)" :class="{active: isActive == -1}">最新</a>
+            </li>
             <li v-for="(item,index) in typeList" :key="item.id">
               <a href="javascript:;" @click="navChange(index,item.id)" :class="{active: isActive == index}">{{item.name}}</a>
             </li>
@@ -175,7 +178,7 @@
     data: function(){
       return {
         typeList: [],
-        isActive: 0,
+        isActive: -1,
         typeId: 0,
         userId: 0,
 

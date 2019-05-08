@@ -678,17 +678,29 @@ router.get('/addArticle', function(req, res, next) {
         },result1[0].power)
       }else{
         let arr = result1[0].power.split(",");
+        let count = 0;
+        console.log('111111111111111111');
+        console.log(arr);
         for(let i = 0;i < arr.length;i++){
           let typeName;
           typesBll.getTypesOneData(function(result){
+            console.log("这是结果");
+            console.log(i);
+            console.log(result);
             if(result.length > 0){
+              count = count + 1;
               typeName = result[0].typeName;
               data.push({
                 'tid':arr[i],
                 'typeName':typeName
               });
-              data.push(req.session.mName);//判断更改文章框是否出现状态文本框使用（只有超管有）
-              if(i == arr.length-1){
+              console.log("count:"+count);
+              if(count == arr.length){
+                data.push(req.session.mName);//判断更改文章框是否出现状态文本框使用（只有超管有）
+                console.log('---------');
+                console.log("i:"+i);
+                console.log("arr.length-1:"+(arr.length-1));
+                console.log(data);
                 res.render('addArticle', {data:data});
               }
             }else{
@@ -752,17 +764,19 @@ router.get('/manageArticle', function(req, res, next) {
         },result1[0].power)
       }else{
         let arr = result1[0].power.split(",");
+        let count = 0;
         for(let i = 0;i < arr.length;i++){
           let typeName;
           typesBll.getTypesOneData(function(result){
             if(result.length > 0){
+              count = count + 1;
               typeName = result[0].typeName;
               data.push({
                 'tid':arr[i],
                 'typeName':typeName
               });
-              data.push(req.session.mName);//判断更改文章框是否出现状态文本框使用（只有超管有）
-              if(i == arr.length-1){
+              if(count == arr.length){
+                data.push(req.session.mName);//判断更改文章框是否出现状态文本框使用（只有超管有）
                 res.render('manageArticle', {data:data});
               }
             }else{
