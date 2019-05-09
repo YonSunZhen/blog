@@ -24,7 +24,7 @@ var storage = multer.diskStorage({
   //如果destination是一个函数，必须手动创建上传文件夹
   destination:function(req,file,cb){
     //这里的路径名是基于整个项目目录的绝对路径
-    cb(null,'./public/upload');
+    cb(null,'public/upload');
   },
   filename:function(req,file,cb){
     const filenameArr = file.originalname.split('.');
@@ -362,13 +362,13 @@ router.post('/addOneArticle',function(req,res,next){
     let articleName = req.body.articleName;
     let tid = req.body.tid;
     let content = req.body.content;
-    let state;
+    let state = req.body.state;
     // console.log(req.session.mName);
-    if(req.session.mName === "superAdmin"){
-      state = 1;//超管添加的文章默认状态通过
-    }else{
-      state = 0;//普通管理添加的文章由超管审批是否通过
-    }
+    // if(req.session.mName === "superAdmin"){
+    //   state = 1;//超管添加的文章默认状态通过
+    // }else{
+    //   state = 0;//普通管理添加的文章由超管审批是否通过
+    // }
     let createDate = time.format(new Date(), 'YYYY-MM-DD HH:mm:ss');
     let updateDate = time.format(new Date(), 'YYYY-MM-DD HH:mm:ss');
     articlesBll.addArticle(function(result){
@@ -388,7 +388,7 @@ router.post('/uploadPic',upload.array('photo',10), function(req,res,next){
   console.log(req.files);
   const array = [];
   for(let i = 0;i < req.files.length; i++){
-    const arr = "/upload/" + req.files[i].filename;
+    const arr = "http://localhost:3000/upload/" + req.files[i].filename;
     array.push(arr);
   }
   const picData = {
@@ -459,6 +459,11 @@ router.post('/updateArticleOneData',function(req,res,next){
   let state = req.body.state;
   let updateDate = time.format(new Date(), 'YYYY-MM-DD HH:mm:ss');
   let updatePeople = req.session.mName;
+  // if(req.session.mName == "superAdmin"){
+  //   state = req.body.state;
+  // }else{
+  //   state = 0;
+  // }
   articlesBll.updateArticleOneData(function(result){
     if(result === "true"){
       //console.log("成功");

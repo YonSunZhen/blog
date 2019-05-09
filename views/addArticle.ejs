@@ -28,6 +28,16 @@
       </div>
     </div>
     <div class="layui-form-item">
+      <label class="layui-form-label">选择状态</label>
+      <div class="layui-input-block">
+        <select name="state" id="state" lay-filter="" style="width:20px;">
+          <option value=""></option>
+          <option value="0">未通过</option>
+          <option value="1">通过</option>
+        </select>
+      </div>
+    </div>
+    <div class="layui-form-item">
       <div id="editor" style="margin-left:38px;"></div>
     </div>
     <div class="layui-form-item">
@@ -101,12 +111,14 @@
       $("#addArticle").click(function(){
         let articleName = $("#name").val();
         let tid = $("#type").val();
+        let state = $("#state").val();
         let content = encodeURIComponent(editor.txt.html());//将html代码编码后再存进数据库
         let text = editor.txt.text();
         let data = {
           'articleName':articleName,
           'tid':tid,
-          'content':content
+          'content':content,
+          'state': state
         }
         //console.log(typeName);
         if(text === ""){

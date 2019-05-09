@@ -267,6 +267,7 @@
       this._getArticleComments(this.id);//这里有点问题
       this._getArticleDetail(this.id);
       this._updateArticleReadCount(this.id,this.readCount);
+
       console.log(this.articleDetail);
       console.log(this.comments);
       console.log(this.replyList);
